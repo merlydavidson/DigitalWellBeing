@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1031642053305",
+    "firebase_url": "https://digitalwellbeing-24c04.firebaseio.com",
+    "project_id": "digitalwellbeing-24c04",
+    "storage_bucket": "digitalwellbeing-24c04.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1031642053305:android:71ec8443cd977ca372f968",
+        "android_client_info": {
+          "package_name": "com.project.digitalwellbeing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1031642053305-2uh0igted7f05la40kg2dri6et6tpda5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.project.digitalwellbeing",
+            "certificate_hash": "3b0414a24598fd5ff16029bde5e393c72ee13b24"
+          }
+        },
+        {
+          "client_id": "1031642053305-a46e7ghu8fe5bb4t9niqgi6gfso05bp1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvyxxcMPynYpbbrCl0niFIeeNenbyK9Us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1031642053305-a46e7ghu8fe5bb4t9niqgi6gfso05bp1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

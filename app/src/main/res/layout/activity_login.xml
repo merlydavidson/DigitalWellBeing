@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/bg"
+    tools:context=".LoginActivity">
+
+    <ImageView
+        android:id="@+id/logo_img"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="20dp"
+        android:src="@mipmap/logo" />
+
+    <EditText
+        android:id="@+id/mob_edt"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/logo_img"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/edittext_round"
+        android:hint="@string/mob_num_string"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
+    <EditText
+        android:layout_marginTop="15dp"
+        android:id="@+id/passwd_edt"
+        android:textStyle="bold"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/mob_edt"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/edittext_round"
+        android:hint="@string/passwd_string"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
+
+    <Button
+        android:layout_marginTop="20dp"
+        android:id="@+id/login_btn"
+        android:textStyle="bold"
+        android:text="@string/login"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/passwd_edt"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/btn_round"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
+
+    <TextView
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:id="@+id/frgt_psswd_txt"
+        android:text="@string/frgt_psswd"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/login_btn"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/white" />
+    <TextView
+        android:gravity="center_horizontal"
+        android:layout_marginTop="15dp"
+        android:id="@+id/sign_up_txt"
+        android:text="@string/signup"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/frgt_psswd_txt"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:padding="10dp"
+        android:textColor="@color/black"
+        android:textColorHint="@color/white" />
+
+
+    <Button
+        android:layout_marginTop="25dp"
+        android:id="@+id/signup_btn"
+        android:textStyle="bold"
+        android:text="@string/register"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@+id/sign_up_txt"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="@drawable/btn_round"
+        android:padding="10dp"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white" />
+
+
+</RelativeLayout>
