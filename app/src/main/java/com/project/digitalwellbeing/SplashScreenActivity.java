@@ -36,6 +36,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         setContentView(R.layout.activity_splash_screen);
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
+        int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
         CommonDataArea.editor = sharedPreferences.edit();
 
         new Handler().postDelayed(new Runnable() {
@@ -43,8 +44,13 @@ public class SplashScreenActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (sharedPreferences.getBoolean(CommonDataArea.ISLOGIN, false)) {
-                    Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);
-                    startActivity(intent);
+                    if (role == 0) {
+                        Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(SplashScreenActivity.this, GoogleFit.class);
+                        startActivity(intent);
+                    }
                     finish();
                 } else {
                     Intent intent = new Intent(SplashScreenActivity.this, LoginActivity.class);

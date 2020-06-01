@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.project.digitalwellbeing.DetailActivity;
 import com.project.digitalwellbeing.GoogleFit;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.data.model.LogDetails;
@@ -43,7 +44,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.childName.setText(userDetails.get(position).getChildName());
-        holder.childPlace.setText(logDetails.getLocation());
+        holder.childPlace.setText(logDetails.getTimeStamp());
 
         if (logDetails.isOnline())
             holder.onoffline.setBackgroundResource(R.drawable.online);
@@ -53,7 +54,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
         holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(context, GoogleFit.class);
+                Intent intent=new Intent(context, DetailActivity.class);
                 context.startActivity(intent);
             }
         });

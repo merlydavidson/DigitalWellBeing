@@ -20,6 +20,9 @@ public interface DigitalWellBeingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertLogDetails(LogDetails logDetails);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertTaskDetails(TaskDetails taskDetails);
+
     @Query("SELECT * FROM UserInfo")
     List<UserInfo> getUserInfo();
 

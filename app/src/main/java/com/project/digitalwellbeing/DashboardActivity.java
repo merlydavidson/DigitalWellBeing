@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.adapter.UsersListAdapter;
@@ -47,6 +48,10 @@ DashboardActivity extends AppCompatActivity {
     private DigitalWellBeingService mDigitalWellBeingService;
     private Intent mServiceIntent;
 
+    LinearLayout linearLayoutDashBoard;
+    private int count = 0;
+    private long startMillis = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,16 +69,14 @@ DashboardActivity extends AppCompatActivity {
         if (CommonDataArea.ROLE != 0) {
             floatingActionButton.setVisibility(View.GONE);
         }
-        toolbar = findViewById(R.id.pres_toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-
-        toolbar.setTitle("Digital Well Being");
-        toolbar.setBackgroundColor(getResources().getColor(R.color.dark_bg));
-        toolbar.setTitleTextColor(getResources().getColor(R.color.white));
-        toolbar.inflateMenu(R.menu.menu);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        toolbar = findViewById(R.id.pres_toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+//
+//        toolbar.setTitle("Digital Well Being");
+//        toolbar.inflateMenu(R.menu.menu);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getDeviceUUID(this);
         new CommonFunctionArea().subscribeTopic();
@@ -89,16 +92,19 @@ DashboardActivity extends AppCompatActivity {
         if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
             startService(mServiceIntent);
         }
+
+
     }
+
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
             if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i ("Service status", "Running");
+                Log.i("Service status", "Running");
                 return true;
             }
         }
-        Log.i ("Service status", "Not running");
+        Log.i("Service status", "Not running");
         return false;
     }
 
@@ -106,7 +112,7 @@ DashboardActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (CommonDataArea.ROLE == 0 && getStimulationList().size() > 0) {
-            mAdapter = new UsersListAdapter(this, getStimulationList(),new CommonFunctionArea().getLogList(DashboardActivity.this));
+            mAdapter = new UsersListAdapter(this, getStimulationList(), new CommonFunctionArea().getLogList(DashboardActivity.this));
             childRecyclerview.setAdapter(mAdapter);
 
             pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -116,7 +122,7 @@ DashboardActivity extends AppCompatActivity {
                 public void onRefresh() {
                     //Here you can update your data from internet or from local SQLite data
                     //   communicator.checkPrescriptionDelete(CommonDataArea.patientID);
-                    mAdapter = new UsersListAdapter(DashboardActivity.this, getStimulationList(),new CommonFunctionArea().getLogList(DashboardActivity.this));
+                    mAdapter = new UsersListAdapter(DashboardActivity.this, getStimulationList(), new CommonFunctionArea().getLogList(DashboardActivity.this));
                     childRecyclerview.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
                     pullToRefresh.setRefreshing(false);
@@ -150,10 +156,7 @@ DashboardActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
 
-                finish();
-                return true;
             case R.id.uuid:
                 String uuid = CommonFunctionArea.getDeviceUUID(DashboardActivity.this);
                 new Popup(DashboardActivity.this).singleChoice("UUID", uuid);

@@ -23,7 +23,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-
+repositories {
+    maven { url 'https://jitpack.io' }
+}
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -38,7 +40,7 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.4.0'
     implementation 'com.google.android.gms:play-services-fitness:18.0.0'
     implementation 'com.google.android.gms:play-services-auth:18.0.0'
-
+    implementation 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     implementation "androidx.room:room-runtime:2.2.3"
     annotationProcessor "androidx.room:room-compiler:2.2.3"
     implementation 'com.google.android.gms:play-services-location:17.0.0'

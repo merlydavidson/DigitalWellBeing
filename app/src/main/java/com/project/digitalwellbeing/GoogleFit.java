@@ -23,12 +23,13 @@ public class GoogleFit extends AppCompatActivity {
 
     private int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
     private FitnessOptions fitnessOptions;
-    private String TAG = getPackageName();
+    private String TAG = "DigitalWellBeingTag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_fit);
+        getGoogleFitDetails();
     }
 
     public void getGoogleFitDetails() {

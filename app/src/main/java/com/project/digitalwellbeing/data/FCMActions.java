@@ -39,7 +39,10 @@ public class FCMActions {
     private void insertLogDetails(String body) {
         Gson gson = new Gson();
         LogDetails response = gson.fromJson(body, LogDetails.class);
-
+        if (response.isOnline()) {
+            response.setOnline(false);
+        } else
+            response.setOnline(true);
 
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();

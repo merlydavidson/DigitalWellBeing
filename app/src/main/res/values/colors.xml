@@ -8,9 +8,10 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="dim_bg">#61E997</color>
-    <color name="dark_bg" >#3DA26B</color>
+    <color name="dark_bg">#3DA26B</color>
 
     <color name="background_color">#61E997</color>
     <color name="white_greyish">#EEEEEE</color>
     <color name="button_selectorcolor">#9E9E9E</color>
+    <color name="light_gray">#DFDCDC</color>
 </resources>

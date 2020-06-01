@@ -37,7 +37,7 @@ public class CommonFunctionArea {
     }
 
     public String getTimeStamp() {
-        return new SimpleDateFormat("yyyyMMdd_HHmmss").format(Calendar.getInstance().getTime());
+        return new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(Calendar.getInstance().getTime());
     }
 
     public LogDetails getLogList(Context context) {

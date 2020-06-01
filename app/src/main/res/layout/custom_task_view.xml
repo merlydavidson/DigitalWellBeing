@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="350dp"
+    android:background="@drawable/corner_layout"
+    android:orientation="vertical"
+    android:weightSum="2">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.4"
+        android:background="@color/dark_bg"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
+        <TextView
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="@dimen/text20"
+            android:gravity="center"
+            android:text="Add Activity"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.85"></TextView>
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="15dp"
+            android:layout_weight="0.15"
+            android:src="@drawable/close"></ImageView>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.3"
+
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <EditText
+            android:id="@+id/activity_edt"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_weight="0.5"
+            android:background="@drawable/corner_edittext"
+            android:drawableLeft=""
+            android:hint="Activity Name"
+            android:paddingLeft="10dp"
+            android:textColorHint="@color/light_gray" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+            <EditText
+                android:id="@+id/calender_edt"
+                android:textColorHint="@color/light_gray"
+                android:gravity="center"
+                android:hint="DD/MM/YY"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/corner_edittext"
+                android:drawableLeft="@drawable/calendar"
+                android:paddingLeft="10dp">
+
+            </EditText>
+
+            <EditText
+                android:id="@+id/clock_edt"
+                android:textColorHint="@color/light_gray"
+                android:gravity="center"
+                android:hint="HH:MM:SS"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_weight="0.5"
+                android:background="@drawable/corner_edittext"
+                android:drawableLeft="@drawable/clock"
+                android:paddingLeft="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/activity_submit_btn"
+        android:text="SUBMIT"
+        android:textColor="@color/white"
+        android:background="@drawable/btn_round"
+        android:layout_margin="25dp"
+        android:layout_weight="0.3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"/>
+
+</LinearLayout>

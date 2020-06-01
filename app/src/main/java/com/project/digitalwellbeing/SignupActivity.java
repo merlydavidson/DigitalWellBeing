@@ -149,8 +149,16 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
             digitalWellBeingDao.insertUserInfo(userInfo);
             editor.commit();
-            Intent intent = new Intent(SignupActivity.this, DashboardActivity.class);
-            startActivity(intent);
+
+            if (role == R.id.role_parent) {
+                Intent intent = new Intent(SignupActivity.this, DashboardActivity.class);
+                startActivity(intent);
+            } else {
+
+                Intent intent = new Intent(SignupActivity.this, DetailActivity.class);
+                startActivity(intent);
+
+            }
         }
 
 
