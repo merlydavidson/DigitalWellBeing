@@ -1,174 +1,111 @@
 package com.project.digitalwellbeing;
 
-import androidx.annotation.RequiresApi;
+import android.content.Context;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.LinearLayout;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.project.digitalwellbeing.adapter.UsersListAdapter;
-import com.project.digitalwellbeing.data.model.AppDataBase;
-import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
-import com.project.digitalwellbeing.data.model.UserDetails;
-import com.project.digitalwellbeing.remote.Communicator;
-import com.project.digitalwellbeing.service.DigitalWellBeingService;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
-import com.project.digitalwellbeing.utils.Popup;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
-public class
-DashboardActivity extends AppCompatActivity {
-    FloatingActionButton floatingActionButton;
-    RecyclerView childRecyclerview;
-    private RecyclerView.LayoutManager layoutManager;
+public class DashboardActivity extends AppCompatActivity implements View.OnClickListener {
 
+    LinearLayout pairKeyLinearLayout, taskLinearLayout, googleFitLinearLayout, webHistoryLinearLayout, callLogLinearLayout, locationLinearLayout, appUsageLinearLayout, recentActivitiesLinearLayout, lockDeviceLinearLayout;
+    TextView pairKeytext, tasktext, googleFitText, webHistoryText, callLogText, locationText, appusageText, recentActivitiesText, lockDeviceText;
     private Toolbar toolbar;
-    private SwipeRefreshLayout pullToRefresh;
-    private UsersListAdapter mAdapter;
-    private DigitalWellBeingService mDigitalWellBeingService;
-    private Intent mServiceIntent;
-
-    LinearLayout linearLayoutDashBoard;
-    private int count = 0;
-    private long startMillis = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        setContentView(R.layout.activity_dashboard2);
+        initViews();
+        getAllData();
+    }
+
+    public void getAllData() {
+        CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getDeviceUUID(this);
+        new CommonFunctionArea().subscribeTopic();
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
         CommonDataArea.editor = sharedPreferences.edit();
         CommonDataArea.ROLE = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
-        childRecyclerview = (RecyclerView) findViewById(R.id.child_rv);
-        childRecyclerview.setHasFixedSize(true);
-        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
-        layoutManager = new LinearLayoutManager(this);
-        childRecyclerview.setLayoutManager(layoutManager);
-        floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingActionButton);
-        if (CommonDataArea.ROLE != 0) {
-            floatingActionButton.setVisibility(View.GONE);
-        }
-//        toolbar = findViewById(R.id.pres_toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-//
-//        toolbar.setTitle("Digital Well Being");
-//        toolbar.inflateMenu(R.menu.menu);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    public void initViews() {
+
+        toolbar = findViewById(R.id.dashboard_toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setTitle("Digital Well Being");
+        toolbar.setTitleTextColor(getResources().getColor(R.color.dark_bg));
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getDeviceUUID(this);
-        new CommonFunctionArea().subscribeTopic();
 
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Popup(DashboardActivity.this).SingleEditTextChoice("Pair Child", 1, DashboardActivity.this);
-            }
-        });
-        mDigitalWellBeingService = new DigitalWellBeingService();
-        mServiceIntent = new Intent(this, mDigitalWellBeingService.getClass());
-        if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
-            startService(mServiceIntent);
-        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        pairKeyLinearLayout = (LinearLayout) findViewById(R.id.uuid_layout);
+        taskLinearLayout = (LinearLayout) findViewById(R.id.task_layout);
+        googleFitLinearLayout = (LinearLayout) findViewById(R.id.google_fit_layout);
+        callLogLinearLayout = (LinearLayout) findViewById(R.id.call_layout);
+        webHistoryLinearLayout = (LinearLayout) findViewById(R.id.web_layout);
+        locationLinearLayout = (LinearLayout) findViewById(R.id.location_layout);
+        appUsageLinearLayout = (LinearLayout) findViewById(R.id.apps_layout);
+        recentActivitiesLinearLayout = (LinearLayout) findViewById(R.id.log_layout);
+        lockDeviceLinearLayout = (LinearLayout) findViewById(R.id.lock_layout);
+
+        pairKeyLinearLayout.setOnClickListener(this);
+        taskLinearLayout.setOnClickListener(this);
+        googleFitLinearLayout.setOnClickListener(this);
+        callLogLinearLayout.setOnClickListener(this);
+        webHistoryLinearLayout.setOnClickListener(this);
+        locationLinearLayout.setOnClickListener(this);
+        appUsageLinearLayout.setOnClickListener(this);
+        recentActivitiesLinearLayout.setOnClickListener(this);
+        lockDeviceLinearLayout.setOnClickListener(this);
 
 
-    }
-
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                Log.i("Service status", "Running");
-                return true;
-            }
-        }
-        Log.i("Service status", "Not running");
-        return false;
+        pairKeytext = (TextView) findViewById(R.id.txt_pair_key);
+        tasktext = (TextView) findViewById(R.id.txt_task);
+        googleFitText = (TextView) findViewById(R.id.txt_google_fit);
+        callLogText = (TextView) findViewById(R.id.txt_call);
+        webHistoryText = (TextView) findViewById(R.id.txt_web);
+        locationText = (TextView) findViewById(R.id.txt_location);
+        appusageText = (TextView) findViewById(R.id.txt_app);
+        recentActivitiesText = (TextView) findViewById(R.id.txt_log);
+        lockDeviceText = (TextView) findViewById(R.id.txt_lock);
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (CommonDataArea.ROLE == 0 && getStimulationList().size() > 0) {
-            mAdapter = new UsersListAdapter(this, getStimulationList(), new CommonFunctionArea().getLogList(DashboardActivity.this));
-            childRecyclerview.setAdapter(mAdapter);
-
-            pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                int Refreshcounter = 1; //Counting how many times user have refreshed the layout
-
-                @Override
-                public void onRefresh() {
-                    //Here you can update your data from internet or from local SQLite data
-                    //   communicator.checkPrescriptionDelete(CommonDataArea.patientID);
-                    mAdapter = new UsersListAdapter(DashboardActivity.this, getStimulationList(), new CommonFunctionArea().getLogList(DashboardActivity.this));
-                    childRecyclerview.setAdapter(mAdapter);
-                    mAdapter.notifyDataSetChanged();
-                    pullToRefresh.setRefreshing(false);
-                }
-            });
-        }
-    }
-
-
-    public List<UserDetails> getStimulationList() {
-        List<UserDetails> userDetails = null;
-        try {
-            AppDataBase appDataBase = AppDataBase.getInstance(DashboardActivity.this);
-            DigitalWellBeingDao stimulationSessionsDao = appDataBase.userDetailsDao();
-            userDetails = stimulationSessionsDao.getUserDetails();
-        } catch (Exception e) {
-            Log.e("Exception", e.getMessage());
-        }
-        return userDetails;
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
-
-
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.uuid:
-                String uuid = CommonFunctionArea.getDeviceUUID(DashboardActivity.this);
-                new Popup(DashboardActivity.this).singleChoice("UUID", uuid);
-
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.uuid_layout:
                 break;
-
-            default:
+            case R.id.task_layout:
+                break;
+            case R.id.google_fit_layout:
+                break;
+            case R.id.call_layout:
+                break;
+            case R.id.web_layout:
+                break;
+            case R.id.location_layout:
+                break;
+            case R.id.apps_layout:
+                break;
+            case R.id.log_layout:
+                break;
+            case R.id.lock_layout:
                 break;
 
         }
-        return super.onOptionsItemSelected(item);
     }
-
-
 }

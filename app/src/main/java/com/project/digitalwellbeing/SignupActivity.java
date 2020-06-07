@@ -4,8 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.content.res.XmlResourceParser;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -151,7 +149,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             editor.commit();
 
             if (role == R.id.role_parent) {
-                Intent intent = new Intent(SignupActivity.this, DashboardActivity.class);
+                Intent intent = new Intent(SignupActivity.this, ChildActivity.class);
                 startActivity(intent);
             } else {
 

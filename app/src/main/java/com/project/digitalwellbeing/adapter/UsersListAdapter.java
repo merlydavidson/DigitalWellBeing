@@ -43,22 +43,24 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.childName.setText(userDetails.get(position).getChildName());
-        holder.childPlace.setText(logDetails.getTimeStamp());
+        if(userDetails.size()>0&&logDetails!=null) {
+            holder.childName.setText(userDetails.get(position).getChildName());
+            holder.childPlace.setText(logDetails.getLocation());
+            holder.childTime.setText(logDetails.getTimeStamp());
 
-        if (logDetails.isOnline())
-            holder.onoffline.setBackgroundResource(R.drawable.online);
-        else
-            holder.onoffline.setBackgroundResource(R.drawable.offline);
+            if (logDetails.isOnline())
+                holder.onoffline.setBackgroundResource(R.drawable.online);
+            else
+                holder.onoffline.setBackgroundResource(R.drawable.offline);
 
-        holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent=new Intent(context, DetailActivity.class);
-                context.startActivity(intent);
-            }
-        });
-
+            holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, DetailActivity.class);
+                    context.startActivity(intent);
+                }
+            });
+        }
     }
 
     @Override
@@ -67,7 +69,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView childName, childPlace;
+        TextView childName, childPlace,childTime;
         ImageView onoffline;
         LinearLayout linearLayoutChild;
 
@@ -75,6 +77,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
             super(itemView);
             childName = (TextView) itemView.findViewById(R.id.child_name_tv);
             childPlace = (TextView) itemView.findViewById(R.id.child_place_tv);
+            childTime = (TextView) itemView.findViewById(R.id.child_time_tv);
             onoffline = (ImageView) itemView.findViewById(R.id.onoff_iv);
             linearLayoutChild = (LinearLayout) itemView.findViewById(R.id.child_layout);
         }

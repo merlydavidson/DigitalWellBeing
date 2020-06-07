@@ -1,25 +1,22 @@
 package com.project.digitalwellbeing;
 
-import android.annotation.SuppressLint;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.project.digitalwellbeing.service.DigitalWellBeingService;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 
-import static com.project.digitalwellbeing.utils.CommonDataArea.prefName;
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
 /**
@@ -27,6 +24,8 @@ import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreference
  * status bar and navigation/system bar) with user interaction.
  */
 public class SplashScreenActivity extends AppCompatActivity {
+    private DigitalWellBeingService mDigitalWellBeingService;
+    private Intent mServiceIntent;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +36,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
         int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        CommonDataArea.ROLE = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
         CommonDataArea.editor = sharedPreferences.edit();
 
         new Handler().postDelayed(new Runnable() {
@@ -44,11 +44,17 @@ public class SplashScreenActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (sharedPreferences.getBoolean(CommonDataArea.ISLOGIN, false)) {
+                    mDigitalWellBeingService = new DigitalWellBeingService();
+                    mServiceIntent = new Intent(SplashScreenActivity.this, mDigitalWellBeingService.getClass());
+                    if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
+                        startService(mServiceIntent);
+                    }
+
                     if (role == 0) {
-                        Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);
+                        Intent intent = new Intent(SplashScreenActivity.this, ChildActivity.class);
                         startActivity(intent);
                     } else {
-                        Intent intent = new Intent(SplashScreenActivity.this, GoogleFit.class);
+                        Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);
                         startActivity(intent);
                     }
                     finish();
@@ -61,4 +67,16 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
         }, 2000);
     }
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i("Service status", "Not running");
+        return false;
+    }
+
 }

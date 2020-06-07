@@ -9,7 +9,7 @@
     android:clickable="true"
     android:id="@+id/dashboard_layout"
     android:background="@drawable/home_bg"
-    tools:context=".DashboardActivity">
+    tools:context=".ChildActivity">
 <!--    <androidx.appcompat.widget.Toolbar-->
 <!--        android:id="@+id/pres_toolbar"-->
 <!--        android:layout_width="match_parent"-->

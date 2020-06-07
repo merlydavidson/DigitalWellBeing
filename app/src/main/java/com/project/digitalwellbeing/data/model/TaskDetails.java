@@ -6,8 +6,6 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.Date;
-
 @Entity
 public class TaskDetails {
     @PrimaryKey(autoGenerate = true)
@@ -21,13 +19,21 @@ public class TaskDetails {
     @SerializedName("date")
     public String date;
 
-    @ColumnInfo(name ="time")
-    @SerializedName("time")
-    public String time;
+    @ColumnInfo(name ="starttime")
+    @SerializedName("starttime")
+    public String starttime;
 
-    @ColumnInfo(name ="timeStamp")
-    @SerializedName("timeStamp")
-    public String timeStamp;
+    @ColumnInfo(name ="starttimeStamp")
+    @SerializedName("starttimeStamp")
+    public String starttimeStamp;
+
+    @ColumnInfo(name ="endtime")
+    @SerializedName("endtime")
+    public String endtime;
+
+    @ColumnInfo(name ="endtimeStamp")
+    @SerializedName("endtimeStamp")
+    public String endtimeStamp;
 
     @ColumnInfo(name ="upload")
     @SerializedName("upload")
@@ -58,20 +64,20 @@ public class TaskDetails {
         this.date = date;
     }
 
-    public String getTime() {
-        return time;
+    public String getStarttime() {
+        return starttime;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setStarttime(String starttime) {
+        this.starttime = starttime;
     }
 
-    public String getTimeStamp() {
-        return timeStamp;
+    public String getStarttimeStamp() {
+        return starttimeStamp;
     }
 
-    public void setTimeStamp(String timeStamp) {
-        this.timeStamp = timeStamp;
+    public void setStarttimeStamp(String starttimeStamp) {
+        this.starttimeStamp = starttimeStamp;
     }
 
     public int getUpload() {
@@ -80,5 +86,21 @@ public class TaskDetails {
 
     public void setUpload(int upload) {
         this.upload = upload;
+    }
+
+    public String getEndtime() {
+        return endtime;
+    }
+
+    public void setEndtime(String endtime) {
+        this.endtime = endtime;
+    }
+
+    public String getEndtimeStamp() {
+        return endtimeStamp;
+    }
+
+    public void setEndtimeStamp(String endtimeStamp) {
+        this.endtimeStamp = endtimeStamp;
     }
 }

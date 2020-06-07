@@ -11,13 +11,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
 
 import com.google.firebase.messaging.RemoteMessage;
-import com.project.digitalwellbeing.MainActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.data.FCMActions;
 import com.project.digitalwellbeing.data.model.AppDataBase;
@@ -26,8 +27,6 @@ import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.remote.Communicator;
 
 import java.util.Calendar;
-
-import static com.project.digitalwellbeing.utils.CommonDataArea.context;
 
 public class Popup extends Activity {
     TextView popupTitle, popupMessage;
@@ -145,11 +144,19 @@ public class Popup extends Activity {
         // popupTitle = (TextView) layout.findViewById(R.id.dtitle);
         EditText activityEdt = (EditText) layout.findViewById(R.id.activity_edt);
         EditText calenderEdt = (EditText) layout.findViewById(R.id.calender_edt);
-        EditText clockEdt = (EditText) layout.findViewById(R.id.clock_edt);
+        EditText startClockEdt = (EditText) layout.findViewById(R.id.calender_edt);
+        EditText endClockEdt = (EditText) layout.findViewById(R.id.end_clock_edt);
         Button submitBtn = (Button) layout.findViewById(R.id.activity_submit_btn);
+        ImageView closePopup=(ImageView)layout.findViewById(R.id.close_poup);
         builder.setView(layout);
         final AlertDialog alertDialog = builder.create();
         alertDialog.show();
+        closePopup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                alertDialog.dismiss();
+            }
+        });
         calenderEdt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,7 +175,7 @@ public class Popup extends Activity {
                 picker.show();
             }
         });
-        clockEdt.setOnClickListener(new View.OnClickListener() {
+        startClockEdt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
@@ -179,9 +186,28 @@ public class Popup extends Activity {
                 mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        clockEdt.setText(selectedHour + ":" + selectedMinute);
+                        startClockEdt.setText(selectedHour + ":" + selectedMinute);
                     }
-                }, hour, minute, true);//Yes 24 hour time
+                }, hour, minute, true);//Yes 24 hour starttime
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+            }
+        });
+
+        endClockEdt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        endClockEdt.setText(selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour starttime
                 mTimePicker.setTitle("Select Time");
                 mTimePicker.show();
             }
@@ -189,11 +215,12 @@ public class Popup extends Activity {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!activityEdt.getText().toString().equalsIgnoreCase("") && !calenderEdt.getText().toString().equalsIgnoreCase("") && !clockEdt.getText().toString().equalsIgnoreCase("")) {
+                if (!activityEdt.getText().toString().equalsIgnoreCase("") && !calenderEdt.getText().toString().equalsIgnoreCase("") && !startClockEdt.getText().toString().equalsIgnoreCase("") && !endClockEdt.getText().toString().equalsIgnoreCase("")) {
                     TaskDetails taskDetails = new TaskDetails();
                     taskDetails.setTaskName(activityEdt.getText().toString());
                     taskDetails.setDate(calenderEdt.getText().toString());
-                    taskDetails.setTime(clockEdt.getText().toString());
+                    taskDetails.setStarttime(startClockEdt.getText().toString());
+                    taskDetails.setEndtime(endClockEdt.getText().toString());
                     taskDetails.setUpload(0);
 
                     AppDataBase appDataBase = AppDataBase.getInstance(context);

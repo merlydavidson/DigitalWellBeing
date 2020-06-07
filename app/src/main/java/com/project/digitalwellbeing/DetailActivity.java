@@ -1,10 +1,5 @@
 package com.project.digitalwellbeing;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,11 +7,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.Popup;
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class DetailActivity extends AppCompatActivity {
 
+    FloatingActionButton floatingActionButtonAddtask;
     private Toolbar toolbar;
     private LinearLayout linearLayoutDashBoard;
     private int count = 0;
@@ -35,7 +36,7 @@ public class DetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-       // toolbar = findViewById(R.id.det_toolbar);
+        // toolbar = findViewById(R.id.det_toolbar);
 //        setSupportActionBar(toolbar);
 //        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
 
@@ -44,35 +45,45 @@ public class DetailActivity extends AppCompatActivity {
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 //        getSupportActionBar().setDisplayShowHomeEnabled(true);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getDeviceUUID(this);
-        new CommonFunctionArea().subscribeTopic();
+//        CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getDeviceUUID(this);
+//        new CommonFunctionArea().subscribeTopic();
         linearLayoutDashBoard = (LinearLayout) findViewById(R.id.det_layout);
         linearLayoutDashBoard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long time= System.currentTimeMillis();
+                long time = System.currentTimeMillis();
 
 
-                //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
-                if (startMillis==0 || (time-startMillis> 3000) ) {
-                    startMillis=time;
-                    count=1;
+                //if it is the first starttime, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
+                if (startMillis == 0 || (time - startMillis > 3000)) {
+                    startMillis = time;
+                    count = 1;
                 }
                 //it is not the first, and it has been  less than 3 seconds since the first
-                else{ //  time-startMillis< 3000
+                else { //  starttime-startMillis< 3000
                     count++;
                 }
 
-                if (count==5) {
+                if (count == 5) {
                     String uuid = CommonFunctionArea.getDeviceUUID(DetailActivity.this);
                     new Popup(DetailActivity.this).singleChoice("UUID", uuid);
                 }
             }
         });
         drawPieChart();
+        floatingActionButtonAddtask = (FloatingActionButton) findViewById(R.id.floatingActionButton_task);
+        if (CommonDataArea.ROLE == 1)
+            floatingActionButtonAddtask.setVisibility(View.GONE);
+        floatingActionButtonAddtask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Popup(DetailActivity.this).taskPopup("Add task", DetailActivity.this);
+            }
+        });
+
     }
-    public void drawPieChart()
-    {
+
+    public void drawPieChart() {
         pieChart = findViewById(R.id.piechart);
         ArrayList NoOfEmp = new ArrayList();
 

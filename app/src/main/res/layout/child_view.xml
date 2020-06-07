@@ -7,7 +7,7 @@
     <LinearLayout
         android:id="@+id/child_layout"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="200dp"
         android:orientation="horizontal"
         android:weightSum="1">
 
@@ -16,9 +16,11 @@
             android:layout_height="match_parent"
             android:layout_weight="0.9"
             android:orientation="vertical"
-            android:weightSum="1">
+            android:weightSum="3">
 
             <TextView
+                android:gravity="center_vertical"
+                android:text="Child Name"
                 android:textSize="@dimen/text20"
                 android:layout_gravity="center_vertical"
                 android:id="@+id/child_name_tv"
@@ -27,15 +29,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="8dp"
-                android:layout_weight="0.5" />
+                android:layout_weight="1" />
 
             <TextView
+                android:gravity="center_vertical"
+                android:text="Place"
                 android:id="@+id/child_place_tv"
                 android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_margin="8dp"
-                android:layout_weight="0.5" />
+                android:layout_weight="1" />
+            <TextView
+                android:gravity="center_vertical"
+                android:text="Last Updated"
+                android:id="@+id/child_time_tv"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="8dp"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <ImageView

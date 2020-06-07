@@ -1,7 +1,6 @@
 package com.project.digitalwellbeing.service;
 
 import android.Manifest;
-import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -26,31 +25,44 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.project.digitalwellbeing.data.model.FCMMessage;
 import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.FCMMessages;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class DigitalWellBeingService extends Service {
-    public int counter = 0;
-
     public static final String BROADCAST_ACTION = "Digital Well Being";
     private static final int TWO_MINUTES = 1000 * 60 * 2;
+    public int counter = 0;
     public LocationManager locationManager;
     public DWBLocationListener listener;
     public Location previousBestLocation = null;
 
     Intent intent;
     private String cityName = "";
+    private Timer timer;
+    private TimerTask timerTask;
+
+    public static Thread performOnBackgroundThread(final Runnable runnable) {
+        final Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    runnable.run();
+                } finally {
+
+                }
+            }
+        };
+        t.start();
+        return t;
+    }
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -63,7 +75,6 @@ public class DigitalWellBeingService extends Service {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, listener);
 
     }
-
 
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
         if (currentBestLocation == null) {
@@ -107,14 +118,12 @@ public class DigitalWellBeingService extends Service {
         return false;
     }
 
-
     private boolean isSameProvider(String provider1, String provider2) {
         if (provider1 == null) {
             return provider2 == null;
         }
         return provider1.equals(provider2);
     }
-
 
     @Override
     public void onCreate() {
@@ -146,14 +155,12 @@ public class DigitalWellBeingService extends Service {
         startForeground(2, notification);
     }
 
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
         startTimer();
         return START_STICKY;
     }
-
 
     @Override
     public void onDestroy() {
@@ -166,38 +173,24 @@ public class DigitalWellBeingService extends Service {
 //        this.sendBroadcast(broadcastIntent);
     }
 
-    public static Thread performOnBackgroundThread(final Runnable runnable) {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                } finally {
-
-                }
-            }
-        };
-        t.start();
-        return t;
-    }
-
-
-    private Timer timer;
-    private TimerTask timerTask;
-
     public void startTimer() {
         timer = new Timer();
         timerTask = new TimerTask() {
             public void run() {
                 if (CommonFunctionArea.getRole(getApplicationContext()) == 1) {
                     CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getparentId(getApplicationContext());
+                    Log.d("Merly", "from service 194");
+                    Log.d("Merly", "city name " + cityName);
+                    Log.d("Merly", "time stamp " + new CommonFunctionArea().getTimeStamp());
+                    Log.d("Merly", "uuid " + CommonFunctionArea.getDeviceUUID(getApplicationContext()));
+                    Log.d("Merly", "online " + new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
 
                     new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, new CommonFunctionArea().getTimeStamp(), new CommonFunctionArea().getDeviceLocked(getApplicationContext())));
                 }
                 //                Log.i("Count", "=========  "+ (counter++));
             }
         };
-        timer.schedule(timerTask, 1000, 10000); //
+        timer.schedule(timerTask, 10000, 10000); //
     }
 
     public void stoptimertask() {
@@ -230,13 +223,17 @@ public class DigitalWellBeingService extends Service {
                 cityName = addresses.get(0).getAddressLine(0);
                 if (CommonFunctionArea.getRole(getApplicationContext()) == 1) {
                     CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getparentId(getApplicationContext());
-
+                    Log.d("Merly", "from service 194");
+                    Log.d("Merly", "city name " + cityName);
+                    Log.d("Merly", "time stamp " + new CommonFunctionArea().getTimeStamp());
+                    Log.d("Merly", "uuid " + CommonFunctionArea.getDeviceUUID(getApplicationContext()));
+                    Log.d("Merly", "online " + new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
                     new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, new CommonFunctionArea().getTimeStamp(), new CommonFunctionArea().getDeviceLocked(getApplicationContext())));
                 }
-                intent.putExtra("Latitude", loc.getLatitude());
-                intent.putExtra("Longitude", loc.getLongitude());
-                intent.putExtra("Provider", loc.getProvider());
-                sendBroadcast(intent);
+//                intent.putExtra("Latitude", ""+loc.getLatitude());
+//                intent.putExtra("Longitude", ""+loc.getLongitude());
+//                intent.putExtra("Provider", loc.getProvider());
+//                sendBroadcast(intent);
 
 
             }
