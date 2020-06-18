@@ -23,6 +23,9 @@ public interface DigitalWellBeingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertTaskDetails(TaskDetails taskDetails);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertCallDetails(CallDetails callDetails);
+
     @Query("SELECT * FROM UserInfo")
     List<UserInfo> getUserInfo();
 
@@ -31,4 +34,10 @@ public interface DigitalWellBeingDao {
 
     @Query("SELECT * FROM LogDetails")
     List<LogDetails> getLogDetails();
+
+    @Query("SELECT * FROM CallDetails")
+    List<CallDetails> getCallDetails();
+
+    @Query("SELECT * FROM CallDetails where callerLogId = :id")
+    List<CallDetails> getaCallDetails(int id);
 }

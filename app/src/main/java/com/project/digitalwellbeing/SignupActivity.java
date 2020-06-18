@@ -153,7 +153,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
                 startActivity(intent);
             } else {
 
-                Intent intent = new Intent(SignupActivity.this, DetailActivity.class);
+                Intent intent = new Intent(SignupActivity.this, DashboardActivity.class);
                 startActivity(intent);
 
             }

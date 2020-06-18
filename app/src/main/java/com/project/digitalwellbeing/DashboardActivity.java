@@ -1,15 +1,21 @@
 package com.project.digitalwellbeing;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Browser;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.project.digitalwellbeing.utils.BrowserObserver;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
 
@@ -20,6 +26,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     LinearLayout pairKeyLinearLayout, taskLinearLayout, googleFitLinearLayout, webHistoryLinearLayout, callLogLinearLayout, locationLinearLayout, appUsageLinearLayout, recentActivitiesLinearLayout, lockDeviceLinearLayout;
     TextView pairKeytext, tasktext, googleFitText, webHistoryText, callLogText, locationText, appusageText, recentActivitiesText, lockDeviceText;
     private Toolbar toolbar;
+    private BrowserObserver browserObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +37,15 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     }
 
     public void getAllData() {
+        final Uri BOOKMARKS_URI = Uri.parse("content://com.android.chrome.browser/bookmarks");
         CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getDeviceUUID(this);
         new CommonFunctionArea().subscribeTopic();
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
         CommonDataArea.editor = sharedPreferences.edit();
         CommonDataArea.ROLE = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+    //    browserObserver = new BrowserObserver(new Handler(),DashboardActivity.this);
+//        getContentResolver().registerContentObserver(BOOKMARKS_URI, true, browserObserver);
     }
 
     public void initViews() {
@@ -90,10 +100,16 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             case R.id.uuid_layout:
                 break;
             case R.id.task_layout:
+                Intent intent=new Intent(DashboardActivity.this,DetailActivity.class);
+                startActivity(intent);
                 break;
             case R.id.google_fit_layout:
+                Intent googleIntent=new Intent(DashboardActivity.this,GoogleFit.class);
+                startActivity(googleIntent);
                 break;
             case R.id.call_layout:
+                Intent callIntent=new Intent(DashboardActivity.this,ContactListActivity.class);
+                startActivity(callIntent);
                 break;
             case R.id.web_layout:
                 break;
@@ -107,5 +123,16 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 break;
 
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+      //  getContentResolver().unregisterContentObserver(browserObserver);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

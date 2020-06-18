@@ -13,7 +13,7 @@ import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
 import com.project.digitalwellbeing.utils.CommonDataArea;
 
-@Database(version = 5, entities = {UserInfo.class,UserDetails.class,LogDetails.class,TaskDetails.class})
+@Database(version = 6, entities = {UserInfo.class,UserDetails.class,LogDetails.class,TaskDetails.class,CallDetails.class})
 public abstract class AppDataBase extends RoomDatabase {
     public abstract DigitalWellBeingDao userDetailsDao();
 

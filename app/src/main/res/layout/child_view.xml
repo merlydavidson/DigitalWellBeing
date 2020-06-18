@@ -2,12 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="10dp"
+
     android:orientation="vertical">
 
     <LinearLayout
+        android:background="@drawable/corner_layout"
+
         android:id="@+id/child_layout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="180dp"
         android:orientation="horizontal"
         android:weightSum="1">
 
@@ -19,36 +23,37 @@
             android:weightSum="3">
 
             <TextView
-                android:gravity="center_vertical"
-                android:text="Child Name"
-                android:textSize="@dimen/text20"
-                android:layout_gravity="center_vertical"
                 android:id="@+id/child_name_tv"
-                android:textStyle="bold"
-                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_margin="8dp"
-                android:layout_weight="1" />
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
+                android:text="Child Name"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text20"
+                android:textStyle="bold" />
 
             <TextView
-                android:gravity="center_vertical"
-                android:text="Place"
                 android:id="@+id/child_place_tv"
-                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_margin="8dp"
-                android:layout_weight="1" />
-            <TextView
+                android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:text="Last Updated"
+                android:paddingLeft="15dp"
+                android:text="Place"
+                android:textColor="@color/black" />
+
+            <TextView
                 android:id="@+id/child_time_tv"
-                android:textColor="@color/black"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_margin="8dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="15dp"
+                android:text="Last Updated"
+                android:textColor="@color/black" />
         </LinearLayout>
 
         <ImageView
@@ -57,7 +62,6 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_margin="8dp"
-            android:layout_weight="0.1"
-            />
+            android:layout_weight="0.1" />
     </LinearLayout>
 </LinearLayout>
