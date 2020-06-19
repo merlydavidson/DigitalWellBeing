@@ -50,5 +50,8 @@
     <string name="last_time_used_label">Last time used</string>
     <!-- label for usage time -->
     <string name="usage_time_label">Usage time</string>
+    <string name="permissionReq">Permission Required</string>
+    <string name="permissionAccess"><![CDATA[To execute this action, tap \"SETTINGS\", go to App info > Permissions, then allow the following permissions and try again:]]></string>
+    <string name="permission">permission</string>
 
 </resources>

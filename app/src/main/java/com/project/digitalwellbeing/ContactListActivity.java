@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.provider.CallLog;
 import android.provider.ContactsContract;
 import android.util.Log;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,8 +21,6 @@ import com.project.digitalwellbeing.utils.CommonDataArea;
 
 import java.util.Date;
 import java.util.List;
-
-import static com.project.digitalwellbeing.utils.CommonDataArea.context;
 
 public class ContactListActivity extends AppCompatActivity {
     static ProgressBar progressBar;
@@ -135,7 +132,7 @@ public class ContactListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact_list);
+        setContentView(R.layout.generic_layout);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -149,7 +146,7 @@ public class ContactListActivity extends AppCompatActivity {
         recyclerViewCall.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerViewCall.setLayoutManager(layoutManager);
-        mAdapter = new GenericAdapter(getcallDetails(), ContactListActivity.this);
+        mAdapter = new GenericAdapter(getcallDetails(), ContactListActivity.this,1);
         recyclerViewCall.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 

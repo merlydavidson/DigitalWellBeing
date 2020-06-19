@@ -20,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ContactDetailActivity"></activity>
+        <activity android:name=".LocationActivity"></activity>
+        <activity android:name=".ContactDetailActivity" />
         <activity android:name=".ContactListActivity" />
         <activity android:name=".DashboardActivity" />
         <activity android:name=".AppusageActivity" />
