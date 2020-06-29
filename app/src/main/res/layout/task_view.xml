@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:background="@drawable/border"
+    android:weightSum="1">
+    <LinearLayout
+        android:orientation="vertical"
+        android:weightSum="4"
+        android:layout_weight="0.8"
+        android:layout_width="0dp"
+        android:layout_height="match_parent">
+        <TextView
+            android:padding="10dp"
+            android:id="@+id/taskName"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="center_vertical"
+            android:text="Task Name"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+        <TextView
+            android:padding="10dp"
+            android:id="@+id/taskDate"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="center_vertical"
+            android:text="Task Date"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+        <TextView
+            android:padding="10dp"
+            android:id="@+id/taskTime"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="center_vertical"
+            android:text="Task Time"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+        <TextView
+            android:padding="10dp"
+            android:id="@+id/taskStatus"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="center_vertical"
+            android:text="Task Status"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"/>
+    </LinearLayout>
+    <ImageView
+        android:src="@drawable/ic_task_pemding"
+        android:id="@+id/status_img"
+        android:layout_weight="0.2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"/>
+
+</LinearLayout>

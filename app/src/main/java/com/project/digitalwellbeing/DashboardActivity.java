@@ -1,12 +1,17 @@
 package com.project.digitalwellbeing;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.app.AppOpsManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -16,15 +21,18 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.project.digitalwellbeing.service.DigitalWellBeingService;
 import com.project.digitalwellbeing.utils.BrowserObserver;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
+import com.project.digitalwellbeing.utils.Popup;
 
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
@@ -34,6 +42,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     TextView pairKeytext, tasktext, googleFitText, webHistoryText, callLogText, locationText, appusageText, recentActivitiesText, lockDeviceText;
     private Toolbar toolbar;
     private BrowserObserver browserObserver;
+    private DigitalWellBeingService mDigitalWellBeingService;
+    private Intent mServiceIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +52,24 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         if (checkPermission()) {
             initViews();
             getAllData();
-        }
-        else
-        {
+
+            new Handler().postDelayed(new Runnable() {
+                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+                @Override
+                public void run() {
+                    mDigitalWellBeingService = new DigitalWellBeingService();
+                    mServiceIntent = new Intent(DashboardActivity.this, mDigitalWellBeingService.getClass());
+                    if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
+                        startService(mServiceIntent);
+                    }
+
+
+                }
+            }, 2000);
+
+
+        } else {
+
             Toast.makeText(this, "Allow all permissions", Toast.LENGTH_SHORT).show();
         }
     }
@@ -107,13 +132,14 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         lockDeviceText = (TextView) findViewById(R.id.txt_lock);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.uuid_layout:
                 break;
             case R.id.task_layout:
-                Intent intent = new Intent(DashboardActivity.this, DetailActivity.class);
+                Intent intent = new Intent(DashboardActivity.this, TaskActivity.class);
                 startActivity(intent);
                 break;
             case R.id.google_fit_layout:
@@ -131,6 +157,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 startActivity(locationIntent);
                 break;
             case R.id.apps_layout:
+                if (!getAppUsagePermissionStatus()) {
+                    new Popup(DashboardActivity.this).doubleChoice("App Usage Permission", "You need to allow App usage permission", 2, DashboardActivity.this);
+                } else {
+                    Intent appUsageIntent = new Intent(DashboardActivity.this, AppusageActivity.class);
+                    startActivity(appUsageIntent);
+                }
                 break;
             case R.id.log_layout:
                 break;
@@ -154,7 +186,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     public boolean checkPermission() {
         boolean check = true;
 
-        String[] stringPerm = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_CALL_LOG};
+        String[] stringPerm = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.READ_CONTACTS, Manifest.permission.READ_CALL_LOG};
         for (String permis : stringPerm) {
             if (!(ActivityCompat.checkSelfPermission(this, permis) == PackageManager.PERMISSION_GRANTED)) {
 
@@ -162,7 +194,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             }
         }
 
-        ActivityCompat.requestPermissions(this, stringPerm, 1);
+        if (!check)
+            ActivityCompat.requestPermissions(this, stringPerm, 1);
         return check;
 
     }
@@ -204,13 +237,13 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                                     permissionTxt += ",Location";
                                 }
                             }
-                            if (permission.equalsIgnoreCase("android.permission.WRITE_EXTERNAL_STORAGE")) {
-                                if (permissionTxt.equalsIgnoreCase("")) {
-                                    permissionTxt += "Storage";
-                                } else {
-                                    permissionTxt += ",Storage";
-                                }
-                            }
+//                            if (permission.equalsIgnoreCase("android.permission.WRITE_EXTERNAL_STORAGE")) {
+//                                if (permissionTxt.equalsIgnoreCase("")) {
+//                                    permissionTxt += "Storage";
+//                                } else {
+//                                    permissionTxt += ",Storage";
+//                                }
+//                            }
                             if (permission.equalsIgnoreCase("android.permission.READ_CONTACTS")) {
                                 if (permissionTxt.equalsIgnoreCase("")) {
                                     permissionTxt += "Read Contacts";
@@ -263,5 +296,30 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public boolean getAppUsagePermissionStatus() {
+        try {
+            PackageManager packageManager = getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getPackageName(), 0);
+            AppOpsManager appOpsManager = (AppOpsManager) getSystemService(Context.APP_OPS_SERVICE);
+            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            return (mode == AppOpsManager.MODE_ALLOWED);
+
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                Log.i("Service status", "Running");
+                return true;
+            }
+        }
+        Log.i("Service status", "Not running");
+        return false;
+    }
 
 }

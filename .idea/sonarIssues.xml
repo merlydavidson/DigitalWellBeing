@@ -28,7 +28,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/BarChartView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/ChildActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/ContactListActivity.java">
           <value>
             <set />
           </value>
@@ -48,12 +58,47 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/TaskActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/adapter/GenericAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/adapter/PagerAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/adapter/UsageListAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/adapter/UsersListAdapter.java">
           <value>
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/data/model/DigitalWellBeingDao.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/data/model/TaskDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/fragment/AppUsageStatisticsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/lockscreen/UnlockReciever.java">
           <value>
             <set />
           </value>
@@ -78,12 +123,32 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/utils/ScrollAwareFABBehavior.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/border.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/drawable/corner_edittext.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/drawable/corner_layout.xml">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout-v21/activity_dashboard2.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout-v21/fragment_app_usage_statistics.xml">
           <value>
             <set />
           </value>
@@ -98,7 +163,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_detail.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/call_view.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/child_view.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/custom_double_view.xml">
           <value>
             <set />
           </value>
@@ -108,7 +188,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/task_view.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/usage_stats_item.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/values-v21/styles.xml">
           <value>
             <set />
           </value>
@@ -128,12 +218,207 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/settings.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/adapter/RecycleViewEsHistoryAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/adapter/RecycleViewEsSeessionAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/adapter/RecyclerviewPrescriptionAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/interfaces/MapleInterface.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/interfaces/StimulationSessionsDao.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/StimulationHistory.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/UserDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/remote/Communicator.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/remote/LoginResponse.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/utils/CommonDataArea.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/utils/CommonFunctionArea.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/utils/Popup.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/DashboardActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESHistoryDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESSessionActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESSessionDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/LoginActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/MeasurementElectrodeFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/MeasurementGraphFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/PrescriptionActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/SignupActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/SimulationElectrodeFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/SimulationGraphFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/StimulationControlScreen.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_eshistory_details.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_essession_details.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_login.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_signup.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_splash_screen.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/dashboard_temp.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/es_session_history.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/prescription_row.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/simulationgraphfragment.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/test_stim.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/values/strings.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/build.gradle">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/build/intermediates/manifests/full/debug/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/src/main/java/com/example/acer/appusagetracker/MainActivity.java">
           <value>
             <set />
           </value>
@@ -154,6 +439,26 @@
           </value>
         </entry>
         <entry key="$USER_HOME$/Documents/Android Projects/android-AppUsageStatistics-master/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/out/target/product/msm8996/fake_packages/ResourceManager/src/main/java/com/mitsubishielectric/ahu/lib/resources/DrawableArrays.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/meaa/HMI/translation/TextViewSupportLib/src/main/java/meaa/mea/com/textviewsupportlib/R1Button.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/meaa/HMI/translation/TextViewSupportLib/src/main/java/meaa/mea/com/viewsupportlib/R1ImageButton.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/AndroidManifest.xml">
           <value>
             <set />
           </value>
@@ -188,12 +493,57 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/test/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetPwrManagerTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/test/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetUtilsTest.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/featuresetserviceinterface/src/main/java/com/mitsubishielectric/ahu/lib/featuresetserviceinterface/FeatureSet.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/IPC/IPCManagerService/ipcmanagerserviceinterface/src/main/java/com/mitsubishielectric/ahu/lib/ipcmanagerserviceinterface/IpcManagerConstants.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/ev/VehicleFcaContainerFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/res/values/styles.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/libs/com.mitsubishielectric.ahu.hmi.support-stubs.jar!/com/mitsubishielectric/ahu/hmi/support/systemui/MenuBarSupport.class">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/src/main/java/com/mitsubishielectric/ahu/appservice/vehicleservice/vsmservice/SettingDataSource.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/vsmserviceinterface/build.gradle">
           <value>
             <set />
           </value>

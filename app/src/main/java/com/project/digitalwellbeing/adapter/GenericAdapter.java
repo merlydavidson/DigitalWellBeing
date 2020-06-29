@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.LogDetails;
+import com.project.digitalwellbeing.data.model.TaskDetails;
 
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
     Context context;
     List<LogDetails> logDetails;
     int callingfrom = 0;
+    List<TaskDetails> taskDetails;
 
     public GenericAdapter(List<CallDetails> callDetails, Context context, int callingfrom) {
         this.callDetails = callDetails;
@@ -34,6 +36,13 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         this.callingfrom = callingfrom;
     }
 
+    public GenericAdapter(Context context, int callingfrom, List<TaskDetails> taskDetails) {
+        this.context = context;
+        this.callingfrom = callingfrom;
+        this.taskDetails = taskDetails;
+
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -43,6 +52,8 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
             listItem = layoutInflater.inflate(R.layout.call_view, parent, false);
         } else if (callingfrom == 2) {
             listItem = layoutInflater.inflate(R.layout.location_view, parent, false);
+        } else if (callingfrom == 3) {
+            listItem = layoutInflater.inflate(R.layout.task_view, parent, false);
         }
         ViewHolder viewHolder = new ViewHolder(listItem, callingfrom);
         return viewHolder;
@@ -54,10 +65,28 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
             bindCalldetails(holder, position);
         else if (callingfrom == 2)
             bindLocationDetails(holder, position);
+        else if (callingfrom == 3)
+            bindTaskDetails(holder, position);
 
     }
 
+    private void bindTaskDetails(ViewHolder holder, int position) {
+        if (taskDetails.size() > 0) {
+            holder.taskName.setText(taskDetails.get(position).getTaskName());
+            holder.taskDate.setText(taskDetails.get(position).getDate());
+            holder.taskTime.setText(taskDetails.get(position).getStarttime() + " - "+taskDetails.get(position).getEndtime());
+            if(taskDetails.get(position).getStatus()==0)
+            holder.taskStatus.setText("Status : Pending");
+            else if(taskDetails.get(position).getStatus()==1)
+                holder.taskStatus.setText("Status : Completed");
+            else if(taskDetails.get(position).getStatus()==2)
+                holder.taskStatus.setText("Status : InComplete");
+
+        }
+    }
+
     private void bindLocationDetails(ViewHolder holder, int position) {
+
         if (logDetails.size() > 0) {
             holder.locationText.setText(logDetails.get(position).getLocation());
             holder.timeText.setText(logDetails.get(position).getTimeStamp());
@@ -66,14 +95,21 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        return callDetails.size();
+        if (callDetails != null)
+            return callDetails.size();
+        else
+            return 0;
     }
 
     public void bindCalldetails(ViewHolder holder, int position) {
         if (callDetails.size() > 0) {
-            holder.nameText.setText(callDetails.get(position).getCallerName());
+            if (callDetails.get(position).getCallerName().equalsIgnoreCase(""))
+                holder.nameText.setText("Unkown");
+            else
+                holder.nameText.setText(callDetails.get(position).getCallerName());
             holder.numberText.setText(callDetails.get(position).getCallerNumber());
-            holder.durationtext.setText(callDetails.get(position).getCallDuration());
+
+            holder.durationtext.setText("Call Duration : " + callDetails.get(position).getCallDuration());
             holder.timeText.setText(callDetails.get(position).getCallTimeStamp());
             if (callDetails.get(position).getCallType() == 1)
                 holder.callTypeimage.setBackgroundResource(R.drawable.ic_call_incoming);
@@ -87,14 +123,25 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView nameText, numberText, durationtext, timeText, locationText;
+        TextView nameText, numberText, durationtext, timeText, locationText, taskName, taskDate, taskTime, taskStatus;
         ImageView callTypeimage;
 
         public ViewHolder(@NonNull View itemView, int callingFrom) {
             super(itemView);
             if (callingFrom == 1)
                 initCallViews(itemView);
+            if (callingFrom == 2)
+                initlocationViews(itemView);
+            if (callingFrom == 3)
+                initTaskViews(itemView);
 
+        }
+
+        private void initTaskViews(View itemView) {
+            taskName = (TextView) itemView.findViewById(R.id.taskName);
+            taskDate = (TextView) itemView.findViewById(R.id.taskDate);
+            taskTime = (TextView) itemView.findViewById(R.id.taskTime);
+            taskStatus = (TextView) itemView.findViewById(R.id.taskStatus);
         }
 
         public void initCallViews(View view) {

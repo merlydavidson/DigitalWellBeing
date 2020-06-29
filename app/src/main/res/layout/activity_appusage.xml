@@ -1,47 +1,50 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
 
-    <TextView
-        android:text="@string/display_order_text"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-    <Spinner
-        android:id="@+id/typeSpinner"
+    <!--    <android.support.v7.widget.Toolbar-->
+    <!--        android:id="@+id/toolbar"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentTop="true"-->
+    <!--        android:background="?attr/colorPrimary"-->
+    <!--        android:elevation="6dp"-->
+    <!--        android:minHeight="?attr/actionBarSize"-->
+    <!--       />-->
+
+    <com.google.android.material.tabs.TabLayout
+
+        android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:entries="@array/usage_stats_display_order_types" />
+        android:background="?attr/colorPrimary"
+        android:elevation="6dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <LinearLayout
-        android:orientation="horizontal"
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-        <TextView
-            android:text="@string/app_name_label"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:paddingEnd="6dip"
-            android:layout_height="wrap_content"
-            android:paddingRight="6dip" />
-        <TextView
-            android:text="@string/last_time_used_label"
-            android:paddingEnd="6dip"
-            android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/tab_layout" />
+    <!--
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="6dip" />
-        <TextView
-            android:text="@string/usage_time_label"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
-    <ListView android:id="@+id/pkg_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:drawSelectorOnTop="false" />
-</LinearLayout>
+            android:layout_alignParentRight="true"
+            android:layout_alignBottom="@id/pager"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="6dp"
+            app:fabSize="normal"
+            android:src="@mipmap/app_icon"
+
+            app:backgroundTint="@color/colorPrimaryDark"
+            app:rippleColor="#F06292"/>
+    -->
+</RelativeLayout>

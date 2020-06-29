@@ -28,10 +28,28 @@ public class ContactListActivity extends AppCompatActivity {
     private LinearLayoutManager layoutManager;
     private GenericAdapter mAdapter;
 
-    public  CallDetails getLastCallDetails(Context context) {
+    public static String getContactName(final String phoneNumber, Context context) {
+        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
+
+        String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
+
+        String contactName = "";
+        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                contactName = cursor.getString(0);
+            }
+            cursor.close();
+        }
+
+        return contactName;
+    }
+
+    public CallDetails getLastCallDetails(Context context) {
 
         CallDetails callDetails = new CallDetails();
-
+        int duration = 0;
         Uri contacts = CallLog.Calls.CONTENT_URI;
         try {
 
@@ -43,7 +61,10 @@ public class ContactListActivity extends AppCompatActivity {
                     while (managedCursor.moveToNext()) {
 
                         int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
-                        int duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+                        if (managedCursor.getColumnIndex(CallLog.Calls.DURATION) == 0 || managedCursor.getColumnIndex(CallLog.Calls.DURATION) < 60)
+                            duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
+                        else
+                            duration = Math.round(managedCursor.getColumnIndex(CallLog.Calls.DURATION) / 60);
                         int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
                         int id = managedCursor.getColumnIndex(CallLog.Calls._ID);
                         int type = managedCursor.getColumnIndex(String.valueOf(CallLog.Calls.INCOMING_TYPE));
@@ -83,24 +104,6 @@ public class ContactListActivity extends AppCompatActivity {
         }
 
         return callDetails;
-    }
-
-    public static String getContactName(final String phoneNumber, Context context) {
-        Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(phoneNumber));
-
-        String[] projection = new String[]{ContactsContract.PhoneLookup.DISPLAY_NAME};
-
-        String contactName = "";
-        Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-
-        if (cursor != null) {
-            if (cursor.moveToFirst()) {
-                contactName = cursor.getString(0);
-            }
-            cursor.close();
-        }
-
-        return contactName;
     }
 
     public void insertCallDetails(CallDetails callDetails) {
@@ -146,7 +149,7 @@ public class ContactListActivity extends AppCompatActivity {
         recyclerViewCall.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerViewCall.setLayoutManager(layoutManager);
-        mAdapter = new GenericAdapter(getcallDetails(), ContactListActivity.this,1);
+        mAdapter = new GenericAdapter(getcallDetails(), ContactListActivity.this, 1);
         recyclerViewCall.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 

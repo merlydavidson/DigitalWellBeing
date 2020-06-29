@@ -39,6 +39,17 @@ public class TaskDetails {
     @SerializedName("upload")
     public int upload;
 
+    @ColumnInfo(name ="status")
+    @SerializedName("status")
+    public int status;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public int getLogId() {
         return logId;

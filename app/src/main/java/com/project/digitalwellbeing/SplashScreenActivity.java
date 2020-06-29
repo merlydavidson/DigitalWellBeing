@@ -44,14 +44,10 @@ public class SplashScreenActivity extends AppCompatActivity {
             @Override
             public void run() {
                 if (sharedPreferences.getBoolean(CommonDataArea.ISLOGIN, false)) {
-                    mDigitalWellBeingService = new DigitalWellBeingService();
-                    mServiceIntent = new Intent(SplashScreenActivity.this, mDigitalWellBeingService.getClass());
-                    if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
-                        startService(mServiceIntent);
-                    }
+
 
                     if (role == 0) {
-                        Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);
+                        Intent intent = new Intent(SplashScreenActivity.this, ChildActivity.class);
                         startActivity(intent);
                     } else {
                         Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);

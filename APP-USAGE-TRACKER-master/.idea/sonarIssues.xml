@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="issues">
+    <option name="index">
+      <map>
+        <entry key="/Dummy.txt">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="/a.dummy">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="/fragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/java/com/project/digitalwellbeing/ChildActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/java/com/project/digitalwellbeing/DashboardActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/java/com/project/digitalwellbeing/DetailActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/java/com/project/digitalwellbeing/SplashScreenActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/java/com/project/digitalwellbeing/service/DigitalWellBeingService.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/java/com/project/digitalwellbeing/utils/BrowserObserver.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/java/com/project/digitalwellbeing/utils/CommonFunctionArea.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/res/drawable/corner_layout.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/res/layout-v21/activity_dashboard2.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/res/layout/activity_dashboard2.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/res/layout/child_view.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/DigitalWellBeing/app/src/main/res/values/styles.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/ReferenceValues.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/utils/MeasurmentRGBColors.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/BluettoothActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/DashboardActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESMeasurementActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/MeasurmentActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/StimulationControlScreen.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/AndroidStudioProjects/MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/StimulationScreen.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/build/intermediates/manifests/full/debug/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FSDemo/app/src/main/java/com/example/quest/demoapp/FeatureProvider.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FSDemo/app/src/main/java/com/example/quest/demoapp/FeatureSet.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/java/com/mitsubishielectric/ahu/appservice/featuresetservice/constants/Constants.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/java/com/mitsubishielectric/ahu/appservice/featuresetservice/constants/FeatureProvider.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/FeatureSetServiceManager.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureExtSrvManager.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetConfigManager.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetCpuComManager.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/main/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetUtils.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/test/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetConfigManagerTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/test/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetCpuComManagerTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/test/java/com/mitsubishielectric/ahu/appservice/featuresetservice/data/utils/FeatureSetUtilsTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/src/test/java/com/mitsubishielectric/ahu/appservice/featuresetservice/stub/FeatureSetServiceCallBackTest.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/featuresetserviceinterface/src/main/java/com/mitsubishielectric/ahu/lib/featuresetserviceinterface/FeatureSet.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>

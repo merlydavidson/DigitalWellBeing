@@ -1,44 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
+    android:layout_height="400dp"
     android:orientation="vertical"
     android:weightSum="2">
 
     <TextView
+        android:textStyle="bold"
+        android:textSize="18dp"
         android:id="@+id/dtitle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.5" />
 
     <TextView
+android:gravity="center_vertical"
         android:id="@+id/dmessage"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="0.8" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5"
+        android:layout_margin="10dp"
+        android:layout_weight="0.7"
         android:orientation="horizontal"
         android:weightSum="1">
 
         <Button
+            android:layout_marginRight="5dp"
             android:id="@+id/dyesbtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-
             android:layout_weight="0.5"
+            android:background="@drawable/btn_round"
+            android:paddingRight="5dp"
             android:text="Yes" />
 
         <Button
+            android:layout_marginLeft="5dp"
             android:id="@+id/dnobtn"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:layout_weight="0.5"
+            android:background="@drawable/btn_round"
+            android:paddingLeft="5dp"
             android:text="No" />
     </LinearLayout>
 

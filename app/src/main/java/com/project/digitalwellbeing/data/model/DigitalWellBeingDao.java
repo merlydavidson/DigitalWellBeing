@@ -40,4 +40,7 @@ public interface DigitalWellBeingDao {
 
     @Query("SELECT * FROM CallDetails where callerLogId = :id")
     List<CallDetails> getaCallDetails(int id);
+
+    @Query("SELECT * FROM TaskDetails ")
+    List<TaskDetails> getaTaskDetails();
 }

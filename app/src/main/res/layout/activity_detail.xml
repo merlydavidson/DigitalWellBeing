@@ -5,28 +5,23 @@
     android:id="@+id/det_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/home_bg"
     android:orientation="vertical"
     android:weightSum="2"
-    tools:context=".DetailActivity">
+    tools:context=".TaskActivity">
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.4"
-        android:background="@mipmap/logo"></ImageView>
+
 
     <LinearLayout
         android:id="@+id/pie_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:layout_weight="1.6"
+        android:layout_weight="2"
         android:gravity="center"
         android:orientation="horizontal">
 
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/piechart"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/task_recyclerview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center" />

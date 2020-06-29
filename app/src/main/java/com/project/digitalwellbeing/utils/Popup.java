@@ -5,22 +5,27 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 
-import com.google.firebase.messaging.RemoteMessage;
 import com.project.digitalwellbeing.R;
-import com.project.digitalwellbeing.data.FCMActions;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.TaskDetails;
@@ -68,7 +73,7 @@ public class Popup extends Activity {
 
     }
 
-    public void doubleChoice(String title, String message, final RemoteMessage remoteMessage, final int callingFrom) {
+    public void doubleChoice(String title, String message, final int callingFrom,Activity activity) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.custom_double_view, null);
@@ -90,10 +95,8 @@ public class Popup extends Activity {
         yesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (callingFrom == 1) {
-                    CommonDataArea.context = Popup.this;
-                    new FCMActions().registerParent(remoteMessage);
-                }
+               activity.startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+                alertDialog.dismiss();
             }
         });
         noBtn.setOnClickListener(new View.OnClickListener() {
@@ -138,19 +141,35 @@ public class Popup extends Activity {
 
 
     public void taskPopup(String title, final Context contextCurr) {
+         long startMilliSeconds =0;
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.custom_task_view, null);
         // popupTitle = (TextView) layout.findViewById(R.id.dtitle);
         EditText activityEdt = (EditText) layout.findViewById(R.id.activity_edt);
         EditText calenderEdt = (EditText) layout.findViewById(R.id.calender_edt);
-        EditText startClockEdt = (EditText) layout.findViewById(R.id.calender_edt);
+        EditText startClockEdt = (EditText) layout.findViewById(R.id.start_clock_edt);
         EditText endClockEdt = (EditText) layout.findViewById(R.id.end_clock_edt);
         Button submitBtn = (Button) layout.findViewById(R.id.activity_submit_btn);
         ImageView closePopup=(ImageView)layout.findViewById(R.id.close_poup);
+
+
         builder.setView(layout);
         final AlertDialog alertDialog = builder.create();
+        Window view=((AlertDialog)alertDialog).getWindow();
+        view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         alertDialog.show();
+
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+
+        lp.copyFrom(alertDialog.getWindow().getAttributes());
+        lp.width = 700;
+        lp.height = 1000;
+//        lp.x=-170;
+//        lp.y=100;
+        alertDialog.getWindow().setAttributes(lp);
+
         closePopup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,8 +203,12 @@ public class Popup extends Activity {
                 int minute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mTimePicker;
                 mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.set(timePicker.getHour(),timePicker.getMinute());
+                        //startMilliSeconds=calendar.getTimeInMillis();
                         startClockEdt.setText(selectedHour + ":" + selectedMinute);
                     }
                 }, hour, minute, true);//Yes 24 hour starttime
@@ -205,6 +228,7 @@ public class Popup extends Activity {
                 mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+
                         endClockEdt.setText(selectedHour + ":" + selectedMinute);
                     }
                 }, hour, minute, true);//Yes 24 hour starttime
@@ -222,6 +246,7 @@ public class Popup extends Activity {
                     taskDetails.setStarttime(startClockEdt.getText().toString());
                     taskDetails.setEndtime(endClockEdt.getText().toString());
                     taskDetails.setUpload(0);
+                    taskDetails.setStatus(0);
 
                     AppDataBase appDataBase = AppDataBase.getInstance(context);
                     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
