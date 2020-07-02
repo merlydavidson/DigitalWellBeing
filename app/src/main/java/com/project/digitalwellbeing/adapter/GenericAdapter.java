@@ -1,6 +1,7 @@
 package com.project.digitalwellbeing.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -72,8 +73,10 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
     private void bindTaskDetails(ViewHolder holder, int position) {
         if (taskDetails.size() > 0) {
+            TaskDetails taskDetail=taskDetails.get(position);
             holder.taskName.setText(taskDetails.get(position).getTaskName());
             holder.taskDate.setText(taskDetails.get(position).getDate());
+            Log.d("debuggenericadapter",taskDetail.getTaskName());
             holder.taskTime.setText(taskDetails.get(position).getStarttime() + " - "+taskDetails.get(position).getEndtime());
             if(taskDetails.get(position).getStatus()==0)
             holder.taskStatus.setText("Status : Pending");
@@ -95,10 +98,17 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
     @Override
     public int getItemCount() {
-        if (callDetails != null)
+       /* if (callDetails != null)
             return callDetails.size();
         else
-            return 0;
+            return 0;*/
+        if(callingfrom==3)
+            return taskDetails.size();
+        else if(callingfrom==1)
+            return callDetails.size();
+        else if(callingfrom==2)
+            return  logDetails.size();
+        else return 0;
     }
 
     public void bindCalldetails(ViewHolder holder, int position) {

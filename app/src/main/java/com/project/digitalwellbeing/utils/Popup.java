@@ -13,14 +13,18 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -31,7 +35,10 @@ import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.remote.Communicator;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Popup extends Activity {
     TextView popupTitle, popupMessage;
@@ -39,7 +46,9 @@ public class Popup extends Activity {
     EditText pairEdit;
     Context context;
     private DatePickerDialog picker;
-
+    String fromTime,toTime;
+    String adjFDate,adjTDate;
+    boolean appdisabled=true;
     public Popup(Context context) {
         this.context = context;
     }
@@ -47,6 +56,7 @@ public class Popup extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
     }
 
@@ -147,6 +157,7 @@ public class Popup extends Activity {
         View layout = inflater.inflate(R.layout.custom_task_view, null);
         // popupTitle = (TextView) layout.findViewById(R.id.dtitle);
         EditText activityEdt = (EditText) layout.findViewById(R.id.activity_edt);
+        CheckBox disableApps = (CheckBox) layout.findViewById(R.id.disable_apps);
         EditText calenderEdt = (EditText) layout.findViewById(R.id.calender_edt);
         EditText startClockEdt = (EditText) layout.findViewById(R.id.start_clock_edt);
         EditText endClockEdt = (EditText) layout.findViewById(R.id.end_clock_edt);
@@ -158,14 +169,14 @@ public class Popup extends Activity {
         final AlertDialog alertDialog = builder.create();
         Window view=((AlertDialog)alertDialog).getWindow();
         view.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+       // alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);//new line added for max width
         alertDialog.show();
-
-
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
 
         lp.copyFrom(alertDialog.getWindow().getAttributes());
-        lp.width = 700;
-        lp.height = 1000;
+        lp.width = 900;
+        lp.height = 1200;
 //        lp.x=-170;
 //        lp.y=100;
         alertDialog.getWindow().setAttributes(lp);
@@ -179,6 +190,8 @@ public class Popup extends Activity {
         calenderEdt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(activityEdt.getText().toString().equals(""))
+                    activityEdt.setError("Enter task name");
                 final Calendar cldr = Calendar.getInstance();
                 int day = cldr.get(Calendar.DAY_OF_MONTH);
                 int month = cldr.get(Calendar.MONTH);
@@ -188,10 +201,28 @@ public class Popup extends Activity {
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                calenderEdt.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                if(monthOfYear<10 && dayOfMonth<10)
+                                    calenderEdt.setText("0"+dayOfMonth + "/" +"0"+(monthOfYear + 1) + "/" + year);
+                                else if(dayOfMonth<10)
+                                calenderEdt.setText("0"+dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                else if(monthOfYear<10)
+                                    calenderEdt.setText("0"+dayOfMonth + "/" +"0"+ (monthOfYear + 1) + "/" + year);
+                                else
+                                    calenderEdt.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                             }
                         }, year, month, day);
                 picker.show();
+            }
+        });
+        disableApps.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener(){
+
+            @Override
+            public void onCheckedChanged(CompoundButton arg0, boolean isChecked) {
+                if (isChecked){
+                    appdisabled=true;
+                }else{
+                    appdisabled=false;
+                }
             }
         });
         startClockEdt.setOnClickListener(new View.OnClickListener() {
@@ -201,15 +232,33 @@ public class Popup extends Activity {
                 Calendar mcurrentTime = Calendar.getInstance();
                 int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                 int minute = mcurrentTime.get(Calendar.MINUTE);
+
+
                 TimePickerDialog mTimePicker;
+
                 mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                     @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                        Calendar calendar = Calendar.getInstance();
-                        calendar.set(timePicker.getHour(),timePicker.getMinute());
+                       /* Calendar calendar = Calendar.getInstance();
+                        calendar.set(timePicker.getHour(),timePicker.getMinute());*/
                         //startMilliSeconds=calendar.getTimeInMillis();
-                        startClockEdt.setText(selectedHour + ":" + selectedMinute);
+
+
+                        if(selectedHour<10 && selectedMinute<10) {
+                            fromTime = calenderEdt.getText().toString() + " 0" + selectedHour + ":0" + selectedMinute;
+                                adjFDate="0" + selectedHour + ":0" + selectedMinute;
+                        } else if(selectedHour<10) {
+                            fromTime = calenderEdt.getText().toString() + " 0" + selectedHour + ":" + selectedMinute;
+                            adjFDate="0" + selectedHour + ":" + selectedMinute;
+                        }else if(selectedMinute<10) {adjFDate="0" + selectedHour + ":" + selectedMinute;
+                            fromTime = calenderEdt.getText().toString() + " " + selectedHour + ":0" + selectedMinute;
+                            adjFDate=selectedHour + ":0" + selectedMinute;
+                        }else {
+                            fromTime = calenderEdt.getText().toString() + " " + selectedHour + ":" + selectedMinute;
+                            adjFDate=selectedHour + ":" + selectedMinute;
+                        }
+                        startClockEdt.setText(adjFDate);
                     }
                 }, hour, minute, true);//Yes 24 hour starttime
                 mTimePicker.setTitle("Select Time");
@@ -224,13 +273,32 @@ public class Popup extends Activity {
                 Calendar mcurrentTime = Calendar.getInstance();
                 int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                 int minute = mcurrentTime.get(Calendar.MINUTE);
+
+
                 TimePickerDialog mTimePicker;
                 mTimePicker = new TimePickerDialog(context, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        if(selectedHour<10 && selectedMinute<10) {
+                            toTime = calenderEdt.getText().toString() + " 0" + selectedHour + ":0" + selectedMinute;
+                            adjTDate="0" + selectedHour + ":0" + selectedMinute;
+                        } else if(selectedHour<10) {
+                            toTime = calenderEdt.getText().toString() + " 0" + selectedHour + ":" + selectedMinute;
+                            adjTDate="0" + selectedHour + ":" + selectedMinute;
+                        }else if(selectedMinute<10) {adjFDate="0" + selectedHour + ":" + selectedMinute;
+                            toTime = calenderEdt.getText().toString() + " " + selectedHour + ":0" + selectedMinute;
+                            adjTDate=selectedHour + ":0" + selectedMinute;
+                        }else {
+                            toTime = calenderEdt.getText().toString() + " " + selectedHour + ":" + selectedMinute;
+                            adjTDate=selectedHour + ":" + selectedMinute;
+                        }
 
-                        endClockEdt.setText(selectedHour + ":" + selectedMinute);
-                    }
+                       if( compareDates(fromTime,toTime))
+                           endClockEdt.setText(adjTDate);
+                        else{
+                           endClockEdt.setText("");
+                            Toast.makeText(context, "Start time must be less than end Time", Toast.LENGTH_SHORT).show();
+                    }}
                 }, hour, minute, true);//Yes 24 hour starttime
                 mTimePicker.setTitle("Select Time");
                 mTimePicker.show();
@@ -247,15 +315,38 @@ public class Popup extends Activity {
                     taskDetails.setEndtime(endClockEdt.getText().toString());
                     taskDetails.setUpload(0);
                     taskDetails.setStatus(0);
+                    taskDetails.setEnableApps(appdisabled);
 
                     AppDataBase appDataBase = AppDataBase.getInstance(context);
                     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
                     digitalWellBeingDao.insertTaskDetails(taskDetails);
+                    alertDialog.dismiss();
                 }
             }
         });
 
     }
+    public static boolean compareDates(String d1,String d2)
+    {
+        try{
 
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Date date1 = sdf.parse(d1);
+            Date date2 = sdf.parse(d2);
+
+            System.out.println("Date1"+sdf.format(date1));
+            System.out.println("Date2"+sdf.format(date2));System.out.println();
+
+            if(date1.getTime()<date2.getTime())
+            return true;
+            else return false;
+
+
+        }
+        catch(ParseException ex){
+            ex.printStackTrace();
+        }
+        return false;
+    }
 
 }

@@ -43,12 +43,26 @@ public class TaskDetails {
     @SerializedName("status")
     public int status;
 
+
+
+    @ColumnInfo(name ="app_enable_status")
+    @SerializedName("app_enable_status")
+    public boolean enableApps;
+
     public int getStatus() {
         return status;
     }
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public boolean getEnableApps() {
+        return enableApps;
+    }
+
+    public void setEnableApps(boolean enableApps) {
+        this.enableApps = enableApps;
     }
 
     public int getLogId() {

@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,6 +36,9 @@ import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.Popup;
 
+import java.util.List;
+
+import static com.project.digitalwellbeing.utils.CommonDataArea.editor;
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
 public class DashboardActivity extends AppCompatActivity implements View.OnClickListener {
@@ -62,7 +67,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                     if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
                         startService(mServiceIntent);
                     }
-
+                    Log.d("I'mahandler","hIiii>>");
 
                 }
             }, 2000);
@@ -72,6 +77,32 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
 
             Toast.makeText(this, "Allow all permissions", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options,menu);
+        return  true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.logout:
+                logout();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void logout() {
+        sharedPreferences = getSharedPreferences(
+                CommonDataArea.prefName, Context.MODE_PRIVATE);
+        CommonDataArea.editor = sharedPreferences.edit();
+        editor.putBoolean(CommonDataArea.ISLOGIN, false);
+        editor.commit();
+        finish();
+        startActivity(new Intent(DashboardActivity.this,LoginActivity.class));
     }
 
     public void getAllData() {

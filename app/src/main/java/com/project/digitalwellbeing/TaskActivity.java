@@ -49,7 +49,8 @@ public class TaskActivity extends AppCompatActivity {
         //drawPieChart();
         floatingActionButtonAddtask = (FloatingActionButton) findViewById(R.id.floatingActionButton_task);
         if (CommonDataArea.ROLE == 1)
-            floatingActionButtonAddtask.setVisibility(View.GONE);
+            //TODO://disable floatin button for child
+           // floatingActionButtonAddtask.setVisibility(View.GONE);
         floatingActionButtonAddtask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -62,8 +63,8 @@ public class TaskActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        callLogRecycler = findViewById(R.id.task_recyclerview);
-        RecyclerView recyclerViewCall = (RecyclerView) findViewById(R.id.genericRecyclerLayout);
+       // callLogRecycler = findViewById(R.id.task_recyclerview);
+        RecyclerView recyclerViewCall = (RecyclerView) findViewById(R.id.task_recyclerview);
         recyclerViewCall.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerViewCall.setLayoutManager(layoutManager);

@@ -3,6 +3,7 @@ package com.project.digitalwellbeing;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Notification;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
@@ -10,7 +11,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-
+import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
@@ -35,5 +36,24 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
        // new CommonFunctionArea().sendMessage(LoginActivity.this);
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sharedPreferences = getSharedPreferences(
+                        CommonDataArea.prefName, Context.MODE_PRIVATE);
+                CommonDataArea.editor = sharedPreferences.edit();
+                int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+
+                if (CommonDataArea.ROLE == R.id.role_parent) {
+                    Intent intent = new Intent(LoginActivity.this, ChildActivity.class);
+                    startActivity(intent);
+                } else {
+
+                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                    startActivity(intent);
+
+                }
+            }
+        });
     }
 }

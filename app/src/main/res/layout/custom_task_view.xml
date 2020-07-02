@@ -126,7 +126,13 @@
                 android:textColorHint="@color/light_gray" />
         </LinearLayout>
     </LinearLayout>
-
+<CheckBox
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:checked="true"
+   android:id="@+id/disable_apps"
+    android:layout_marginLeft="15dp"
+    android:text="Disable all Applications"/>
     <Button
         android:id="@+id/activity_submit_btn"
         android:layout_width="match_parent"

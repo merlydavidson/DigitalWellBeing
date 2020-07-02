@@ -43,4 +43,7 @@ public interface DigitalWellBeingDao {
 
     @Query("SELECT * FROM TaskDetails ")
     List<TaskDetails> getaTaskDetails();
+
+    @Query("SELECT * FROM TaskDetails where date = :date")
+    List<TaskDetails> getTasks(String date);
 }

@@ -108,9 +108,9 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
 
-            // Check if email id valid or not
-        else if (!m.find())
-            Toast.makeText(this, "Invalid EmailID", Toast.LENGTH_SHORT).show();
+            //TODO:// Check if email id valid or not
+       /* else if (!getEmailId.matches(CommonDataArea.regEx))
+            Toast.makeText(this, "Invalid EmailID", Toast.LENGTH_SHORT).show();*/
 
 
             // Check if both password should be equal
