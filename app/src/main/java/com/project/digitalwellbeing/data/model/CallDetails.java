@@ -34,7 +34,7 @@ public class CallDetails {
     String callDuration;
     @ColumnInfo(name = "callType")
     @SerializedName("callType")
-    int callType;
+    String callType;
     @ColumnInfo(name = "callTimeStamp")
     @SerializedName("callTimeStamp")
     String callTimeStamp;
@@ -72,11 +72,11 @@ public class CallDetails {
         this.callDuration = callDuration;
     }
 
-    public int getCallType() {
+    public String getCallType() {
         return callType;
     }
 
-    public void setCallType(int callType) {
+    public void setCallType(String callType) {
         this.callType = callType;
     }
 

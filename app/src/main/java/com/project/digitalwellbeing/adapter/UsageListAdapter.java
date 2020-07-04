@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.digitalwellbeing.BarChartView;
 import com.project.digitalwellbeing.R;
+import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CustomUsageStats;
 
 import java.text.DateFormat;
@@ -50,6 +53,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         private final ImageView mAppIcon;
         private final TextView mPercentage;
         private final ProgressBar pb ;
+        CheckBox selector;
         private Context mContext;
 
         public ViewHolder(View v) {
@@ -60,6 +64,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
             mAppIcon = (ImageView) v.findViewById(R.id.app_icon);
             mPercentage=(TextView) v.findViewById(R.id.percentage);
             pb=(ProgressBar) v.findViewById(R.id.pb);
+            selector=v.findViewById(R.id.selector);
         }
 
 
@@ -127,7 +132,18 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         }else{
             viewHolder.getProgressBar().setProgressTintList(ColorStateList.valueOf(Color.GREEN));
         }
+        if (CommonDataArea.ROLE == 1){
+            //TODO:viewHolder.selector.setVisibility(View.GONE);
+        }
         viewHolder.getProgressBar().setProgress((int)percent);
+        viewHolder.selector.setOnCheckedChangeListener(null);
+        viewHolder.selector.setChecked(mCustomUsageStatsList.get(position).isChecked);
+        viewHolder.selector.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                mCustomUsageStatsList.get(position).setChecked(isChecked);
+            }
+        });
 
         /* onItemClickListener() */
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +182,9 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         }
         return total;
     }
-
+    public List<CustomUsageStats> getSelectedItems(){
+        return mCustomUsageStatsList;
+    }
     private String calculateTime(long ms)
     { String total="";
         long sec=ms/1000;

@@ -34,6 +34,10 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.adapter.UsageListAdapter;
+import com.project.digitalwellbeing.data.model.AppDataBase;
+import com.project.digitalwellbeing.data.model.BlockedApps;
+import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CustomUsageStats;
 
 import java.util.ArrayList;
@@ -52,13 +56,14 @@ public class AppUsageStatisticsFragment extends Fragment {
     UsageStatsManager mUsageStatsManager;
     UsageListAdapter mUsageListAdapter;
     RecyclerView mRecyclerView;
-    Button mOpenUsageSettingButton;
+    Button mOpenUsageSettingButton, block;
     Spinner mSpinnerTimeSpan;
     Spinner mSpinnerSort;
     private GridLayoutManager mGridLayoutManager;
     FloatingActionMenu materialDesignFAM;
     FloatingActionButton floatingActionButton1, floatingActionButton2;
     List<UsageStats> usageStatsList;
+    List<CustomUsageStats> selectedItems;
 
     /**
      * Use this factory method to create a new instance of
@@ -82,6 +87,8 @@ public class AppUsageStatisticsFragment extends Fragment {
         mGridLayoutManager = new GridLayoutManager(getActivity(), 3);
         mUsageStatsManager = (UsageStatsManager) getActivity()
                 .getSystemService(Context.USAGE_STATS_SERVICE);
+
+
     }
 
     @Override
@@ -93,7 +100,7 @@ public class AppUsageStatisticsFragment extends Fragment {
     @Override
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
-
+        block = rootView.findViewById(R.id.blockapps);
         mUsageListAdapter = new UsageListAdapter(getContext());
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_app_usage);
         mRecyclerView.setLayoutManager(mGridLayoutManager);
@@ -102,7 +109,29 @@ public class AppUsageStatisticsFragment extends Fragment {
         mOpenUsageSettingButton = (Button) rootView.findViewById(R.id.button_open_usage_setting);
 
         mSpinnerTimeSpan = (Spinner) rootView.findViewById(R.id.spinner_time_span);
+        if (CommonDataArea.ROLE == 1) //TODO:block.setVisibility(View.GONE);
+            block.setOnClickListener(new View.OnClickListener() {
+                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                @Override
+                public void onClick(View v) {
+                    selectedItems = mUsageListAdapter.getSelectedItems();
+                    if (selectedItems == null || selectedItems.size() == 0) {
+                        Toast.makeText(getActivity(), "No application selected", Toast.LENGTH_SHORT).show();
+                    } else {
+                        AppDataBase appDataBase = AppDataBase.getInstance(getActivity());
+                        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
 
+                        for (CustomUsageStats b : selectedItems) {
+                            CustomUsageStats states = b;
+                            if (b.isChecked) {
+                                if (!digitalWellBeingDao.getBlockedAppDetails(b.usageStats.getPackageName(), CommonDataArea.getDAte("dd/MM/yyyy")))
+                                    digitalWellBeingDao.insertSelectedAppps(new BlockedApps(states.usageStats.getPackageName(), CommonDataArea.getDAte("dd/MM/yyyy"), 1));
+                                
+                            }
+                        }
+                    }
+                }
+            });
 
     }
 
@@ -116,40 +145,40 @@ public class AppUsageStatisticsFragment extends Fragment {
 
     }
 
-public void setmSpinnerTimeSpanAdapter()
-{
-    SpinnerAdapter timespan_spinnerAdapter = ArrayAdapter.createFromResource(getActivity(),
-            R.array.action_timespan, android.R.layout.simple_spinner_dropdown_item);
-    mSpinnerTimeSpan.setAdapter(timespan_spinnerAdapter);
-    mSpinnerTimeSpan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+    public void setmSpinnerTimeSpanAdapter() {
+        SpinnerAdapter timespan_spinnerAdapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.action_timespan, android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerTimeSpan.setAdapter(timespan_spinnerAdapter);
+        mSpinnerTimeSpan.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            String[] strings = getResources().getStringArray(R.array.action_timespan);
-            StatsUsageInterval statsUsageInterval = StatsUsageInterval
-                    .getValue(strings[position]);
-            if (statsUsageInterval != null) {
-                usageStatsList = getUsageStatistics(statsUsageInterval.mInterval);
-                Collections.sort(usageStatsList, new timeInForegroundComparator());
-                updateAppsList(usageStatsList);
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String[] strings = getResources().getStringArray(R.array.action_timespan);
+                StatsUsageInterval statsUsageInterval = StatsUsageInterval
+                        .getValue(strings[position]);
+                if (statsUsageInterval != null) {
+                    usageStatsList = getUsageStatistics(statsUsageInterval.mInterval);
+                    Collections.sort(usageStatsList, new timeInForegroundComparator());
+                    updateAppsList(usageStatsList);
+                }
             }
-        }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    });
-}
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
 
     class AsyncTaskRunner extends AsyncTask<String, String, String> {
 
         private int position;
         ProgressDialog progressDialog;
-         AsyncTaskRunner(int pos)
-         {
-          this.position=pos;
-         }
+
+        AsyncTaskRunner(int pos) {
+            this.position = pos;
+        }
+
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         protected String doInBackground(String... params) {
@@ -162,7 +191,7 @@ public void setmSpinnerTimeSpanAdapter()
                 Collections.sort(usageStatsList, new timeInForegroundComparator());
                 updateAppsList(usageStatsList);
             }
-            return position+"";
+            return position + "";
         }
 
 
@@ -172,10 +201,11 @@ public void setmSpinnerTimeSpanAdapter()
             progressDialog.dismiss();
 
         }
+
         @Override
         protected void onPreExecute() {
             progressDialog = ProgressDialog.show(getActivity(),
-                    "Loading",null);
+                    "Loading", null);
         }
 
 
@@ -191,26 +221,24 @@ public void setmSpinnerTimeSpanAdapter()
     public List<UsageStats> getUsageStatistics(int intervalType) {
         // Get the app statistics since one year ago from the current time.
         Calendar cal = Calendar.getInstance();
-        if(intervalType== UsageStatsManager.INTERVAL_DAILY) {
+        if (intervalType == UsageStatsManager.INTERVAL_DAILY) {
             cal.add(Calendar.DATE, -1);
             cal.set(Calendar.MILLISECOND, 0);
             cal.set(Calendar.SECOND, 0);
             cal.set(Calendar.MINUTE, 0);
             cal.set(Calendar.HOUR_OF_DAY, 0);
-        }
-        else if(intervalType== UsageStatsManager.INTERVAL_WEEKLY)
+        } else if (intervalType == UsageStatsManager.INTERVAL_WEEKLY)
             cal.add(Calendar.DATE, -7);
-        else if(intervalType== UsageStatsManager.INTERVAL_MONTHLY)
+        else if (intervalType == UsageStatsManager.INTERVAL_MONTHLY)
             cal.add(Calendar.MONTH, -1);
-        else if(intervalType== UsageStatsManager.INTERVAL_YEARLY)
+        else if (intervalType == UsageStatsManager.INTERVAL_YEARLY)
             cal.add(Calendar.YEAR, -1);
 
         Map<String, UsageStats> queryUsageStatsMap = mUsageStatsManager
-                .queryAndAggregateUsageStats( cal.getTimeInMillis(),
+                .queryAndAggregateUsageStats(cal.getTimeInMillis(),
                         System.currentTimeMillis());
-        List<UsageStats> queryUsageStats=new ArrayList<UsageStats>() ;
-        for(Map.Entry<String, UsageStats> stat: queryUsageStatsMap.entrySet())
-        {
+        List<UsageStats> queryUsageStats = new ArrayList<UsageStats>();
+        for (Map.Entry<String, UsageStats> stat : queryUsageStatsMap.entrySet()) {
             queryUsageStats.add(stat.getValue());
         }
 
@@ -255,7 +283,7 @@ public void setmSpinnerTimeSpanAdapter()
     }
 
 
-    private  class timeInForegroundComparator implements Comparator<UsageStats> {
+    private class timeInForegroundComparator implements Comparator<UsageStats> {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
@@ -263,25 +291,26 @@ public void setmSpinnerTimeSpanAdapter()
             return Long.compare(right.getTotalTimeInForeground(), left.getTotalTimeInForeground());
         }
     }
-    private  class AlphabeticComparator implements Comparator<UsageStats> {
+
+    private class AlphabeticComparator implements Comparator<UsageStats> {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         public int compare(UsageStats left, UsageStats right) {
-            PackageManager pm= getActivity().getPackageManager();
-            ApplicationInfo ai_left=null;
-            ApplicationInfo ai_right=null;
+            PackageManager pm = getActivity().getPackageManager();
+            ApplicationInfo ai_left = null;
+            ApplicationInfo ai_right = null;
             try {
-                ai_left=pm.getApplicationInfo(left.getPackageName(), 0);
-                ai_right=pm.getApplicationInfo(right.getPackageName(), 0);
+                ai_left = pm.getApplicationInfo(left.getPackageName(), 0);
+                ai_right = pm.getApplicationInfo(right.getPackageName(), 0);
 
-            }catch (final PackageManager.NameNotFoundException e) {
+            } catch (final PackageManager.NameNotFoundException e) {
                 ai_left = null;
                 ai_right = null;
             }
             final String applicationNameLeft = (String) (ai_left != null ? pm.getApplicationLabel(ai_left) : "(unknown)");
             final String applicationNameRight = (String) (ai_right != null ? pm.getApplicationLabel(ai_right) : "(unknown)");
-           return applicationNameLeft.compareTo(applicationNameRight);
+            return applicationNameLeft.compareTo(applicationNameRight);
 
         }
     }

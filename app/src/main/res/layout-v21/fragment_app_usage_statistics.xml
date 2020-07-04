@@ -13,12 +13,18 @@
         android:visibility="gone"
         />
 
-    <LinearLayout android:layout_width="wrap_content"
+    <LinearLayout android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
         android:background="#fff"
+        android:weightSum="1"
         >
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            >
         <TextView android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="TimeSpan"
@@ -33,7 +39,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layoutDirection="inherit"
-            />
+            /></LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            >
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/blockapps"
+            android:text="Block"
+            android:background="@color/colorAccent"/></LinearLayout>
 
     </LinearLayout>
 

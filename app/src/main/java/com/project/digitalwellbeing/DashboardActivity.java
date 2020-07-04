@@ -8,10 +8,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Browser;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -36,7 +39,12 @@ import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.Popup;
 
+import java.util.Date;
 import java.util.List;
+
+import me.everything.providers.android.browser.BrowserProvider;
+import me.everything.providers.android.browser.Search;
+import me.everything.providers.core.Data;
 
 import static com.project.digitalwellbeing.utils.CommonDataArea.editor;
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
@@ -182,6 +190,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 startActivity(callIntent);
                 break;
             case R.id.web_layout:
+                getWebHistory();
                 break;
             case R.id.location_layout:
                 Intent locationIntent = new Intent(DashboardActivity.this, LocationActivity.class);
@@ -201,6 +210,17 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 break;
 
         }
+    }
+
+    private void getWebHistory() {
+        BrowserProvider browserProvider=new BrowserProvider(this);
+        Data<Search> data=browserProvider.getSearches();
+            List<Search> history=data.getList();
+            for(Search s:history){
+                String uri=s.search;
+                long date=s.date;
+
+            }
     }
 
     @Override

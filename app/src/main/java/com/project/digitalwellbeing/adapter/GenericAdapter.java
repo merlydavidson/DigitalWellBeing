@@ -121,11 +121,11 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
             holder.durationtext.setText("Call Duration : " + callDetails.get(position).getCallDuration());
             holder.timeText.setText(callDetails.get(position).getCallTimeStamp());
-            if (callDetails.get(position).getCallType() == 1)
+            if (callDetails.get(position).getCallType()!=null && callDetails.get(position).getCallType() .equalsIgnoreCase("INCOMING"))
                 holder.callTypeimage.setBackgroundResource(R.drawable.ic_call_incoming);
-            else if (callDetails.get(position).getCallType() == 2)
+            else if (callDetails.get(position).getCallType()!=null && callDetails.get(position).getCallType().equalsIgnoreCase("OUTGOING"))
                 holder.callTypeimage.setBackgroundResource(R.drawable.ic_call_outgoing);
-            else if (callDetails.get(position).getCallType() == 3)
+            else if (callDetails.get(position).getCallType()!=null && callDetails.get(position).getCallType().equalsIgnoreCase("MISSED"))
                 holder.callTypeimage.setBackgroundResource(R.drawable.ic_call_missed);
 
 

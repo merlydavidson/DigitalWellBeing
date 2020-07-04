@@ -53,21 +53,21 @@ public class ContactListActivity extends AppCompatActivity {
         Uri contacts = CallLog.Calls.CONTENT_URI;
         try {
 
-            Cursor managedCursor = context.getContentResolver().query(contacts, null, null, null, android.provider.CallLog.Calls.DATE + " DESC ;");
-
+           // Cursor managedCursor = context.getContentResolver().query(contacts, null, null, null, android.provider.CallLog.Calls.DATE + " DESC ;");
+            Cursor managedCursor = managedQuery( CallLog.Calls.CONTENT_URI,null, null,null, null);
             if (managedCursor != null) {
                 if (managedCursor.moveToFirst()) { // added line
 
                     while (managedCursor.moveToNext()) {
 
-                        int number = managedCursor.getColumnIndex(CallLog.Calls.NUMBER);
+                        int number = managedCursor.getColumnIndex( CallLog.Calls.NUMBER );
                         if (managedCursor.getColumnIndex(CallLog.Calls.DURATION) == 0 || managedCursor.getColumnIndex(CallLog.Calls.DURATION) < 60)
                             duration = managedCursor.getColumnIndex(CallLog.Calls.DURATION);
                         else
                             duration = Math.round(managedCursor.getColumnIndex(CallLog.Calls.DURATION) / 60);
-                        int date = managedCursor.getColumnIndex(CallLog.Calls.DATE);
+                        int date = managedCursor.getColumnIndex( CallLog.Calls.DATE);
                         int id = managedCursor.getColumnIndex(CallLog.Calls._ID);
-                        int type = managedCursor.getColumnIndex(String.valueOf(CallLog.Calls.INCOMING_TYPE));
+                        int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
                         String callType;
                         int idNumber = managedCursor.getInt(id);
                         String phNumber = managedCursor.getString(number);
@@ -85,7 +85,7 @@ public class ContactListActivity extends AppCompatActivity {
                         callDetails.setCallerName(callerName);
                         callDetails.setCallerNumber(phNumber);
                         callDetails.setCallDuration(callDuration);
-                        callDetails.setCallType(type);
+                       // callDetails.setCallType(type);
                         callDetails.setCallTimeStamp(callDayTime);
                         callDetails.setCallerLogId(idNumber);
                         if (!getCallEntry(idNumber)) {
@@ -136,11 +136,13 @@ public class ContactListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.generic_layout);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 if (CommonDataArea.ROLE == 1)
-                    getLastCallDetails(ContactListActivity.this);
+                   // getLastCallDetails(ContactListActivity.this);
+                    getCallDetails();
             }
         }).start();
 
@@ -154,5 +156,55 @@ public class ContactListActivity extends AppCompatActivity {
         mAdapter.notifyDataSetChanged();
 
 
+    }
+    private void getCallDetails() {
+        CallDetails callDetails = new CallDetails();
+        StringBuffer sb = new StringBuffer();
+        Cursor managedCursor = managedQuery( CallLog.Calls.CONTENT_URI,null, null,null, null);
+        int number = managedCursor.getColumnIndex( CallLog.Calls.NUMBER );
+        int type = managedCursor.getColumnIndex( CallLog.Calls.TYPE );
+        int date = managedCursor.getColumnIndex( CallLog.Calls.DATE);
+        int duration = managedCursor.getColumnIndex( CallLog.Calls.DURATION);
+        int id = managedCursor.getColumnIndex(CallLog.Calls._ID);
+        sb.append( "Call Details :");
+        while ( managedCursor.moveToNext() ) {
+            String phNumber = managedCursor.getString( number );
+            String callType = managedCursor.getString( type );
+            String callDate = managedCursor.getString( date );
+            Date callDayTime = new Date(Long.valueOf(callDate));
+            String callDuration = managedCursor.getString( duration );
+            int idNumber = managedCursor.getInt(id);
+            String dir = null;
+            int dircode = Integer.parseInt( callType );
+            switch( dircode ) {
+                case CallLog.Calls.OUTGOING_TYPE:
+                    dir = "OUTGOING";
+                    break;
+
+                case CallLog.Calls.INCOMING_TYPE:
+                    dir = "INCOMING";
+                    break;
+
+                case CallLog.Calls.MISSED_TYPE:
+                    dir = "MISSED";
+                    break;
+                default:
+                    dir="MISSED";
+                    break;
+            }
+            sb.append( "\nPhone Number:--- "+phNumber +" \nCall Type:--- "+dir+" \nCall Date:--- "+callDayTime+" \nCall duration in sec :--- "+callDuration );
+            sb.append("\n----------------------------------");
+            callDetails.setCallerName(getContactName(phNumber, ContactListActivity.this));
+            callDetails.setCallerNumber(phNumber);
+            callDetails.setCallDuration(callDuration);
+            callDetails.setCallType(dir);
+            callDetails.setCallTimeStamp(callDayTime.toString());
+            callDetails.setCallerLogId(idNumber);
+            if (!getCallEntry(idNumber)) {
+                insertCallDetails(callDetails);
+            }
+        }
+        managedCursor.close();
+        Log.i("Calllog>>",sb.toString());
     }
 }

@@ -26,6 +26,10 @@ public interface DigitalWellBeingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertCallDetails(CallDetails callDetails);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertSelectedAppps(BlockedApps blockedApps);
+
+
     @Query("SELECT * FROM UserInfo")
     List<UserInfo> getUserInfo();
 
@@ -46,4 +50,7 @@ public interface DigitalWellBeingDao {
 
     @Query("SELECT * FROM TaskDetails where date = :date")
     List<TaskDetails> getTasks(String date);
+
+    @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name AND date = :date)")
+   Boolean getBlockedAppDetails(String name,String date);
 }

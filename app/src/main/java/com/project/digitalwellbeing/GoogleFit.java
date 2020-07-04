@@ -126,19 +126,19 @@ public class GoogleFit extends AppCompatActivity {
 
 
 
-//        Fitness.getHistoryClient(this, account)
-//                .readData(readRequest)
-//                .addOnSuccessListener(response -> {
-//                    // Use response data here
-//
-//                    List<DataSet> dataSets = response.getDataSets();
-//
-//
-//                    Log.d(TAG, "OnSuccess()");
-//                })
-//                .addOnFailureListener(e -> {
-//                    Log.d(TAG, "OnFailure()", e);
-//                });
+        Fitness.getHistoryClient(this, account)
+                .readData(readRequest)
+                .addOnSuccessListener(response -> {
+                    // Use response data here
+
+                    List<DataSet> dataSets = response.getDataSets();
+
+
+                    Log.d(TAG, "OnSuccess()");
+                })
+                .addOnFailureListener(e -> {
+                    Log.d(TAG, "OnFailure()", e);
+                });
     }
 
 }
