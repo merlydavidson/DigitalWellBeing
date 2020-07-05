@@ -1,12 +1,12 @@
 package com.project.digitalwellbeing;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -15,23 +15,26 @@ import com.google.android.gms.fitness.FitnessOptions;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
-import com.google.android.gms.fitness.result.DataReadResult;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
+import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import static java.text.DateFormat.getTimeInstance;
+
 public class GoogleFit extends AppCompatActivity {
 
     private int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
     private FitnessOptions fitnessOptions;
-    private String TAG = "DigitalWellBeingTag";
+    private static String TAG = "DigitalWellBeingTag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,9 +53,8 @@ public class GoogleFit extends AppCompatActivity {
         fitnessOptions = FitnessOptions.builder()
                 .addDataType(DataType.TYPE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.AGGREGATE_STEP_COUNT_DELTA, FitnessOptions.ACCESS_READ)
-                .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_READ)
-                .addDataType(DataType.TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
                 .build();
+
 
         GoogleSignInAccount account = GoogleSignIn.getAccountForExtension(this, fitnessOptions);
 
@@ -63,7 +65,18 @@ public class GoogleFit extends AppCompatActivity {
                     account,
                     fitnessOptions);
         } else {
-            accessGoogleFit();
+//            if (ContextCompat.checkSelfPermission(GoogleFit.this, Manifest.permission.ACTIVITY_RECOGNITION)
+//                    != PackageManager.PERMISSION_GRANTED) {
+//                ActivityCompat.requestPermissions(GoogleFit.this,
+//                        arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+//                        MY_PERMISSIONS_REQUEST_ACTIVITY_RECOGNITION);
+//
+//            } else {
+                accessGoogleFit();
+
+          //  }
+
+
         }
 
     }
@@ -93,7 +106,8 @@ public class GoogleFit extends AppCompatActivity {
         long startTime = cal.getTimeInMillis();
 
         DataReadRequest readRequest = new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_ACTIVITY_SEGMENT, DataType.AGGREGATE_ACTIVITY_SUMMARY)
+                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
+                .aggregate(DataType.TYPE_CALORIES_EXPENDED, DataType.AGGREGATE_CALORIES_EXPENDED)
                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                 .bucketByTime(1, TimeUnit.DAYS)
                 .build();
@@ -106,7 +120,7 @@ public class GoogleFit extends AppCompatActivity {
             public void run() {
                 Task<DataReadResponse> response = Fitness.getHistoryClient(GoogleFit.this, account)
                         .readData(new DataReadRequest.Builder()
-                                .read(DataType.TYPE_ACTIVITY_SEGMENT)
+                                .read(DataType.TYPE_STEP_COUNT_DELTA)
                                 .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                                 .build());
 
@@ -118,12 +132,17 @@ public class GoogleFit extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                DataSet dataSet = readDataResult.getDataSet(DataType.TYPE_ACTIVITY_SEGMENT);
-                List<DataPoint> dataPoints=dataSet.getDataPoints();
+                DataSet dataSet = readDataResult.getDataSet(DataType.TYPE_STEP_COUNT_DELTA);
+                List<DataPoint> dataPoints = dataSet.getDataPoints();
+                List<DataSet> dataSets = response.getResult().getDataSets();
+
+
+
+                    dumpDataSet(dataSet);
+
 
             }
         }).start();
-
 
 
         Fitness.getHistoryClient(this, account)
@@ -140,5 +159,21 @@ public class GoogleFit extends AppCompatActivity {
                     Log.d(TAG, "OnFailure()", e);
                 });
     }
+
+    private static void dumpDataSet(DataSet dataSet) {
+        Log.i(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
+        DateFormat dateFormat = getTimeInstance();
+
+        for (DataPoint dp : dataSet.getDataPoints()) {
+            Log.i(TAG, "Data point:");
+            Log.i(TAG, "\tType: " + dp.getDataType().getName());
+            Log.i(TAG, "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
+            Log.i(TAG, "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
+            for (Field field : dp.getDataType().getFields()) {
+                Log.i(TAG, "\tField: " + field.getName() + " Value: " + dp.getValue(field));
+            }
+        }
+    }
+
 
 }

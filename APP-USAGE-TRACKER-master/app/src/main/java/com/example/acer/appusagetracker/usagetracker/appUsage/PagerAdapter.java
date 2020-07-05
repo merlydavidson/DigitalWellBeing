@@ -1,9 +1,9 @@
 package com.example.acer.appusagetracker.usagetracker.appUsage;
 
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentStatePagerAdapter;
+import androidx.core.app.Fragment;
+import androidx.core.app.FragmentManager;
+import androidx.core.app.FragmentStatePagerAdapter;
 
 import com.example.acer.appusagetracker.usagetracker.appUsage.AppUsageStatisticsFragment;
 import com.example.acer.appusagetracker.usagetracker.barchart.BarChartView;

@@ -13,6 +13,11 @@
             <set />
           </value>
         </entry>
+        <entry key="/fragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/build.gradle">
           <value>
             <set />
@@ -49,6 +54,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/DetailActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/GoogleFit.java">
           <value>
             <set />
           </value>
@@ -228,7 +238,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/build/generated/ap_generated_sources/debug/out/com/assignment/maplehomeapp/interfaces/StimulationSessionsDao_Impl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/ESMeasurmentSessionActivity.java">
           <value>
             <set />
           </value>
@@ -243,7 +263,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/adapter/RecyclerviewMeasurementAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/adapter/RecyclerviewPrescriptionAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/adapter/RecycleviewMeasurmentSessionAdapter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/adapter/TabESMeasurmentPrescriptionAdapter.java">
           <value>
             <set />
           </value>
@@ -258,6 +293,51 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/interfaces/UserDao.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/AppInfo.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/ContractInfo.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/ContractInfoHistory.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/ConverterClass.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/DeviceInfo.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/MeasurementPrescriptons.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/MeasurmentDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/MeasurmentHistory.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/StimulationHistory.java">
           <value>
             <set />
@@ -268,7 +348,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/model/database/AppDataBase.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/remote/Communicator.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/remote/ILogin.java">
           <value>
             <set />
           </value>
@@ -298,7 +388,42 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESHistoryActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESHistoryDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESMeasurementActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESMeasurementPrescriptionControl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESMeasurementPrescriptionElectrodeFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESMeasurementPrescriptionGraphFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESMeasuremntSession.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESMeasurmentSessionActivity.java">
           <value>
             <set />
           </value>
@@ -309,6 +434,16 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/ESSessionDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/Fragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/GraphFragment.java">
           <value>
             <set />
           </value>
@@ -324,6 +459,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/MeasurementGraphFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/MeasurmentActivity.java">
           <value>
             <set />
           </value>
@@ -358,12 +498,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_esmeasurement.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_essession_details.xml">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_login.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_measurment.xml">
           <value>
             <set />
           </value>
@@ -383,7 +533,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/electrode_fragment.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/es_session_history.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/graph_fragment.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/measuremenr_prescription_row.xml">
           <value>
             <set />
           </value>
@@ -394,6 +559,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/simulationgraphfragment.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/stimulate_row_view.xml">
           <value>
             <set />
           </value>
@@ -448,12 +618,37 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Projects/vendor/meaa/HMI/themes/thememanagerlib/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/meaa/HMI/themes/thememanagerlib/settings.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/meaa/HMI/themes/thememanagerlib/src/main/java/com/mea/meaa/thememanager/MeaaTheme.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Projects/vendor/meaa/HMI/translation/TextViewSupportLib/src/main/java/meaa/mea/com/textviewsupportlib/R1Button.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$USER_HOME$/Projects/vendor/meaa/HMI/translation/TextViewSupportLib/src/main/java/meaa/mea/com/viewsupportlib/R1ImageButton.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/meaa/LayerManager/library/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/FeatureSetService/app/build.gradle">
           <value>
             <set />
           </value>
@@ -513,7 +708,32 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/SystemSettingService/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/SystemSettingService/app/src/main/java/com/mitsubishielectric/ahu/appservice/systemsettingservice/data/common/IUtil.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/SystemSettingService/app/src/main/java/com/mitsubishielectric/ahu/appservice/systemsettingservice/data/common/Util.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/SystemSettingService/settings.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/ControlShortCutProvider.java">
           <value>
             <set />
           </value>
@@ -538,12 +758,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/src/main/java/com/mitsubishielectric/ahu/appservice/vehicleservice/tripservice/TripFormatter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/src/main/java/com/mitsubishielectric/ahu/appservice/vehicleservice/vsmservice/SettingDataSource.java">
           <value>
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/src/main/res/layout/climate_drv_psg_temp_popup.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/vsmserviceinterface/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/vsmserviceinterface/src/main/java/com/mitsubishielectric/ahu/lib/vsmserviceinterface/VsmServiceInterfaceConstants.java">
           <value>
             <set />
           </value>
