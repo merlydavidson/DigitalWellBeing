@@ -39,20 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sharedPreferences = getSharedPreferences(
-                        CommonDataArea.prefName, Context.MODE_PRIVATE);
-                CommonDataArea.editor = sharedPreferences.edit();
-                int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
 
-                if (CommonDataArea.ROLE == R.id.role_parent) {
-                    Intent intent = new Intent(LoginActivity.this, ChildActivity.class);
-                    startActivity(intent);
-                } else {
-
-                    Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
-                    startActivity(intent);
-
-                }
             }
         });
     }
