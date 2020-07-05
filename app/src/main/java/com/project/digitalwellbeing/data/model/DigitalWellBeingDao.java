@@ -51,6 +51,6 @@ public interface DigitalWellBeingDao {
     @Query("SELECT * FROM TaskDetails where date = :date")
     List<TaskDetails> getTasks(String date);
 
-    @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name AND date = :date)")
-   Boolean getBlockedAppDetails(String name,String date);
+    @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name)")
+   Boolean getBlockedAppDetails(String name);
 }

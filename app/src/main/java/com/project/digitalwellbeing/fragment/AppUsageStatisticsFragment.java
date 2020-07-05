@@ -124,9 +124,9 @@ public class AppUsageStatisticsFragment extends Fragment {
                         for (CustomUsageStats b : selectedItems) {
                             CustomUsageStats states = b;
                             if (b.isChecked) {
-                                if (!digitalWellBeingDao.getBlockedAppDetails(b.usageStats.getPackageName(), CommonDataArea.getDAte("dd/MM/yyyy")))
+                                if (!digitalWellBeingDao.getBlockedAppDetails(b.usageStats.getPackageName()))
                                     digitalWellBeingDao.insertSelectedAppps(new BlockedApps(states.usageStats.getPackageName(), CommonDataArea.getDAte("dd/MM/yyyy"), 1));
-                                
+
                             }
                         }
                     }
