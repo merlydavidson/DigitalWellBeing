@@ -18,6 +18,17 @@ public class BlockedApps {
     @SerializedName("date")
     String date;
 
+
+    Boolean isChecked;
+
+    public Boolean getChecked() {
+        return isChecked;
+    }
+
+    public void setChecked(Boolean checked) {
+        isChecked = checked;
+    }
+
     public BlockedApps(String packagename, String date, int childId) {
         this.packagename = packagename;
         this.date = date;

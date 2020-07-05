@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.project.digitalwellbeing.service.DigitalWellBeingService;
-
+//launcher
 public class CloseAppActivity extends AppCompatActivity {
 
     @Override

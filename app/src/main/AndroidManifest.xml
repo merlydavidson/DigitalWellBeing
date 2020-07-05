@@ -10,9 +10,9 @@
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
-    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS"/>
-    <uses-permission android:name="com.android.chrome.permission.READ_WRITE_BOOKMARK_FOLDERS"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
+    <uses-permission android:name="com.android.chrome.permission.READ_WRITE_BOOKMARK_FOLDERS" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -30,9 +30,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".CloseAppActivity"
-            android:launchMode="singleInstance"
-           ></activity>
+        <activity android:name=".BlockedAppsActivity"></activity>
+        <activity
+            android:name=".CloseAppActivity"
+            android:launchMode="singleInstance" />
         <activity android:name=".LocationActivity" />
         <activity android:name=".ContactDetailActivity" />
         <activity android:name=".ContactListActivity" />
