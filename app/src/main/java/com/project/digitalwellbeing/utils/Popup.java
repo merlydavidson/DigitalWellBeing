@@ -206,7 +206,7 @@ public class Popup extends Activity {
                                 else if(dayOfMonth<10)
                                 calenderEdt.setText("0"+dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                                 else if(monthOfYear<10)
-                                    calenderEdt.setText("0"+dayOfMonth + "/" +"0"+ (monthOfYear + 1) + "/" + year);
+                                    calenderEdt.setText(dayOfMonth + "/" +"0"+ (monthOfYear + 1) + "/" + year);
                                 else
                                     calenderEdt.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                             }
@@ -316,11 +316,13 @@ public class Popup extends Activity {
                     taskDetails.setUpload(0);
                     taskDetails.setStatus(0);
                     taskDetails.setEnableApps(appdisabled);
+                    taskDetails.setChildId(CommonDataArea.CURRENTCHILDID);
 
                     AppDataBase appDataBase = AppDataBase.getInstance(context);
                     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
                     digitalWellBeingDao.insertTaskDetails(taskDetails);
                     alertDialog.dismiss();
+                   // Toast.makeText(getApplicationContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
                 }
             }
         });

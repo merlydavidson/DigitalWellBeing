@@ -43,7 +43,17 @@ public class TaskDetails {
     @SerializedName("status")
     public int status;
 
+    @ColumnInfo(name = "childId")
+    @SerializedName("childId")
+    String childId;
 
+    public String getChildId() {
+        return childId;
+    }
+
+    public void setChildId(String childId) {
+        this.childId = childId;
+    }
 
     @ColumnInfo(name ="app_enable_status")
     @SerializedName("app_enable_status")

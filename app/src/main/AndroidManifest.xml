@@ -13,9 +13,8 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="com.android.browser.permission.READ_HISTORY_BOOKMARKS" />
     <uses-permission android:name="com.android.chrome.permission.READ_WRITE_BOOKMARK_FOLDERS" />
-    <uses-permission android:name="android.gms.permission.ACTIVITY_RECOGNITION"/>
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
-
+    <uses-permission android:name="android.gms.permission.ACTIVITY_RECOGNITION" />
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
@@ -33,7 +32,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".BlockedAppsActivity"></activity>
+        <activity android:name=".RecentActivity"></activity>
+        <activity android:name=".BlockedAppsActivity" />
         <activity
             android:name=".CloseAppActivity"
             android:launchMode="singleInstance" />

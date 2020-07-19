@@ -1,24 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/det_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+
     android:weightSum="2"
     tools:context=".TaskActivity">
-
 
 
     <LinearLayout
         android:id="@+id/pie_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_gravity="center"
         android:layout_weight="2"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:weightSum="1">
+
+            <EditText
+                android:editable="false"
+                android:id="@+id/date_from"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.4"
+                android:background="@drawable/rounded_edge_box"
+                android:drawableRight="@drawable/ic_date_range_black_24dp" />
+
+            <EditText
+                android:editable="false"
+                android:id="@+id/date_to"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_weight="0.4"
+                android:background="@drawable/rounded_edge_box"
+                android:drawableRight="@drawable/ic_date_range_black_24dp" />
+
+            <Button
+                android:id="@+id/result"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_weight="0.2"
+                android:background="@drawable/shape_round"
+                android:text="Go"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/task_recyclerview"
@@ -31,12 +66,13 @@
         android:id="@+id/floatingActionButton_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|end"
         android:layout_marginRight="20dp"
         android:layout_marginBottom="20dp"
-
         android:clickable="true"
         app:srcCompat="@android:drawable/ic_input_add" />
 
 
-</LinearLayout>
+</RelativeLayout>

@@ -89,6 +89,7 @@ ChildActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("UUIDofParent",CommonFunctionArea.getDeviceUUID(this));
         if (CommonDataArea.ROLE == 0 && getStimulationList().size() > 0) {
             mAdapter = new UsersListAdapter(this, getStimulationList(), new CommonFunctionArea().getLogList(ChildActivity.this));
             childRecyclerview.setAdapter(mAdapter);

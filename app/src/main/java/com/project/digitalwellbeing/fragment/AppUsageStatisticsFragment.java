@@ -7,6 +7,7 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -28,10 +29,13 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.github.clans.fab.FloatingActionButton;
+
 import com.github.clans.fab.FloatingActionMenu;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.project.digitalwellbeing.BlockedAppsActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.adapter.UsageListAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
@@ -61,7 +65,7 @@ public class AppUsageStatisticsFragment extends Fragment {
     Spinner mSpinnerSort;
     private GridLayoutManager mGridLayoutManager;
     FloatingActionMenu materialDesignFAM;
-    FloatingActionButton floatingActionButton1, floatingActionButton2;
+    FloatingActionButton floatingActionButton;
     List<UsageStats> usageStatsList;
     List<CustomUsageStats> selectedItems;
 
@@ -101,9 +105,11 @@ public class AppUsageStatisticsFragment extends Fragment {
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         block = rootView.findViewById(R.id.blockapps);
+        floatingActionButton =(FloatingActionButton) rootView.findViewById(R.id.fab);
         mUsageListAdapter = new UsageListAdapter(getContext());
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_app_usage);
-        mRecyclerView.setLayoutManager(mGridLayoutManager);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(layoutManager);
         //mRecyclerView.scrollToPosition(0);
         mRecyclerView.setAdapter(mUsageListAdapter);
         mOpenUsageSettingButton = (Button) rootView.findViewById(R.id.button_open_usage_setting);
@@ -125,13 +131,21 @@ public class AppUsageStatisticsFragment extends Fragment {
                             CustomUsageStats states = b;
                             if (b.isChecked) {
                                 if (!digitalWellBeingDao.getBlockedAppDetails(b.usageStats.getPackageName()))
-                                    digitalWellBeingDao.insertSelectedAppps(new BlockedApps(states.usageStats.getPackageName(), CommonDataArea.getDAte("dd/MM/yyyy"), 1));
+                                    digitalWellBeingDao.insertSelectedAppps(new BlockedApps(states.usageStats.getPackageName(), CommonDataArea.getDAte("dd/MM/yyyy"), CommonDataArea.FIREBASETOPIC));
 
                             }
                         }
+                       // Toast.makeText(getActivity(), "Apps Blocked Successfully", Toast.LENGTH_SHORT).show();
+                        mUsageListAdapter.updateViews();
                     }
                 }
             });
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(), BlockedAppsActivity.class));
+            }
+        });
 
     }
 
@@ -182,6 +196,7 @@ public class AppUsageStatisticsFragment extends Fragment {
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
         protected String doInBackground(String... params) {
+
             String[] strings = getResources().getStringArray(R.array.action_timespan);
             StatsUsageInterval statsUsageInterval = StatsUsageInterval
                     .getValue(strings[position]);

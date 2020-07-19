@@ -11,30 +11,46 @@
         android:id="@+id/close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="close"
-        android:textColor="@android:color/white"
+        android:layout_marginBottom="76dp"
         android:background="@drawable/btn_round"
+        android:text="close"
+
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.112" />
+        app:layout_constraintTop_toBottomOf="@+id/pin" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="0dp"
+    <EditText
+        android:id="@+id/pin"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:gravity="center"
-        android:textSize="20sp"
-        android:padding="5dp"
-
-        android:text="You have no access over other apps while a task is pending"
+        android:layout_marginTop="32dp"
+        android:ems="10"
+        android:background="@drawable/rounded_edge_box"
+        android:visibility="gone"
+        android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/close"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:gravity="center"
+        android:padding="5dp"
+        android:text="You have no access over other apps while a task is pending"
+
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/pin"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

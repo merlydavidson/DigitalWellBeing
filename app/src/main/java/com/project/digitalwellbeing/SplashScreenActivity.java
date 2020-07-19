@@ -47,7 +47,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
 
                     if (role == 0) {
-                        Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);
+                        Intent intent = new Intent(SplashScreenActivity.this, ChildActivity.class);
                         startActivity(intent);
                     } else {
                         Intent intent = new Intent(SplashScreenActivity.this, DashboardActivity.class);

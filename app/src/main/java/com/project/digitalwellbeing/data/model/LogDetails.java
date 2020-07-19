@@ -15,6 +15,26 @@ public class LogDetails {
     @SerializedName("location")
     public String location;
 
+    public LogDetails() {
+    }
+
+    public LogDetails(String location, String date, String timeStamp, String app_details, String childId, boolean isOnline) {
+        this.location = location;
+        this.date = date;
+        this.timeStamp = timeStamp;
+        this.app_details = app_details;
+        this.childId = childId;
+        this.isOnline = isOnline;
+    }
+
+    public String getApp_details() {
+        return app_details;
+    }
+
+    public void setApp_details(String app_details) {
+        this.app_details = app_details;
+    }
+
     @ColumnInfo(name ="date")
     @SerializedName("date")
     public String date;
@@ -27,6 +47,21 @@ public class LogDetails {
     @SerializedName("uuid")
     public String uuid;
 
+    @ColumnInfo(name ="app_details")
+    @SerializedName("app_details")
+    public String app_details;
+
+    @ColumnInfo(name = "childId")
+    @SerializedName("childId")
+    String childId;
+
+    public String getChildId() {
+        return childId;
+    }
+
+    public void setChildId(String childId) {
+        this.childId = childId;
+    }
 
     public boolean isOnline() {
         return isOnline;

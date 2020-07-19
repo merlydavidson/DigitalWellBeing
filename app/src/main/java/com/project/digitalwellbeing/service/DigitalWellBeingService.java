@@ -41,15 +41,23 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import com.google.gson.Gson;
 import com.project.digitalwellbeing.CloseAppActivity;
+import com.project.digitalwellbeing.ContactListActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.TaskActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
+import com.project.digitalwellbeing.data.model.BlockedApps;
+import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.data.model.LockUnlock;
+import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
+import com.project.digitalwellbeing.data.model.UserDetails;
 import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
+import com.project.digitalwellbeing.utils.CommonFunctionArea.*;
 import com.project.digitalwellbeing.utils.FCMMessages;
 
 import java.io.IOException;
@@ -62,6 +70,11 @@ import java.util.SortedMap;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeMap;
+
+import static com.project.digitalwellbeing.utils.CommonDataArea.BLOCKAPPS;
+import static com.project.digitalwellbeing.utils.CommonDataArea.TASK;
+import static com.project.digitalwellbeing.utils.CommonDataArea.context;
+import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
 public class DigitalWellBeingService extends Service {
     public static final String BROADCAST_ACTION = "Digital Well Being";
@@ -94,8 +107,13 @@ public class DigitalWellBeingService extends Service {
     @Override
     public void onStart(Intent intent, int startId) {
         //TODO:check role ..if role ==children check for tasks
-        checkTaskActivity();
-
+        sharedPreferences = getSharedPreferences(
+                CommonDataArea.prefName, Context.MODE_PRIVATE);
+        int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        if (role == 1)
+            checkTaskActivity();
+         if (role == 0)
+        sendDatatoChild();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new DWBLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -109,42 +127,87 @@ public class DigitalWellBeingService extends Service {
     }
 
     private void checkTaskActivity() {
-        AppDataBase appDataBase = AppDataBase.getInstance(this);
-        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+
         Timer t = new Timer();
         t.scheduleAtFixedRate(new TimerTask() {
                                   @Override
                                   public void run() {
-
-
-                                      List<TaskDetails> taskDetails = digitalWellBeingDao.getTasks(CommonDataArea.getDAte("dd/MM/yyyy"));
-                                      String[] current_time = CommonDataArea.getDAte("dd/MM/yyyy HH:mm").split(" ");
-                                      for (int i = 0; i < taskDetails.size(); i++) {
-                                          String startTime = taskDetails.get(i).getStarttime();
-                                          String endTime = taskDetails.get(i).getEndtime();
-                                          boolean block = taskDetails.get(i).getEnableApps();
-                                          if (compareDates(startTime,current_time[1]) && compareDates(current_time[1], endTime) && block) {
-                                              blockApps = true;
-                                              break;
-                                          } else
-                                              blockApps = false;
-                                      }
-                                      if (blockApps) {
-                                          String package_name = foregroundApplication();
-                                          String apppackage=CommonDataArea.APP_PACKAGE_NAME;
-                                          String launcher=CommonDataArea.LAUNCHER_PACKAGE_NAME;
-                                          if (!package_name.equalsIgnoreCase(CommonDataArea.APP_PACKAGE_NAME) &&
-                                                  !package_name.equalsIgnoreCase(CommonDataArea.LAUNCHER_PACKAGE_NAME)) {
-                                              Intent i = new Intent(DigitalWellBeingService.this, CloseAppActivity.class);
-                                              i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                              DigitalWellBeingService.this.startActivity(i);
-                                              //showDialog();
-                                          }
+                                      sendUpdatedTaskDetails();
+                                      sendLocationDetails();
+                                      sendCallDetailsToParent();
+                                      lookForTasks();//High priority
+                                      if (!blockApps) {
+                                          lookForscreenLock();  //medium priority
+                                          if (!isBlocked)
+                                              lookForBlockedApps();//low priority
                                       }
                                   }
                               },
                 0,
-                2000);
+                5000);
+    }
+
+    private void sendDatatoChild() {
+
+        Timer t = new Timer();
+        t.scheduleAtFixedRate(new TimerTask() {
+                                  @Override
+                                  public void run() {
+                                      blockAllApps();
+                                      sendTasks();
+                                  }
+                              },
+                0,
+                5000);
+    }
+private void sendUpdatedTaskDetails(){
+    AppDataBase appDataBase = AppDataBase.getInstance(this);
+    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+    List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails2(CommonDataArea.CURRENTCHILDID);
+    new Communicator(this).sendMessage(FCMMessages.updateTaskDetails(taskDetails, CommonDataArea.FIREBASETOPIC));
+
+}
+    private void blockAllApps() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<LockUnlock> taskDetails = digitalWellBeingDao.getLockUnlockDetailsList(CommonDataArea.CURRENTCHILDID);
+        List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
+        for(UserDetails user: userDetails) {
+            if (userDetails!=null && taskDetails != null) {
+
+                new Communicator(this).sendMessage(FCMMessages.LockUnlock(taskDetails, "/topics/" + user.getChildDeviceUUID()));
+
+            }
+        }
+   }
+    private void sendLocationDetails(){
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<LogDetails> logDetails = digitalWellBeingDao.getLogDetails(CommonDataArea.CURRENTCHILDID);
+        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/"))
+         new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(logDetails,CommonDataArea.FIREBASETOPIC));
+
+    }
+    private void sendTasks() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails();
+        List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
+        for(UserDetails user: userDetails) {
+            if (userDetails!=null && taskDetails != null) {
+
+                    new Communicator(this).sendMessage(FCMMessages.sendTasks(taskDetails, "/topics/" + user.getChildDeviceUUID()));
+
+            }
+        }
+    }
+
+    private void sendCallDetailsToParent() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails();
+        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/"))
+                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.FIREBASETOPIC));
     }
 
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
@@ -260,13 +323,23 @@ public class DigitalWellBeingService extends Service {
                     Log.d("Merly", "time stamp " + new CommonFunctionArea().getTimeStamp());
                     Log.d("Merly", "uuid " + CommonFunctionArea.getDeviceUUID(getApplicationContext()));
                     Log.d("Merly", "online " + new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
+                    String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
+                    AppDataBase appDataBase = AppDataBase.getInstance(context);
+                    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+                    LogDetails logDetails=new LogDetails();
+                    logDetails.setLocation(cityName);
+                    logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
+                    logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
+                    logDetails.setApp_details(currentForegrounApp);
+                    logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
+                    digitalWellBeingDao.insertLogDetails(logDetails);
+                  //  new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, CommonDataArea.getDAte("dd/MM/yyyy HH:mm"), new CommonFunctionArea().getDeviceLocked(getApplicationContext()), currentForegrounApp));
 
-                    new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, new CommonFunctionArea().getTimeStamp(), new CommonFunctionArea().getDeviceLocked(getApplicationContext())));
                 }
                 //                Log.i("Count", "=========  "+ (counter++));
             }
         };
-        timer.schedule(timerTask, 10000, 10000); //
+        timer.schedule(timerTask, 0, 1000 * 60 * 5); //
     }
 
     public void stoptimertask() {
@@ -296,17 +369,28 @@ public class DigitalWellBeingService extends Service {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if(addresses!=null && addresses.size()>0){
-                cityName = addresses.get(0).getAddressLine(0);
-                if (CommonFunctionArea.getRole(getApplicationContext()) == 1) {
-                    CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getparentId(getApplicationContext());
-                    Log.d("Merly", "from service 194");
-                    Log.d("Merly", "city name " + cityName);
-                    Log.d("Merly", "time stamp " + new CommonFunctionArea().getTimeStamp());
-                    Log.d("Merly", "uuid " + CommonFunctionArea.getDeviceUUID(getApplicationContext()));
-                    Log.d("Merly", "online " + new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
-                    new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, new CommonFunctionArea().getTimeStamp(), new CommonFunctionArea().getDeviceLocked(getApplicationContext())));
-                }}
+                if (addresses != null && addresses.size() > 0) {
+                    cityName = addresses.get(0).getAddressLine(0);
+                    if (CommonFunctionArea.getRole(getApplicationContext()) == 1) {
+                        CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getparentId(getApplicationContext());
+                        Log.d("Merly", "from service 194");
+                        Log.d("Merly", "city name " + cityName);
+                        Log.d("Merly", "time stamp " + new CommonFunctionArea().getTimeStamp());
+                        Log.d("Merly", "uuid " + CommonFunctionArea.getDeviceUUID(getApplicationContext()));
+                        Log.d("Merly", "online " + new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
+                        String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
+                        LogDetails logDetails=new LogDetails();
+                        AppDataBase appDataBase = AppDataBase.getInstance(context);
+                        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+                        logDetails.setLocation(cityName);
+                        logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
+                        logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
+                        logDetails.setApp_details(currentForegrounApp);
+                        logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
+                        digitalWellBeingDao.insertLogDetails(logDetails);
+                     //   new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, new CommonFunctionArea().getTimeStamp(), new CommonFunctionArea().getDeviceLocked(getApplicationContext()), currentForegrounApp));
+                    }
+                }
 //                intent.putExtra("Latitude", ""+loc.getLatitude());
 //                intent.putExtra("Longitude", ""+loc.getLongitude());
 //                intent.putExtra("Provider", loc.getProvider());
@@ -339,70 +423,23 @@ public class DigitalWellBeingService extends Service {
         super.onTaskRemoved(rootIntent);
     }
 
-    private String foregroundApplication() {
 
-        String currentApp = "NULL";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            UsageStatsManager usm = (UsageStatsManager) this.getSystemService(Context.USAGE_STATS_SERVICE);
-            long time = System.currentTimeMillis();
-            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
-            if (appList != null && appList.size() > 0) {
-                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
-                for (UsageStats usageStats : appList) {
-                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-                }
-                if (mySortedMap != null && !mySortedMap.isEmpty()) {
-                    currentApp = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                }
-            }
-        } else {
-            ActivityManager am = (ActivityManager) this.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
-            currentApp = tasks.get(0).processName;
-        }
-        Log.i("package>>", currentApp);
-        return currentApp;
-
-    }
-
-    public void usageAccessSettingsPage() {
-      try {
-          Intent intent = new Intent();
-          intent.setAction(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-          intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-          if(intent.resolveActivity(getPackageManager()) != null){
-              Uri uri = Uri.fromParts("package", this.getPackageName(), null);
-              intent.setData(uri);
-              DigitalWellBeingService.this.startActivity(intent);
-          }
-
-
-
-      }catch(Exception e){}
-    }
-
-    public static boolean compareDates(String d1, String d2) {
+    public void usageAccessSettingsPage() {//permission for reading foreground task
         try {
-
-            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-            Date date1 = sdf.parse("01/06/2020 "+d1);
-            Date date2 = sdf.parse("01/06/2020 "+d2);
-
-            System.out.println("Date1" + sdf.format(date1));
-            System.out.println("Date2" + sdf.format(date2));
-            System.out.println();
-
-            if (date1.getTime() < date2.getTime())
-                return true;
-            else
-                return false;
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                intent.setData(uri);
+                DigitalWellBeingService.this.startActivity(intent);
+            }
 
 
-        } catch (ParseException ex) {
-            ex.printStackTrace();
+        } catch (Exception e) {
         }
-        return false;
     }
+
 
     public void showDialog() {
 
@@ -458,5 +495,98 @@ public class DigitalWellBeingService extends Service {
         }
     }
 
+    private void lookForTasks() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<TaskDetails> taskDetails = digitalWellBeingDao.getTasks(CommonDataArea.getDAte("dd/MM/yyyy"));
 
+        if (taskDetails != null && taskDetails.size() > 0) {
+            String[] current_time = CommonDataArea.getDAte("dd/MM/yyyy HH:mm").split(" ");
+            for (int i = 0; i < taskDetails.size(); i++) {
+                String startTime = taskDetails.get(i).getStarttime();
+                String endTime = taskDetails.get(i).getEndtime();
+                boolean block = taskDetails.get(i).getEnableApps();
+                if (CommonFunctionArea.compareTimes(startTime, current_time[1]) && CommonFunctionArea.compareTimes(current_time[1], endTime) && block) {
+                    blockApps = true;
+                    break;
+                } else
+                    blockApps = false;
+            }
+            if (blockApps) {
+                String package_name = CommonFunctionArea.foregroundApplication(this);
+                String apppackage = CommonDataArea.APP_PACKAGE_NAME;
+                String launcher = CommonDataArea.LAUNCHER_PACKAGE_NAME;
+                if (!package_name.equalsIgnoreCase(CommonDataArea.APP_PACKAGE_NAME) &&
+                        !package_name.equalsIgnoreCase(CommonDataArea.LAUNCHER_PACKAGE_NAME)) {
+                    Intent i = new Intent(DigitalWellBeingService.this, CloseAppActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(TASK, "tasks");
+                    i.putExtras(bundle);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    DigitalWellBeingService.this.startActivity(i);
+                    //showDialog();
+                }
+
+            }
+        }
+    }
+
+    boolean isBlocked = false;
+
+    private void lookForBlockedApps() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        String package_name = CommonFunctionArea.foregroundApplication(this);
+        boolean isBlocked = digitalWellBeingDao.getBlockedAppDetails(package_name);
+
+        if (isBlocked) {
+            Intent i = new Intent(DigitalWellBeingService.this, CloseAppActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(TASK, "block_selected_apps");
+            i.putExtras(bundle);
+            i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            DigitalWellBeingService.this.startActivity(i);
+
+        }
+
+    }
+
+    private void lookForscreenLock() {
+       /* sharedPreferences = getSharedPreferences(
+                CommonDataArea.prefName, Context.MODE_PRIVATE);
+        isBlocked = sharedPreferences.getBoolean(BLOCKAPPS, false);
+        if (isBlocked) {
+            String package_name = CommonFunctionArea.foregroundApplication(this);
+            if (!package_name.equalsIgnoreCase(CommonDataArea.APP_PACKAGE_NAME) &&
+                    !package_name.equalsIgnoreCase(CommonDataArea.LAUNCHER_PACKAGE_NAME)) {
+                Intent i = new Intent(DigitalWellBeingService.this, CloseAppActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString(TASK, "lock");
+                i.putExtras(bundle);
+                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                DigitalWellBeingService.this.startActivity(i);
+                //showDialog();
+
+            }
+        }*/
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
+            LockUnlock lockUnlock = digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID);
+            if (lockUnlock!=null && lockUnlock.isLocked()) {
+                String package_name = CommonFunctionArea.foregroundApplication(this);
+                if (!package_name.equalsIgnoreCase(CommonDataArea.APP_PACKAGE_NAME) &&
+                        !package_name.equalsIgnoreCase(CommonDataArea.LAUNCHER_PACKAGE_NAME)) {
+                    Intent i = new Intent(DigitalWellBeingService.this, CloseAppActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString(TASK, "lock");
+                    i.putExtras(bundle);
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    DigitalWellBeingService.this.startActivity(i);
+                    //showDialog();
+
+                }
+            }
+        }
+    }
 }

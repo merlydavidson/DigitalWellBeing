@@ -1,7 +1,10 @@
 package com.project.digitalwellbeing.utils;
 
+import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.KeyguardManager;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -32,6 +35,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static android.app.AppOpsManager.MODE_ALLOWED;
 import static android.app.AppOpsManager.OPSTR_GET_USAGE_STATS;
@@ -78,7 +83,7 @@ public class CommonFunctionArea {
         try {
             AppDataBase appDataBase = AppDataBase.getInstance(context);
             DigitalWellBeingDao stimulationSessionsDao = appDataBase.userDetailsDao();
-            logDetails = stimulationSessionsDao.getLogDetails();
+            logDetails = stimulationSessionsDao.getLogDetails(CommonDataArea.CURRENTCHILDID);
             logDetails1 = logDetails.get(logDetails.size() - 1);
         } catch (Exception e) {
             Log.e("Exception", e.getMessage());
@@ -177,5 +182,75 @@ Context context;
             }
             return "";
         }
+    }
+    public static boolean compareTimes(String d1, String d2) {
+        try {
+
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+            Date date1 = sdf.parse("01/06/2020 " + d1);
+            Date date2 = sdf.parse("01/06/2020 " + d2);
+
+            System.out.println("Date1" + sdf.format(date1));
+            System.out.println("Date2" + sdf.format(date2));
+            System.out.println();
+
+            if (date1.getTime() < date2.getTime())
+                return true;
+            else
+                return false;
+
+
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean compareDateTimes(String format,String d1, String d2) {
+        try {
+
+            SimpleDateFormat sdf = new SimpleDateFormat(format);
+            Date date1 = sdf.parse(d1);
+            Date date2 = sdf.parse(d2);
+
+            System.out.println("Date1" + sdf.format(date1));
+            System.out.println("Date2" + sdf.format(date2));
+            System.out.println();
+
+            if (date1.getTime() <= date2.getTime())
+                return true;
+            else
+                return false;
+
+
+        } catch (ParseException ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+    public static String foregroundApplication(Context context) {
+
+        String currentApp = "NULL";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            UsageStatsManager usm = (UsageStatsManager) context.getSystemService(Context.USAGE_STATS_SERVICE);
+            long time = System.currentTimeMillis();
+            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
+            if (appList != null && appList.size() > 0) {
+                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                for (UsageStats usageStats : appList) {
+                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+                }
+                if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                    currentApp = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+                }
+            }
+        } else {
+            ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            List<ActivityManager.RunningAppProcessInfo> tasks = am.getRunningAppProcesses();
+            currentApp = tasks.get(0).processName;
+        }
+        Log.i("package>>", currentApp);
+        return currentApp;
+
     }
 }

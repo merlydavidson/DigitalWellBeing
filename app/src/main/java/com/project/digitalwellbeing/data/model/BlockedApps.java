@@ -19,17 +19,17 @@ public class BlockedApps {
     String date;
 
 
-    Boolean isChecked;
+    boolean isChecked;
 
-    public Boolean getChecked() {
+    public boolean getChecked() {
         return isChecked;
     }
 
-    public void setChecked(Boolean checked) {
+    public void setChecked(boolean checked) {
         isChecked = checked;
     }
 
-    public BlockedApps(String packagename, String date, int childId) {
+    public BlockedApps(String packagename, String date, String childId) {
         this.packagename = packagename;
         this.date = date;
         this.childId = childId;
@@ -59,15 +59,15 @@ public class BlockedApps {
         this.date = date;
     }
 
-    public int getChildId() {
+    public String getChildId() {
         return childId;
     }
 
-    public void setChildId(int childId) {
+    public void setChildId(String childId) {
         this.childId = childId;
     }
 
     @ColumnInfo(name = "childId")
     @SerializedName("childId")
-    int childId;
+    String childId;
 }

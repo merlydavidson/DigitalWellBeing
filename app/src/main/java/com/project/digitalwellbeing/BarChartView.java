@@ -148,12 +148,13 @@ BarChartView extends Fragment implements Replication.ChangeListener {
         pieDataSet.setValueTextSize(10);
 
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.GREEN);
-        colors.add(Color.RED);
-        colors.add(Color.CYAN);
-        colors.add(Color.BLUE);
-        colors.add(Color.MAGENTA);
-        colors.add(Color.YELLOW);
+        colors.add(Color.parseColor("#8966f6"));
+        colors.add(Color.parseColor("#bf69e3"));
+        colors.add(Color.parseColor("#43d7ee"));
+        colors.add(Color.parseColor("#a2a2cb"));
+        colors.add(Color.parseColor("#6e6b99"));
+        colors.add(Color.parseColor("#63a6ff"));
+
 
         pieDataSet.setColors(colors);
         PieData pieData = new PieData(pieDataSet);

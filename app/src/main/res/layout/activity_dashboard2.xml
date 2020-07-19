@@ -445,6 +445,7 @@
                     android:layout_gravity="center"
                     android:layout_weight="0.5"
                     android:gravity="center"
+
                     android:orientation="horizontal"
                     android:weightSum="1">
 

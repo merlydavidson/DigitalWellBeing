@@ -24,6 +24,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.digitalwellbeing.BarChartView;
 import com.project.digitalwellbeing.R;
+import com.project.digitalwellbeing.data.model.AppDataBase;
+import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CustomUsageStats;
 
@@ -42,9 +45,12 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
     int flag2=0;
     private Context context;
     private long total;
+    DigitalWellBeingDao digitalWellBeingDao;
     public UsageListAdapter(Context c)
     {
         context=c;
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+         digitalWellBeingDao = appDataBase.userDetailsDao();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,7 +61,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         private final ProgressBar pb ;
         CheckBox selector;
         private Context mContext;
-
+        ImageView lock;
         public ViewHolder(View v) {
             super(v);
 
@@ -63,6 +69,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
             mLastTimeUsed = (TextView) v.findViewById(R.id.textview_total_time);
             mAppIcon = (ImageView) v.findViewById(R.id.app_icon);
             mPercentage=(TextView) v.findViewById(R.id.percentage);
+            lock=(ImageView) v.findViewById(R.id.lock);
             pb=(ProgressBar) v.findViewById(R.id.pb);
             selector=v.findViewById(R.id.selector);
         }
@@ -94,7 +101,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.usage_row, viewGroup, false);
+                .inflate(R.layout.appusage_list_item, viewGroup, false);
 
         return new ViewHolder(v);
     }
@@ -135,13 +142,29 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         if (CommonDataArea.ROLE == 1){
             //TODO:viewHolder.selector.setVisibility(View.GONE);
         }
+
         viewHolder.getProgressBar().setProgress((int)percent);
         viewHolder.selector.setOnCheckedChangeListener(null);
+
+        boolean isBlocked = digitalWellBeingDao.getBlockedAppDetails(mCustomUsageStatsList.get(position).usageStats.getPackageName());
+        if(isBlocked) {
+            viewHolder.lock.setVisibility(View.VISIBLE);
+            viewHolder.selector.setVisibility(View.GONE);
+        }else{
+            viewHolder.lock.setVisibility(View.GONE);
+            viewHolder.selector.setVisibility(View.VISIBLE);
+        }
+
+
         viewHolder.selector.setChecked(mCustomUsageStatsList.get(position).isChecked);
         viewHolder.selector.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCustomUsageStatsList.get(position).setChecked(isChecked);
+                if(isChecked)
+                    viewHolder.lock.setVisibility(View.VISIBLE);
+                else
+                    viewHolder.lock.setVisibility(View.GONE);
             }
         });
 
@@ -183,7 +206,16 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         return total;
     }
     public List<CustomUsageStats> getSelectedItems(){
+
         return mCustomUsageStatsList;
+    }
+    public void updateViews(){
+        for(CustomUsageStats s:mCustomUsageStatsList){
+            if(s.isChecked()){
+                s.setChecked(false);
+            }
+        }
+        notifyDataSetChanged();
     }
     private String calculateTime(long ms)
     { String total="";

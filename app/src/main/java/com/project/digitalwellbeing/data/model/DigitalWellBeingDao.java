@@ -29,24 +29,42 @@ public interface DigitalWellBeingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertSelectedAppps(BlockedApps blockedApps);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertLockUnlockData(LockUnlock lockUnlock);
 
-    @Query("SELECT * FROM UserInfo")
-    List<UserInfo> getUserInfo();
+
+    @Query("SELECT * FROM UserInfo where phoneNumber = :phNo AND password = :password")
+    UserInfo getUserData(String phNo,String password);
 
     @Query("SELECT * FROM UserDetails")
     List<UserDetails> getUserDetails();
 
-    @Query("SELECT * FROM LogDetails")
-    List<LogDetails> getLogDetails();
+    @Query("SELECT * FROM LogDetails where childId =:id")
+    List<LogDetails> getLogDetails(String id);
 
     @Query("SELECT * FROM CallDetails")
     List<CallDetails> getCallDetails();
 
-    @Query("SELECT * FROM CallDetails where callerLogId = :id")
-    List<CallDetails> getaCallDetails(int id);
+    @Query("SELECT * FROM LockUnlock where childId =:id")
+   LockUnlock getLockUnlockDetails(String id);
+
+    @Query("SELECT * FROM LockUnlock where childId =:id")
+   List<LockUnlock> getLockUnlockDetailsList(String id);
+
+    @Query("SELECT * FROM CallDetails where childId =:id")
+    List<CallDetails> getCallDetails2(String id);
+
+    @Query("SELECT * FROM CallDetails where callerLogId = :id and childId =:chId")
+    List<CallDetails> getaCallDetails(int id,String chId);
 
     @Query("SELECT * FROM TaskDetails ")
     List<TaskDetails> getaTaskDetails();
+
+    @Query("SELECT * FROM TaskDetails where childId =:id")
+    List<TaskDetails> getaTaskDetails2(String id);
+
+    @Query("SELECT * FROM UserInfo ")
+    List<UserInfo> getUserInfo();
 
     @Query("SELECT * FROM TaskDetails where date = :date")
     List<TaskDetails> getTasks(String date);
@@ -54,6 +72,32 @@ public interface DigitalWellBeingDao {
     @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name)")
    Boolean getBlockedAppDetails(String name);
 
+    @Query("SELECT EXISTS ( SELECT * FROM TaskDetails where logId = :id and childId =:cId)")
+    Boolean taskExists(int id,String cId);
+
+    @Query("SELECT EXISTS ( SELECT * FROM LockUnlock where childId = :id)")
+    Boolean LockUnLock(String id);
+
+    @Query("SELECT EXISTS ( SELECT * FROM logdetails where childId = :id and logId =:logid)")
+    Boolean checkLogExists(String id,int logid);
+
+    @Query("SELECT EXISTS ( SELECT * FROM UserInfo where phoneNumber = :phNo AND password = :password)")
+    Boolean checkLoginppDetails(String phNo,String password);
+
     @Query("SELECT * FROM BlockedApps ")
     List<BlockedApps> getBlockedApps();
+
+    @Query("DELETE FROM BlockedApps WHERE packagename = :packagename")
+    void deleteByPackagename(String packagename);
+
+    @Query("SELECT * FROM TaskDetails where date = :date AND status = :status")
+    List<TaskDetails> getCompletedTasks(String date,int status);
+
+
+
+    @Query("UPDATE TaskDetails SET status= :status WHERE logId = :logid")
+    public abstract int updateTaskdetails(int logid, int status);
+
+    @Query("UPDATE LockUnlock SET isLocked= :status AND password =:pass WHERE childId = :id")
+    public abstract int updateLockUnlock(String id, boolean status,String pass);
 }
