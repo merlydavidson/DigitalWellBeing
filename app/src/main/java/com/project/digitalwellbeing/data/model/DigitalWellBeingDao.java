@@ -53,4 +53,7 @@ public interface DigitalWellBeingDao {
 
     @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name)")
    Boolean getBlockedAppDetails(String name);
+
+    @Query("SELECT * FROM BlockedApps ")
+    List<BlockedApps> getBlockedApps();
 }
