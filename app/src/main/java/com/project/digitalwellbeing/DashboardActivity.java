@@ -93,7 +93,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
             CommonDataArea.CURRENTCHILDID = CommonFunctionArea.getDeviceUUID(this);
         }
         /****************************************************************************/
-requestPermission();
+            requestPermission();
         /****************************************************************************/
 
 
