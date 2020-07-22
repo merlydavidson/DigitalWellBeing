@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.project.digitalwellbeing.SignupActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
+import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.FCMMessage;
@@ -169,6 +170,28 @@ public class FCMMessages {
         fcmMessageNotification.setContent_available("yes");
         fcmMessageNotification.setPriority("yes");
         fcmMessageNotification.setTitle("7");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+    public static FCMMessage sendAppdata(List<BlockedApps> blockedApps, String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(blockedApps);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("8");
         fcmMessage.setFcmMessageData(fcmMessageData);
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
         return fcmMessage;

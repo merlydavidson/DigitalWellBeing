@@ -156,6 +156,7 @@ EditText dateFrom,dateTo;
         recyclerViewCall.setLayoutManager(layoutManager);
         mAdapter = new GenericAdapter(TaskActivity.this, 3,getTaskDetails() ,this);
         recyclerViewCall.setAdapter(mAdapter);
+        mAdapter.notifyItemChanged(0);
         mAdapter.notifyDataSetChanged();
 
     }

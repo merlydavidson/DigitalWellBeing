@@ -36,12 +36,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.BlockedAppsActivity;
+import com.project.digitalwellbeing.DashboardActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.adapter.UsageListAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.utils.CommonDataArea;
+import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.CustomUsageStats;
 
 import java.util.ArrayList;
@@ -51,9 +53,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import static com.project.digitalwellbeing.utils.CommonDataArea.context;
+import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
+
 
 public class AppUsageStatisticsFragment extends Fragment {
-
+    ProgressDialog progress;
     private static final String TAG = AppUsageStatisticsFragment.class.getSimpleName();
 
     //VisibleForTesting for variables below
@@ -66,8 +71,8 @@ public class AppUsageStatisticsFragment extends Fragment {
     private GridLayoutManager mGridLayoutManager;
     FloatingActionMenu materialDesignFAM;
     FloatingActionButton floatingActionButton;
-    List<UsageStats> usageStatsList;
-    List<CustomUsageStats> selectedItems;
+    List<BlockedApps> usageStatsList;
+    List<BlockedApps> selectedItems;
 
     /**
      * Use this factory method to create a new instance of
@@ -113,7 +118,9 @@ public class AppUsageStatisticsFragment extends Fragment {
         //mRecyclerView.scrollToPosition(0);
         mRecyclerView.setAdapter(mUsageListAdapter);
         mOpenUsageSettingButton = (Button) rootView.findViewById(R.id.button_open_usage_setting);
-
+        progress = ProgressDialog.show(getActivity(), "Loading..",
+                "Please wait...", true);
+        progress.show();
         mSpinnerTimeSpan = (Spinner) rootView.findViewById(R.id.spinner_time_span);
         if (CommonDataArea.ROLE == 1) //TODO:block.setVisibility(View.GONE);
             block.setOnClickListener(new View.OnClickListener() {
@@ -127,12 +134,17 @@ public class AppUsageStatisticsFragment extends Fragment {
                         AppDataBase appDataBase = AppDataBase.getInstance(getActivity());
                         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
 
-                        for (CustomUsageStats b : selectedItems) {
-                            CustomUsageStats states = b;
-                            if (b.isChecked) {
-                                if (!digitalWellBeingDao.getBlockedAppDetails(b.usageStats.getPackageName()))
-                                    digitalWellBeingDao.insertSelectedAppps(new BlockedApps(states.usageStats.getPackageName(), CommonDataArea.getDAte("dd/MM/yyyy"), CommonDataArea.FIREBASETOPIC));
-
+                        for (BlockedApps b : selectedItems) {
+                           // CustomUsageStats states = b;
+                            if (b.getChecked()) {
+                                digitalWellBeingDao.updateBlockStatus(true,b.getPackagename());
+                               /* if (!digitalWellBeingDao.getBlockedAppDetails(b.getPackagename())) {
+                                    BlockedApps blockedApps = new BlockedApps();
+                                    blockedApps.setPackagename(b.getPackagename());
+                                    blockedApps.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
+                                    blockedApps.setChildId( CommonDataArea.FIREBASETOPIC);
+                                    digitalWellBeingDao.insertSelectedAppps(blockedApps);
+                                }*/
                             }
                         }
                        // Toast.makeText(getActivity(), "Apps Blocked Successfully", Toast.LENGTH_SHORT).show();
@@ -175,6 +187,7 @@ public class AppUsageStatisticsFragment extends Fragment {
                     usageStatsList = getUsageStatistics(statsUsageInterval.mInterval);
                     Collections.sort(usageStatsList, new timeInForegroundComparator());
                     updateAppsList(usageStatsList);
+                    progress.dismiss();
                 }
             }
 
@@ -184,125 +197,92 @@ public class AppUsageStatisticsFragment extends Fragment {
         });
     }
 
-    class AsyncTaskRunner extends AsyncTask<String, String, String> {
 
-        private int position;
-        ProgressDialog progressDialog;
-
-        AsyncTaskRunner(int pos) {
-            this.position = pos;
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        @Override
-        protected String doInBackground(String... params) {
-
-            String[] strings = getResources().getStringArray(R.array.action_timespan);
-            StatsUsageInterval statsUsageInterval = StatsUsageInterval
-                    .getValue(strings[position]);
-            if (statsUsageInterval != null) {
-                List<UsageStats> usageStatsList =
-                        getUsageStatistics(statsUsageInterval.mInterval);
-                Collections.sort(usageStatsList, new timeInForegroundComparator());
-                updateAppsList(usageStatsList);
-            }
-            return position + "";
-        }
-
-
-        @Override
-        protected void onPostExecute(String result) {
-            // execution of result of Long time consuming operation
-            progressDialog.dismiss();
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressDialog = ProgressDialog.show(getActivity(),
-                    "Loading", null);
-        }
-
-
-        @Override
-        protected void onProgressUpdate(String... text) {
-
-        }
-
-    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public List<UsageStats> getUsageStatistics(int intervalType) {
+    public List<BlockedApps> getUsageStatistics(int intervalType) {
         // Get the app statistics since one year ago from the current time.
-        Calendar cal = Calendar.getInstance();
-        if (intervalType == UsageStatsManager.INTERVAL_DAILY) {
-            cal.add(Calendar.DATE, -1);
-            cal.set(Calendar.MILLISECOND, 0);
-            cal.set(Calendar.SECOND, 0);
-            cal.set(Calendar.MINUTE, 0);
-            cal.set(Calendar.HOUR_OF_DAY, 0);
-        } else if (intervalType == UsageStatsManager.INTERVAL_WEEKLY)
-            cal.add(Calendar.DATE, -7);
-        else if (intervalType == UsageStatsManager.INTERVAL_MONTHLY)
-            cal.add(Calendar.MONTH, -1);
-        else if (intervalType == UsageStatsManager.INTERVAL_YEARLY)
-            cal.add(Calendar.YEAR, -1);
-
-        Map<String, UsageStats> queryUsageStatsMap = mUsageStatsManager
-                .queryAndAggregateUsageStats(cal.getTimeInMillis(),
-                        System.currentTimeMillis());
         List<UsageStats> queryUsageStats = new ArrayList<UsageStats>();
-        for (Map.Entry<String, UsageStats> stat : queryUsageStatsMap.entrySet()) {
-            queryUsageStats.add(stat.getValue());
-        }
+        AppDataBase appDataBase = AppDataBase.getInstance(getActivity());
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        int role = CommonDataArea.ROLE;
+        if (role == 1) {
+            Calendar cal = Calendar.getInstance();
+            if (intervalType == UsageStatsManager.INTERVAL_DAILY) {
+                cal.add(Calendar.DATE, -1);
+                cal.set(Calendar.MILLISECOND, 0);
+                cal.set(Calendar.SECOND, 0);
+                cal.set(Calendar.MINUTE, 0);
+                cal.set(Calendar.HOUR_OF_DAY, 0);
+            } else if (intervalType == UsageStatsManager.INTERVAL_WEEKLY)
+                cal.add(Calendar.DATE, -7);
+            else if (intervalType == UsageStatsManager.INTERVAL_MONTHLY)
+                cal.add(Calendar.MONTH, -1);
+            else if (intervalType == UsageStatsManager.INTERVAL_YEARLY)
+                cal.add(Calendar.YEAR, -1);
 
-        if (queryUsageStats.size() == 0) {
-            Log.i(TAG, "The user may not allow the access to apps usage. ");
-            Toast.makeText(getActivity(),
-                    getString(R.string.explanation_access_to_appusage_is_not_enabled),
-                    Toast.LENGTH_LONG).show();
-            mOpenUsageSettingButton.setVisibility(View.VISIBLE);
-            mOpenUsageSettingButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+            Map<String, UsageStats> queryUsageStatsMap = mUsageStatsManager
+                    .queryAndAggregateUsageStats(cal.getTimeInMillis(),
+                            System.currentTimeMillis());
+
+            for (Map.Entry<String, UsageStats> stat : queryUsageStatsMap.entrySet()) {
+                queryUsageStats.add(stat.getValue());
+            }
+
+
+            if (queryUsageStats.isEmpty()) {
+                Log.i(TAG, "The user may not allow the access to apps usage. ");
+                Toast.makeText(getActivity(),
+                        getString(R.string.explanation_access_to_appusage_is_not_enabled),
+                        Toast.LENGTH_LONG).show();
+                mOpenUsageSettingButton.setVisibility(View.VISIBLE);
+                mOpenUsageSettingButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
+                    }
+                });
+            }else{
+
+                for (UsageStats u : queryUsageStats) {
+                    if(!digitalWellBeingDao.getBlockedAppDetails(u.getPackageName())) {
+                        BlockedApps blockedApps = new BlockedApps();
+                        blockedApps.setPackagename(u.getPackageName());
+                        blockedApps.setLastTimeUsed(u.getLastTimeUsed());
+                        blockedApps.setTotalTimeInForeground( u.getTotalTimeInForeground());
+                        blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
+                        blockedApps.setChecked(false);
+                        digitalWellBeingDao.insertAppDta(blockedApps);
+                    }else{
+                        long t=u.getTotalTimeVisible();
+                        long t1=u.getLastTimeForegroundServiceUsed();
+                        long t2=u.getTotalTimeInForeground();
+                       int istrue= digitalWellBeingDao.updateAppDetails(t2,
+                              u.getPackageName(),CommonFunctionArea.getDeviceUUID(getActivity()));
+
+                    }
                 }
-            });
+            }
         }
-        return queryUsageStats;
+        return digitalWellBeingDao.getAppData(CommonDataArea.CURRENTCHILDID);
     }
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    void updateAppsList(List<UsageStats> usageStatsList) {
-        List<CustomUsageStats> customUsageStatsList = new ArrayList<>();
-        for (int i = 0; i < usageStatsList.size(); i++) {
-            CustomUsageStats customUsageStats = new CustomUsageStats();
-            customUsageStats.usageStats = usageStatsList.get(i);
-            try {
-                Drawable appIcon = getActivity().getPackageManager()
-                        .getApplicationIcon(customUsageStats.usageStats.getPackageName());
-                customUsageStats.appIcon = appIcon;
-            } catch (PackageManager.NameNotFoundException e) {
-                Log.w(TAG, String.format("App Icon is not found for %s",
-                        customUsageStats.usageStats.getPackageName()));
-                customUsageStats.appIcon = getActivity()
-                        .getDrawable(R.drawable.ic_launcher_foreground);
-            }
-            customUsageStatsList.add(customUsageStats);
-        }
-        mUsageListAdapter.setCustomUsageStatsList(customUsageStatsList);
+    void updateAppsList(List<BlockedApps> usageStatsList) {
+
+        mUsageListAdapter.setCustomUsageStatsList(usageStatsList);
         mUsageListAdapter.notifyDataSetChanged();
         mRecyclerView.scrollToPosition(0);
     }
 
 
-    private class timeInForegroundComparator implements Comparator<UsageStats> {
+    private class timeInForegroundComparator implements Comparator<BlockedApps> {
 
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         @Override
-        public int compare(UsageStats left, UsageStats right) {
+        public int compare(BlockedApps left, BlockedApps right) {
             return Long.compare(right.getTotalTimeInForeground(), left.getTotalTimeInForeground());
         }
     }

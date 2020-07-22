@@ -38,6 +38,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.LockUnlock;
@@ -85,32 +92,130 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         if (role == 1) {
             CommonDataArea.CURRENTCHILDID = CommonFunctionArea.getDeviceUUID(this);
         }
-        if (checkPermission()) {
-            initViews();
-            getAllData();
+        /****************************************************************************/
+requestPermission();
+        /****************************************************************************/
 
-            new Handler().postDelayed(new Runnable() {
-                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-                @Override
-                public void run() {
-                    mDigitalWellBeingService = new DigitalWellBeingService();
-                    mServiceIntent = new Intent(DashboardActivity.this, mDigitalWellBeingService.getClass());
-                    if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
-                        startService(mServiceIntent);
+
+    }
+    private void requestPermission() {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.READ_CONTACTS,
+                        Manifest.permission.READ_CALL_LOG,
+                        Manifest.permission.ACTIVITY_RECOGNITION,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                           // Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+                        doTasks();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            showSettingsDialog();
+                        }
                     }
-                    Log.d("I'mahandler", "hIiii>>");
 
-                }
-            }, 2000);
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                }).
+                withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Toast.makeText(getApplicationContext(), "Error occurred! ", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+                openSettings();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivityForResult(intent, 101);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private boolean hasPermission() {
+        try {
+            PackageManager packageManager = getApplicationContext().getPackageManager();
+            ApplicationInfo applicationInfo = packageManager.getApplicationInfo(getApplicationContext().getPackageName(), 0);
+            AppOpsManager appOpsManager = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+                appOpsManager = (AppOpsManager) getApplicationContext().getSystemService(Context.APP_OPS_SERVICE);
+            }
+            int mode = appOpsManager.checkOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS, applicationInfo.uid, applicationInfo.packageName);
+            return (mode == AppOpsManager.MODE_ALLOWED);
 
-
-        } else {
-
-            Toast.makeText(this, "Allow all permissions", Toast.LENGTH_SHORT).show();
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
         }
+    }
+    public void usageAccessSettingsPage() {//permission for reading foreground task
+        try {
+            Intent intent = new Intent();
+            intent.setAction(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                intent.setData(uri);
+                this.startActivity(intent);
+            }
+
+
+        } catch (Exception e) {
+        }
+    }
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    private void doTasks() {
+        if (!hasPermission()) {
+            usageAccessSettingsPage();
+        }
+        initViews();
+        getAllData();
+
+        new Handler().postDelayed(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+            @Override
+            public void run() {
+                mDigitalWellBeingService = new DigitalWellBeingService();
+                mServiceIntent = new Intent(DashboardActivity.this, mDigitalWellBeingService.getClass());
+                if (!isMyServiceRunning(mDigitalWellBeingService.getClass())) {
+                    startService(mServiceIntent);
+                }
+                Log.d("I'mahandler", "hIiii>>");
+
+            }
+        }, 2000);
+
         showTaskCompletionDialog();
         pairKeytext.setText(CommonDataArea.CURRENTCHILDID);
-
     }
 
     private void showTaskCompletionDialog() {
@@ -294,21 +399,21 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                     if (dialogButton.getText().toString().equalsIgnoreCase("Block")) {
                         int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
                         if (role == 0) {
-                        if (text.getText().toString() != null && text.getText().toString().length() > 0) {
-                            if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
-                                digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, true, text.getText().toString());
-                                dialogButton.setText("Unblock");
-                                Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
-                            } else {
-                                digitalWellBeingDao.insertLockUnlockData(new LockUnlock(CommonDataArea.CURRENTCHILDID,
-                                        text.getText().toString(), true));
-                            }
+                            if (text.getText().toString() != null && text.getText().toString().length() > 0) {
+                                if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
+                                    digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, true, text.getText().toString());
+                                    dialogButton.setText("Unblock");
+                                    Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    digitalWellBeingDao.insertLockUnlockData(new LockUnlock(CommonDataArea.CURRENTCHILDID,
+                                            text.getText().toString(), true));
+                                }
                          /*  editor.putBoolean(BLOCKAPPS, true);
                             editor.putString(APP_BLOCK_PIN,text.getText().toString());
                            dialogButton.setText("Unblock");
                             Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
                            editor.commit();*/
-                        }
+                            }
                         }
                     } else if (dialogButton.getText().toString().equalsIgnoreCase("Unblock")) {
                         //editor.putBoolean(BLOCKAPPS, false);
@@ -317,7 +422,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                                     equalsIgnoreCase(text.getText().toString())) {
                                 digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, false, "");
                                 //dialogButton.setText("Block");
-                               // Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
                                 dialogButton.setText("Block");
                             }
                         }

@@ -1,5 +1,6 @@
 package com.project.digitalwellbeing.data;
 
+import android.app.usage.UsageStats;
 import android.content.Context;
 import android.os.Build;
 import android.widget.Toast;
@@ -11,6 +12,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.project.digitalwellbeing.DashboardActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
+import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.LockUnlock;
@@ -19,6 +21,7 @@ import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.data.model.UserDetails;
 import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.utils.CommonDataArea;
+import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.FCMMessages;
 
 import java.lang.reflect.Type;
@@ -50,9 +53,36 @@ public class FCMActions {
             lockUnlock(remoteMessage.getNotification().getBody());
         } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("6")) {//add call details to db
             insertCallDetails(remoteMessage.getNotification().getBody());
-        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("")) {//update task details to db
+        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("7")) {//update task details to db
             UpdateTaskDetails(remoteMessage.getNotification().getBody());
+        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("8")) {//update appusage details to db
+            UpdateApplicationUsage(remoteMessage.getNotification().getBody());
         }
+    }
+
+    private void UpdateApplicationUsage(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<BlockedApps>>() {
+        }.getType();
+        List<BlockedApps> list = gson.fromJson(body, listType);
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        for (BlockedApps u : list) {
+            if(!digitalWellBeingDao.ifAppDetailsExists(u.getPackagename(),CommonDataArea.CURRENTCHILDID)) {
+                BlockedApps blockedApps = new BlockedApps();
+                blockedApps.setPackagename(u.getPackagename());
+                blockedApps.setLastTimeUsed(u.getLastTimeUsed());
+                blockedApps.setTotalTimeInForeground( u.getTotalTimeInForeground());
+                blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
+                blockedApps.setChecked(false);
+                digitalWellBeingDao.insertAppDta(blockedApps);
+            }else{
+
+                long t2=u.getTotalTimeInForeground();
+                int istrue= digitalWellBeingDao.updateAppDetails(t2,
+                        u.getPackagename(), CommonDataArea.CURRENTCHILDID);
+
+            }}
     }
 
     private void UpdateTaskDetails(String body) {

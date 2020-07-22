@@ -39,6 +39,18 @@ public class CallDetails {
     @SerializedName("callTimeStamp")
     String callTimeStamp;
 
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    @ColumnInfo(name = "date")
+    @SerializedName("date")
+    String date;
+
     public String getChildId() {
         return childId;
     }
