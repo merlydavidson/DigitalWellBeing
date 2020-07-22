@@ -1,5 +1,9 @@
 package com.project.digitalwellbeing;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
@@ -8,13 +12,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import com.project.digitalwellbeing.adapter.GenericAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
-import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.utils.CommonDataArea;
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public class LocationActivity extends AppCompatActivity {
+public class RecentActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     private LinearLayoutManager layoutManager;
     private GenericAdapter mAdapter;
@@ -45,20 +44,19 @@ public class LocationActivity extends AppCompatActivity {
         recyclerViewCall.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerViewCall.setLayoutManager(layoutManager);
-        mAdapter = new GenericAdapter(LocationActivity.this, getcallDetails(), 2);
+        mAdapter = new GenericAdapter(RecentActivity.this, getcallDetails(), 4);
         recyclerViewCall.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
         sortbyDate();
     }
 
     public List<LogDetails> getcallDetails() {
-        AppDataBase appDataBase = AppDataBase.getInstance(LocationActivity.this);
+        AppDataBase appDataBase = AppDataBase.getInstance(RecentActivity.this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<LogDetails> logDetails = digitalWellBeingDao.getLogDetails(CommonDataArea.CURRENTCHILDID);
 
         return logDetails;
     }
-
     private void sortbyDate(){
         dateTo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +66,7 @@ public class LocationActivity extends AppCompatActivity {
                 int month = cldr.get(Calendar.MONTH);
                 int year = cldr.get(Calendar.YEAR);
                 // date picker dialog
-                picker = new DatePickerDialog(LocationActivity.this,
+                picker = new DatePickerDialog(RecentActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -93,7 +91,7 @@ public class LocationActivity extends AppCompatActivity {
                 int month = cldr.get(Calendar.MONTH);
                 int year = cldr.get(Calendar.YEAR);
                 // date picker dialog
-                picker = new DatePickerDialog(LocationActivity.this,
+                picker = new DatePickerDialog(RecentActivity.this,
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -119,16 +117,16 @@ public class LocationActivity extends AppCompatActivity {
                 if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy",datefrom,dateto)){
                     List<LogDetails> details=getcallDetails();
                     for(LogDetails d:details){
-                        if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",datefrom,d.getTimeStamp()) &&
-                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",d.getTimeStamp(),dateto)){
+                        if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",datefrom,d.getDate()) &&
+                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",d.getDate(),dateto)){
                             sortedList.add(d);
                         }
                     }
-                    mAdapter = new GenericAdapter(LocationActivity.this, sortedList, 2);
+                    mAdapter = new GenericAdapter(RecentActivity.this, sortedList, 2);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
                 }else{
-                    Toast.makeText(LocationActivity.this, "Date from must be less than date to..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RecentActivity.this, "Date from must be less than date to..", Toast.LENGTH_SHORT).show();
                 }
             }
         });

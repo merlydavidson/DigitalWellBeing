@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,6 +25,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.digitalwellbeing.BarChartView;
 import com.project.digitalwellbeing.R;
+import com.project.digitalwellbeing.data.model.AppDataBase;
+import com.project.digitalwellbeing.data.model.BlockedApps;
+import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CustomUsageStats;
 
@@ -37,14 +42,21 @@ import java.util.List;
 
 public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.ViewHolder> {
 
-    private List<CustomUsageStats> mCustomUsageStatsList = new ArrayList<>();
+    private List<BlockedApps> mCustomUsageStatsList = new ArrayList<>();
     int flag1=0;
     int flag2=0;
     private Context context;
     private long total;
+    ArrayList<Float> xdata;
+    ArrayList<String>ydata;
+    DigitalWellBeingDao digitalWellBeingDao;
     public UsageListAdapter(Context c)
     {
         context=c;
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        digitalWellBeingDao = appDataBase.userDetailsDao();
+       xdata=new ArrayList<>();
+       ydata=new ArrayList<>();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -55,7 +67,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         private final ProgressBar pb ;
         CheckBox selector;
         private Context mContext;
-
+        ImageView lock;
         public ViewHolder(View v) {
             super(v);
 
@@ -63,6 +75,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
             mLastTimeUsed = (TextView) v.findViewById(R.id.textview_total_time);
             mAppIcon = (ImageView) v.findViewById(R.id.app_icon);
             mPercentage=(TextView) v.findViewById(R.id.percentage);
+            lock=(ImageView) v.findViewById(R.id.lock);
             pb=(ProgressBar) v.findViewById(R.id.pb);
             selector=v.findViewById(R.id.selector);
         }
@@ -94,7 +107,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.usage_row, viewGroup, false);
+                .inflate(R.layout.appusage_list_item, viewGroup, false);
 
         return new ViewHolder(v);
     }
@@ -107,25 +120,34 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         final PackageManager pm= context.getPackageManager();
         ApplicationInfo ai=null;
         try {
-            ai=pm.getApplicationInfo(mCustomUsageStatsList.get(position).usageStats.getPackageName(), 0);
+            ai=pm.getApplicationInfo(mCustomUsageStatsList.get(position).getPackagename(), 0);
 
         }catch (final PackageManager.NameNotFoundException e) {
             ai = null;
         }
         final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
         viewHolder.getPackageName().setText(applicationName);
-        BarChartView.ydata.add(applicationName);
 
-        final long timeInForeground = mCustomUsageStatsList.get(position).usageStats.getTotalTimeInForeground();
+       ydata.add(applicationName);
+
+        final long timeInForeground = mCustomUsageStatsList.get(position).getTotalTimeInForeground();
           viewHolder.getLastTimeUsed().setText(calculateTime(timeInForeground));
         double percent=timeInForeground*100.0/(double)total;
         viewHolder.getPercentage().setText(calculatePercent(timeInForeground));
+       if(total!=0)
         j=(timeInForeground*100.0)/(double) total;
-
-        BarChartView.xdata.add((float) j);
-
-        BarChartView.addDataSet();
-        viewHolder.getAppIcon().setImageDrawable(mCustomUsageStatsList.get(position).appIcon);
+        else
+            j=0;
+        xdata.add((float) j);
+        BarChartView.addDataSet(xdata,ydata);
+        //BarChartView.addDataSet();
+        Drawable icon = null;
+        try {
+            icon = context.getPackageManager().getApplicationIcon(mCustomUsageStatsList.get(position).getPackagename());
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        viewHolder.getAppIcon().setImageDrawable(icon);
         if(percent>10)
         {
             viewHolder.getProgressBar().setProgressTintList(ColorStateList.valueOf(Color.RED));
@@ -134,14 +156,31 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         }
         if (CommonDataArea.ROLE == 1){
             //TODO:viewHolder.selector.setVisibility(View.GONE);
+          //  viewHolder.selector.setVisibility(View.GONE);
         }
+
         viewHolder.getProgressBar().setProgress((int)percent);
         viewHolder.selector.setOnCheckedChangeListener(null);
-        viewHolder.selector.setChecked(mCustomUsageStatsList.get(position).isChecked);
+
+        BlockedApps blockedApps = digitalWellBeingDao.getBlockedAppDetail(mCustomUsageStatsList.get(position).getPackagename());
+        if(blockedApps.getChecked()) {
+            viewHolder.lock.setVisibility(View.VISIBLE);
+            viewHolder.selector.setVisibility(View.GONE);
+        }else{
+            viewHolder.lock.setVisibility(View.GONE);
+            viewHolder.selector.setVisibility(View.VISIBLE);
+        }
+
+
+        viewHolder.selector.setChecked(mCustomUsageStatsList.get(position).getChecked());
         viewHolder.selector.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCustomUsageStatsList.get(position).setChecked(isChecked);
+                if(isChecked)
+                    viewHolder.lock.setVisibility(View.VISIBLE);
+                else
+                    viewHolder.lock.setVisibility(View.GONE);
             }
         });
 
@@ -155,11 +194,18 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
                 TextView text = (TextView) dialog.findViewById(R.id.appname);
                 text.setText(applicationName);
                 TextView lastused = (TextView) dialog.findViewById(R.id.last_used);
-                lastused.setText("Last Used : "+dateFormat.format(new Date(mCustomUsageStatsList.get(position).usageStats.getLastTimeUsed())));
+                lastused.setText("Last Used : "+dateFormat.format(new Date(mCustomUsageStatsList.get(position).getLastTimeUsed())));
                 TextView totalused = (TextView) dialog.findViewById(R.id.total_used);
                 totalused.setText("Total time used : "+timeInForeground/1000 +" sec");
                 ImageView image = (ImageView) dialog.findViewById(R.id.image_icon);
-                image.setImageDrawable(mCustomUsageStatsList.get(position).appIcon);
+                Drawable icon = null;
+                try {
+                    icon = context.getPackageManager().getApplicationIcon(mCustomUsageStatsList.get(position).getPackagename());
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+
+                image.setImageDrawable(icon);
 
                 Button dialogButton = (Button) dialog.findViewById(R.id.dialogButtonOK);
                 // if button is clicked, close the custom dialog
@@ -175,15 +221,24 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         });
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    private long totalTime(List<CustomUsageStats> list){
+    private long totalTime(List<BlockedApps> list){
         long total=0;
-        for(CustomUsageStats app:list){
-            total+=app.usageStats.getTotalTimeInForeground();
+        for(BlockedApps app:list){
+            total+=app.getTotalTimeInForeground();
         }
         return total;
     }
-    public List<CustomUsageStats> getSelectedItems(){
+    public List<BlockedApps> getSelectedItems(){
+
         return mCustomUsageStatsList;
+    }
+    public void updateViews(){
+        for(BlockedApps s:mCustomUsageStatsList){
+            if(s.getChecked()){
+                s.setChecked(false);
+            }
+        }
+        notifyDataSetChanged();
     }
     private String calculateTime(long ms)
     { String total="";
@@ -223,9 +278,15 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void setCustomUsageStatsList(List<CustomUsageStats> customUsageStats) {
+    public void setCustomUsageStatsList(List<BlockedApps> customUsageStats) {
         mCustomUsageStatsList = customUsageStats;
         total=totalTime(mCustomUsageStatsList);
         System.out.println("total time :"+total);
+    }
+    public ArrayList<String> getYdata(){
+        return ydata;
+    }
+    public ArrayList<Float> getXdata(){
+        return xdata;
     }
 }

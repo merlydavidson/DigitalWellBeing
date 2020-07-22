@@ -12,10 +12,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.project.digitalwellbeing.DashboardActivity;
 import com.project.digitalwellbeing.TaskActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.UserDetails;
+import com.project.digitalwellbeing.utils.CommonDataArea;
 
 import java.util.List;
 
@@ -55,7 +57,9 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
             holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(context, TaskActivity.class);
+                    Intent intent = new Intent(context, DashboardActivity.class);
+                    CommonDataArea.FIREBASETOPIC = "/topics/" + userDetails.get(position).getChildDeviceUUID();
+                    CommonDataArea.CURRENTCHILDID=userDetails.get(position).getChildDeviceUUID();
                     context.startActivity(intent);
                 }
             });

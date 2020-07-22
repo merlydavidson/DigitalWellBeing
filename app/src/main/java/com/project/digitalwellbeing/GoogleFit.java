@@ -1,12 +1,16 @@
 package com.project.digitalwellbeing;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -40,6 +44,12 @@ public class GoogleFit extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_fit);
+        if (ContextCompat.checkSelfPermission(GoogleFit.this, Manifest.permission.ACTIVITY_RECOGNITION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(GoogleFit.this,
+                    new String[]{Manifest.permission.ACTIVITY_RECOGNITION},
+                    3);
+        }
         try {
             getGoogleFitDetails();
         } catch (ExecutionException e) {

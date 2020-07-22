@@ -18,22 +18,46 @@ public class BlockedApps {
     @SerializedName("date")
     String date;
 
+    @ColumnInfo(name = "lastTimeUsed")
+    @SerializedName("lastTimeUsed")
+    long lastTimeUsed;
 
-    Boolean isChecked;
+    @ColumnInfo(name = "totalTimeInForeground")
+    @SerializedName("totalTimeInForeground")
+    long totalTimeInForeground;
 
-    public Boolean getChecked() {
+
+
+    boolean isChecked;
+
+    public BlockedApps() {
+    }
+
+    public boolean getChecked() {
         return isChecked;
     }
 
-    public void setChecked(Boolean checked) {
+    public long getLastTimeUsed() {
+        return lastTimeUsed;
+    }
+
+    public void setLastTimeUsed(long lastTimeUsed) {
+        this.lastTimeUsed = lastTimeUsed;
+    }
+
+    public long getTotalTimeInForeground() {
+        return totalTimeInForeground;
+    }
+
+    public void setTotalTimeInForeground(long totalTimeInForeground) {
+        this.totalTimeInForeground = totalTimeInForeground;
+    }
+
+    public void setChecked(boolean checked) {
         isChecked = checked;
     }
 
-    public BlockedApps(String packagename, String date, int childId) {
-        this.packagename = packagename;
-        this.date = date;
-        this.childId = childId;
-    }
+
 
     public int getId() {
         return id;
@@ -59,15 +83,15 @@ public class BlockedApps {
         this.date = date;
     }
 
-    public int getChildId() {
+    public String getChildId() {
         return childId;
     }
 
-    public void setChildId(int childId) {
+    public void setChildId(String childId) {
         this.childId = childId;
     }
 
     @ColumnInfo(name = "childId")
     @SerializedName("childId")
-    int childId;
+    String childId;
 }

@@ -22,23 +22,27 @@ import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.utils.CustomUsageStats;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class BlockedAppsAdapter extends RecyclerView.Adapter<BlockedAppsAdapter.ViewHolder> {
     List<BlockedApps> blockedAppDeails;
+    List<BlockedApps> deletedApps;
     Context mContext;
 
     // RecyclerView recyclerView;
     public BlockedAppsAdapter(List<BlockedApps> blockedAppDeails, Context mContext) {
         this.blockedAppDeails = blockedAppDeails;
+        //deletedApps=blockedAppDeails;
         this.mContext = mContext;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View listItem = layoutInflater.inflate(R.layout.usage_row, parent, false);
+        View listItem = layoutInflater.inflate(R.layout.appusage_list_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(listItem);
         return viewHolder;
     }
@@ -59,7 +63,10 @@ public class BlockedAppsAdapter extends RecyclerView.Adapter<BlockedAppsAdapter.
             }
 
         }
+
         holder.selector.setOnCheckedChangeListener(null);
+
+
         holder.selector.setChecked(blockedAppDeails.get(position).getChecked());
         holder.selector.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -70,13 +77,24 @@ public class BlockedAppsAdapter extends RecyclerView.Adapter<BlockedAppsAdapter.
     }
 
     public List<BlockedApps> getUnblocklist(){
+
         return blockedAppDeails;
     }
-    public void deleteFromList(){
-        for(BlockedApps b:blockedAppDeails){
-
+public void updatelist(){
+       //deletedApps=blockedAppDeails;
+    deletedApps=new ArrayList<>();
+    for(BlockedApps b:blockedAppDeails){
+        deletedApps.add(b);
+    }
+    for(int i=0;i<blockedAppDeails.size();i++){
+        BlockedApps b=blockedAppDeails.get(i);
+        if(b.getChecked()){
+            deletedApps.remove(b);
         }
     }
+    blockedAppDeails=deletedApps;
+    notifyDataSetChanged();
+}
     @Override
     public int getItemCount() {
         return blockedAppDeails.size();
