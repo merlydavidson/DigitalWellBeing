@@ -36,6 +36,7 @@ import static java.text.DateFormat.getTimeInstance;
 
 public class GoogleFit extends AppCompatActivity {
 
+    private static int totalCount=0;
     private int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
     private FitnessOptions fitnessOptions;
     private static String TAG = "DigitalWellBeingTag";
@@ -181,7 +182,11 @@ public class GoogleFit extends AppCompatActivity {
             Log.i(TAG, "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
             for (Field field : dp.getDataType().getFields()) {
                 Log.i(TAG, "\tField: " + field.getName() + " Value: " + dp.getValue(field));
+                totalCount+=dp.getValue(field).asInt();
+
+
             }
+            Log.d("totalCount","totalCount  "+totalCount);
         }
     }
 
