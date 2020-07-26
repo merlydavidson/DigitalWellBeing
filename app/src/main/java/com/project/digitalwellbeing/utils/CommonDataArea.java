@@ -3,8 +3,6 @@ package com.project.digitalwellbeing.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import androidx.appcompat.widget.Toolbar;
-
 import com.google.firebase.messaging.RemoteMessage;
 
 import java.text.DateFormat;
@@ -14,6 +12,7 @@ import java.util.Date;
 public class CommonDataArea {
     public static final String PHONENUMBER = "";
     public static final String DB_NAME = "DigitalWellBeing";
+    public static final String ISGOOGLESUCCESS = "googleFitSignIn";
     public static String FIREBASETOPIC="";
     public static String CURRENTCHILDID="";
     public static RemoteMessage remoteMessage=null;

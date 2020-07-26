@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_weight="0.2"
-            android:background="@drawable/shape_round"
+            android:background="@drawable/btn_round"
             android:text="Go"
             android:textColor="@color/white" />
     </LinearLayout>

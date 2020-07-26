@@ -60,6 +60,7 @@ BarChartView extends Fragment implements Replication.ChangeListener {
         pieChart.setTransparentCircleAlpha(0);
         pieChart.setCenterText("APP USAGE");
         pieChart.setCenterTextSize(20);
+        pieChart.setUsePercentValues(true);
     }
     public static void addDataSet() {
         float others = 0; int flag2=0;

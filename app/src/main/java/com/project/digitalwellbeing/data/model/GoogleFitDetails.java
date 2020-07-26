@@ -1,0 +1,96 @@
+package com.project.digitalwellbeing.data.model;
+
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import com.google.gson.annotations.SerializedName;
+
+@Entity
+public class GoogleFitDetails {
+
+    @ColumnInfo(name = "walking")
+    @SerializedName("walking")
+    public float walking;
+
+    @ColumnInfo(name = "running")
+    @SerializedName("running")
+    public float running;
+
+    @ColumnInfo(name = "still")
+    @SerializedName("still")
+    public float still;
+
+
+    @ColumnInfo(name = "totalCalorie")
+    @SerializedName("totalCalorie")
+    public float totalCalorie;
+
+    @ColumnInfo(name = "totalSteps")
+    @SerializedName("totalSteps")
+    public int totalSteps;
+
+    @ColumnInfo(name = "date")
+    @SerializedName("date")
+    public String date;
+
+
+    @PrimaryKey(autoGenerate = true)
+    int googleFitID;
+
+    public float getWalking() {
+        return walking;
+    }
+
+    public void setWalking(float walking) {
+        this.walking = walking;
+    }
+
+    public float getRunning() {
+        return running;
+    }
+
+    public void setRunning(float running) {
+        this.running = running;
+    }
+
+    public float getStill() {
+        return still;
+    }
+
+    public void setStill(float still) {
+        this.still = still;
+    }
+
+    public float getTotalCalorie() {
+        return totalCalorie;
+    }
+
+    public void setTotalCalorie(float totalCalorie) {
+        this.totalCalorie = totalCalorie;
+    }
+
+    public int getTotalSteps() {
+        return totalSteps;
+    }
+
+    public void setTotalSteps(int totalSteps) {
+        this.totalSteps = totalSteps;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getGoogleFitID() {
+        return googleFitID;
+    }
+
+    public void setGoogleFitID(int googleFitID) {
+        this.googleFitID = googleFitID;
+    }
+}
