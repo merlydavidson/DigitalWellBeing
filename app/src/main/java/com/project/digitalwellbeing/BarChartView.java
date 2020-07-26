@@ -17,6 +17,7 @@ import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.project.digitalwellbeing.adapter.UsageListAdapter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,107 +61,114 @@ BarChartView extends Fragment implements Replication.ChangeListener {
         pieChart.setTransparentCircleAlpha(0);
         pieChart.setCenterText("APP USAGE");
         pieChart.setCenterTextSize(20);
+<<<<<<< HEAD
         pieChart.setUsePercentValues(true);
+=======
+
+>>>>>>> 1951b3902702c4387dd01eecf8bb88ac49a2a067
     }
-    public static void addDataSet() {
+    public static void addDataSet(ArrayList<Float> xdata1,ArrayList<String>ydata1) {
+        xdata=new ArrayList<>();
+        ydata=new ArrayList<>();
+
+        xdata=xdata1;
+        ydata=ydata1;
         float others = 0; int flag2=0;
         ArrayList<PieEntry> xEntrys = new ArrayList<>();
         ArrayList<String> yEntrys = new ArrayList<>();
-        for (int i = 0; i < xdata.size(); i++) {
-            if (xdata.get(i) < 5.0) {
-                others += xdata.get(i);
-                xdata.remove(i);
-                ydata.remove(i);
-            }
-        }
-        Log.e("test", "size" + xdata.size());
-        for (int i = 0; i < ydata.size(); i++) {
-            String value;
-            value = ydata.get(i);
-            for (int j = i + 1; j < ydata.size(); j++) {
-                if (value.equals(ydata.get(j))) {
-                    ydata.remove(j);
-                    xdata.remove(j);
+        if(!xdata.isEmpty() && !ydata.isEmpty()) {
+            for (int i = 0; i < xdata.size(); i++) {
+                if (xdata.get(i) < 5.0) {
+                    others += xdata.get(i);
+                    xdata.remove(i);
+                    ydata.remove(i);
                 }
             }
-        }
-        for (int i = 0; i < xdata.size(); i++) {
-            Log.e("test", "percentage" + xdata.get(i));
-            Log.e("test", "application name" + ydata.get(i));
-            String str = ydata.get(i);
-            float x = xdata.get(i);
-            if(flag==0) {
-                myDocId.add(createDocument(xdata.get(i), ydata.get(i)));
-                flag++;
-            }
-            else
-            {
-                Log.e("updation","updation");
-                for(int j=0;j<myDocId.size();j++) {
-                    Document doc = AppusageActivity.database.getDocument(myDocId.get(j));
-                    // We can directly access properties from the document object:
-                    String percent=(String)doc.getProperty("percent");
-                    String owner = (String) doc.getProperty("Applicationn name");
-                    Log.e("String","String obtained"+owner);
-                    if(owner.equals(ydata.get(i))){
-                        flag2=1;
-                        x=x+100;
-                        String xs=x+"%";
-                        Log.e("for checking percent 1"+xs,"percent 2"+percent);
-                        if(!(percent.equals(x+"%")))
-                        {
-                        Document doc1 = AppusageActivity.database.getDocument(myDocId.get(j));
-                        Map<String, Object> properties1 = new HashMap<String, Object>();
-                        properties1.putAll(doc1.getProperties());
-                        properties1.put("percent", x + "%");
-                        properties1.put("Applicationn name", str);
-                        try {
-                            doc.putProperties(properties1);
-                        } catch (CouchbaseLiteException e) {
-                            e.printStackTrace();
-                        }
-                     }
-                     else{
-                            continue;
-                        }
+            Log.e("test", "size" + xdata.size());
+            for (int i = 0; i < ydata.size(); i++) {
+                String value;
+                value = ydata.get(i);
+                for (int j = i + 1; j < ydata.size(); j++) {
+                    if (value.equals(ydata.get(j))) {
+                        ydata.remove(j);
+                        xdata.remove(j);
                     }
                 }
-                if(flag2==0){
-                    Log.e("not matching excitsing","adding"+ydata.get(i));
+            }
+            for (int i = 0; i < xdata.size(); i++) {
+                Log.e("test", "percentage" + xdata.get(i));
+                Log.e("test", "application name" + ydata.get(i));
+                String str = ydata.get(i);
+                float x = xdata.get(i);
+                if (flag == 0) {
                     myDocId.add(createDocument(xdata.get(i), ydata.get(i)));
+                    flag++;
+                } else {
+                    Log.e("updation", "updation");
+                    for (int j = 0; j < myDocId.size(); j++) {
+                        Document doc = AppusageActivity.database.getDocument(myDocId.get(j));
+                        // We can directly access properties from the document object:
+                        String percent = (String) doc.getProperty("percent");
+                        String owner = (String) doc.getProperty("Applicationn name");
+                        Log.e("String", "String obtained" + owner);
+                        if (owner.equals(ydata.get(i))) {
+                            flag2 = 1;
+                            x = x + 100;
+                            String xs = x + "%";
+                            Log.e("for checking percent 1" + xs, "percent 2" + percent);
+                            if (!(percent.equals(x + "%"))) {
+                                Document doc1 = AppusageActivity.database.getDocument(myDocId.get(j));
+                                Map<String, Object> properties1 = new HashMap<String, Object>();
+                                properties1.putAll(doc1.getProperties());
+                                properties1.put("percent", x + "%");
+                                properties1.put("Applicationn name", str);
+                                try {
+                                    doc.putProperties(properties1);
+                                } catch (CouchbaseLiteException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                continue;
+                            }
+                        }
+                    }
+                    if (flag2 == 0) {
+                        Log.e("not matching excitsing", "adding" + ydata.get(i));
+                        myDocId.add(createDocument(xdata.get(i), ydata.get(i)));
+
+                    }
+                    flag2 = 0;
 
                 }
-                flag2=0;
+                Log.e("test", "index" + i);
+                xEntrys.add(new PieEntry(xdata.get(i), ydata.get(i)));
+
 
             }
-            Log.e("test", "index" + i);
-            xEntrys.add(new PieEntry(xdata.get(i), ydata.get(i)));
+
+            for (int i = 0; i < ydata.size(); i++) {
+                yEntrys.add(ydata.get(i));
+
+            }
+
+            PieDataSet pieDataSet = new PieDataSet(xEntrys, " ");
+            pieDataSet.setSliceSpace(4);
+            pieDataSet.setValueTextSize(10);
+
+            ArrayList<Integer> colors = new ArrayList<>();
+            colors.add(Color.parseColor("#8966f6"));
+            colors.add(Color.parseColor("#bf69e3"));
+            colors.add(Color.parseColor("#43d7ee"));
+            colors.add(Color.parseColor("#a2a2cb"));
+            colors.add(Color.parseColor("#6e6b99"));
+            colors.add(Color.parseColor("#63a6ff"));
 
 
+            pieDataSet.setColors(colors);
+            PieData pieData = new PieData(pieDataSet);
+            pieChart.setData(pieData);
+            pieChart.invalidate();
         }
-
-        for (int i = 0; i < ydata.size(); i++) {
-            yEntrys.add(ydata.get(i));
-
-        }
-
-        PieDataSet pieDataSet = new PieDataSet(xEntrys, " ");
-        pieDataSet.setSliceSpace(4);
-        pieDataSet.setValueTextSize(10);
-
-        ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(Color.parseColor("#8966f6"));
-        colors.add(Color.parseColor("#bf69e3"));
-        colors.add(Color.parseColor("#43d7ee"));
-        colors.add(Color.parseColor("#a2a2cb"));
-        colors.add(Color.parseColor("#6e6b99"));
-        colors.add(Color.parseColor("#63a6ff"));
-
-
-        pieDataSet.setColors(colors);
-        PieData pieData = new PieData(pieDataSet);
-        pieChart.setData(pieData);
-        pieChart.invalidate();
     }
 
 

@@ -31,7 +31,7 @@ public class BlockedAppsActivity extends AppCompatActivity {
         unblock=findViewById(R.id.unblock);
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        blockedAppsList=digitalWellBeingDao.getBlockedApps();
+        blockedAppsList=digitalWellBeingDao.getBlockedApps(true);
 
         blockedRecycler.setHasFixedSize(true);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -47,7 +47,7 @@ public class BlockedAppsActivity extends AppCompatActivity {
                 if (unblockList != null){
                     for (int i=0; i<unblockList.size(); i++){
                         if (unblockList.get(i).getChecked()){
-                           digitalWellBeingDao.deleteByPackagename(unblockList.get(i).getPackagename());
+                           digitalWellBeingDao.updateBlockStatus(false,unblockList.get(i).getPackagename());
 
                         }
                     }

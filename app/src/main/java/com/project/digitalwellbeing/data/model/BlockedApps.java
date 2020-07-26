@@ -18,22 +18,46 @@ public class BlockedApps {
     @SerializedName("date")
     String date;
 
+    @ColumnInfo(name = "lastTimeUsed")
+    @SerializedName("lastTimeUsed")
+    long lastTimeUsed;
+
+    @ColumnInfo(name = "totalTimeInForeground")
+    @SerializedName("totalTimeInForeground")
+    long totalTimeInForeground;
+
+
 
     boolean isChecked;
 
+    public BlockedApps() {
+    }
+
     public boolean getChecked() {
         return isChecked;
+    }
+
+    public long getLastTimeUsed() {
+        return lastTimeUsed;
+    }
+
+    public void setLastTimeUsed(long lastTimeUsed) {
+        this.lastTimeUsed = lastTimeUsed;
+    }
+
+    public long getTotalTimeInForeground() {
+        return totalTimeInForeground;
+    }
+
+    public void setTotalTimeInForeground(long totalTimeInForeground) {
+        this.totalTimeInForeground = totalTimeInForeground;
     }
 
     public void setChecked(boolean checked) {
         isChecked = checked;
     }
 
-    public BlockedApps(String packagename, String date, String childId) {
-        this.packagename = packagename;
-        this.date = date;
-        this.childId = childId;
-    }
+
 
     public int getId() {
         return id;

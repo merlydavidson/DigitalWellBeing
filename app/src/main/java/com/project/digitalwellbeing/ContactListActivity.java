@@ -1,6 +1,7 @@
 package com.project.digitalwellbeing;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -37,6 +38,7 @@ import java.util.List;
 
 public class ContactListActivity extends AppCompatActivity {
     static ProgressBar progressBar;
+    ProgressDialog progress;
     RecyclerView callLogRecycler;
     private LinearLayoutManager layoutManager;
     private GenericAdapter mAdapter;
@@ -95,7 +97,9 @@ public class ContactListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.generic_layout);
-
+        progress = ProgressDialog.show(this, "Loading..",
+                "Please wait...", true);
+        progress.show();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -116,6 +120,7 @@ public class ContactListActivity extends AppCompatActivity {
         recyclerViewCall.setLayoutManager(layoutManager);
         mAdapter = new GenericAdapter(getcallDetails(), ContactListActivity.this, 1);
         recyclerViewCall.setAdapter(mAdapter);
+
         mAdapter.notifyDataSetChanged();
         dateTo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,6 +196,15 @@ public class ContactListActivity extends AppCompatActivity {
         });
 
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdapter = new GenericAdapter(getcallDetails(), ContactListActivity.this, 1);
+        recyclerViewCall.setAdapter(mAdapter);
+        progress.dismiss();
+    }
+
     private void getCallDetails() {
         try {
             CallDetails callDetails = new CallDetails();
@@ -236,6 +250,7 @@ public class ContactListActivity extends AppCompatActivity {
                 String formateDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(callDayTime);
                 callDetails.setCallTimeStamp(formateDate);
                 callDetails.setCallerLogId(idNumber);
+                callDetails.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
                 callDetails.setChildId(CommonFunctionArea.getDeviceUUID(this));
                 if (!getCallEntry(idNumber)) {
                     insertCallDetails(callDetails);

@@ -46,13 +46,8 @@ import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.FCMMessages;
-import com.project.digitalwellbeing.utils.GoogleFitData;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Timer;
@@ -71,7 +66,6 @@ public class DigitalWellBeingService extends Service {
     public Location previousBestLocation = null;
     boolean blockApps = false;
     Intent intent;
-    boolean isBlocked = false;
     private String cityName = "";
     private Timer timer;
     private TimerTask timerTask;
@@ -99,8 +93,8 @@ public class DigitalWellBeingService extends Service {
         int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
         if (role == 1)
             checkTaskActivity();
-        if (role == 0)
-            sendDatatoChild();
+         if (role == 0)
+        sendDatatoChild();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         listener = new DWBLocationListener();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -123,7 +117,6 @@ public class DigitalWellBeingService extends Service {
                                       sendLocationDetails();
                                       sendCallDetailsToParent();
                                       lookForTasks();//High priority
-                                      collectGoogleFitData();
                                       if (!blockApps) {
                                           lookForscreenLock();  //medium priority
                                           if (!isBlocked)
@@ -133,22 +126,6 @@ public class DigitalWellBeingService extends Service {
                               },
                 0,
                 5000);
-    }
-
-    public void collectGoogleFitData() {
-        if (sharedPreferences.getBoolean(CommonDataArea.ISGOOGLESUCCESS, false)) {
-            String stringDate = CommonDataArea.getDAte("dd-MM-yyyy");
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            Date date = null;
-            try {
-                date = formatter.parse(stringDate);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            Calendar calender = Calendar.getInstance();
-            calender.setTime(date);
-            new GoogleFitData().connectGoogle(getApplicationContext(), date);
-        }
     }
 
     private void sendDatatoChild() {
@@ -164,47 +141,43 @@ public class DigitalWellBeingService extends Service {
                 0,
                 5000);
     }
+private void sendUpdatedTaskDetails(){
+    AppDataBase appDataBase = AppDataBase.getInstance(this);
+    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+    List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails2(CommonDataArea.CURRENTCHILDID);
+    new Communicator(this).sendMessage(FCMMessages.updateTaskDetails(taskDetails, CommonDataArea.FIREBASETOPIC));
 
-    private void sendUpdatedTaskDetails() {
-        AppDataBase appDataBase = AppDataBase.getInstance(this);
-        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails2(CommonDataArea.CURRENTCHILDID);
-        new Communicator(this).sendMessage(FCMMessages.updateTaskDetails(taskDetails, CommonDataArea.FIREBASETOPIC));
-
-    }
-
+}
     private void blockAllApps() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<LockUnlock> taskDetails = digitalWellBeingDao.getLockUnlockDetailsList(CommonDataArea.CURRENTCHILDID);
-        List<UserDetails> userDetails = digitalWellBeingDao.getUserDetails();
-        for (UserDetails user : userDetails) {
-            if (userDetails != null && taskDetails != null) {
+        List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
+        for(UserDetails user: userDetails) {
+            if (userDetails!=null && taskDetails != null) {
 
                 new Communicator(this).sendMessage(FCMMessages.LockUnlock(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
             }
         }
-    }
-
-    private void sendLocationDetails() {
+   }
+    private void sendLocationDetails(){
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<LogDetails> logDetails = digitalWellBeingDao.getLogDetails(CommonDataArea.CURRENTCHILDID);
-        if (!CommonDataArea.FIREBASETOPIC.equals("/topics/"))
-            new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(logDetails, CommonDataArea.FIREBASETOPIC));
+        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/"))
+         new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(logDetails,CommonDataArea.FIREBASETOPIC));
 
     }
-
     private void sendTasks() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails();
-        List<UserDetails> userDetails = digitalWellBeingDao.getUserDetails();
-        for (UserDetails user : userDetails) {
-            if (userDetails != null && taskDetails != null) {
+        List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
+        for(UserDetails user: userDetails) {
+            if (userDetails!=null && taskDetails != null) {
 
-                new Communicator(this).sendMessage(FCMMessages.sendTasks(taskDetails, "/topics/" + user.getChildDeviceUUID()));
+                    new Communicator(this).sendMessage(FCMMessages.sendTasks(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
             }
         }
@@ -213,9 +186,9 @@ public class DigitalWellBeingService extends Service {
     private void sendCallDetailsToParent() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails();
-        if (!CommonDataArea.FIREBASETOPIC.equals("/topics/"))
-            new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.FIREBASETOPIC));
+        List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails(CommonDataArea.getDAte("dd/MM/yyyy"));
+        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/"))
+                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.FIREBASETOPIC));
     }
 
     protected boolean isBetterLocation(Location location, Location currentBestLocation) {
@@ -334,14 +307,14 @@ public class DigitalWellBeingService extends Service {
                     String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
                     AppDataBase appDataBase = AppDataBase.getInstance(context);
                     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-                    LogDetails logDetails = new LogDetails();
+                    LogDetails logDetails=new LogDetails();
                     logDetails.setLocation(cityName);
                     logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
                     logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
                     logDetails.setApp_details(currentForegrounApp);
                     logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
                     digitalWellBeingDao.insertLogDetails(logDetails);
-                    //  new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, CommonDataArea.getDAte("dd/MM/yyyy HH:mm"), new CommonFunctionArea().getDeviceLocked(getApplicationContext()), currentForegrounApp));
+                  //  new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, CommonDataArea.getDAte("dd/MM/yyyy HH:mm"), new CommonFunctionArea().getDeviceLocked(getApplicationContext()), currentForegrounApp));
 
                 }
                 //                Log.i("Count", "=========  "+ (counter++));
@@ -361,6 +334,66 @@ public class DigitalWellBeingService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public class DWBLocationListener implements LocationListener {
+
+        public void onLocationChanged(final Location loc) {
+            Log.i("*****", "Location changed");
+            if (isBetterLocation(loc, previousBestLocation)) {
+                loc.getLatitude();
+                loc.getLongitude();
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                List<Address> addresses = null;
+                try {
+                    addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (addresses != null && addresses.size() > 0) {
+                    cityName = addresses.get(0).getAddressLine(0);
+                    if (CommonFunctionArea.getRole(getApplicationContext()) == 1) {
+                        CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getparentId(getApplicationContext());
+                        Log.d("Merly", "from service 194");
+                        Log.d("Merly", "city name " + cityName);
+                        Log.d("Merly", "time stamp " + new CommonFunctionArea().getTimeStamp());
+                        Log.d("Merly", "uuid " + CommonFunctionArea.getDeviceUUID(getApplicationContext()));
+                        Log.d("Merly", "online " + new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
+                        String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
+                        LogDetails logDetails=new LogDetails();
+                        AppDataBase appDataBase = AppDataBase.getInstance(context);
+                        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+                        logDetails.setLocation(cityName);
+                        logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
+                        logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
+                        logDetails.setApp_details(currentForegrounApp);
+                        logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
+                        digitalWellBeingDao.insertLogDetails(logDetails);
+                     //   new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, new CommonFunctionArea().getTimeStamp(), new CommonFunctionArea().getDeviceLocked(getApplicationContext()), currentForegrounApp));
+                    }
+                }
+//                intent.putExtra("Latitude", ""+loc.getLatitude());
+//                intent.putExtra("Longitude", ""+loc.getLongitude());
+//                intent.putExtra("Provider", loc.getProvider());
+//                sendBroadcast(intent);
+
+
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        public void onProviderDisabled(String provider) {
+            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
+        }
+
+
+        public void onProviderEnabled(String provider) {
+            Toast.makeText(getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -479,6 +512,8 @@ public class DigitalWellBeingService extends Service {
         }
     }
 
+    boolean isBlocked = false;
+
     private void lookForBlockedApps() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
@@ -519,7 +554,7 @@ public class DigitalWellBeingService extends Service {
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
             LockUnlock lockUnlock = digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID);
-            if (lockUnlock != null && lockUnlock.isLocked()) {
+            if (lockUnlock!=null && lockUnlock.isLocked()) {
                 String package_name = CommonFunctionArea.foregroundApplication(this);
                 if (!package_name.equalsIgnoreCase(CommonDataArea.APP_PACKAGE_NAME) &&
                         !package_name.equalsIgnoreCase(CommonDataArea.LAUNCHER_PACKAGE_NAME)) {
@@ -533,66 +568,6 @@ public class DigitalWellBeingService extends Service {
 
                 }
             }
-        }
-    }
-
-    public class DWBLocationListener implements LocationListener {
-
-        public void onLocationChanged(final Location loc) {
-            Log.i("*****", "Location changed");
-            if (isBetterLocation(loc, previousBestLocation)) {
-                loc.getLatitude();
-                loc.getLongitude();
-                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-                List<Address> addresses = null;
-                try {
-                    addresses = geocoder.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                if (addresses != null && addresses.size() > 0) {
-                    cityName = addresses.get(0).getAddressLine(0);
-                    if (CommonFunctionArea.getRole(getApplicationContext()) == 1) {
-                        CommonDataArea.FIREBASETOPIC = "/topics/" + CommonFunctionArea.getparentId(getApplicationContext());
-                        Log.d("Merly", "from service 194");
-                        Log.d("Merly", "city name " + cityName);
-                        Log.d("Merly", "time stamp " + new CommonFunctionArea().getTimeStamp());
-                        Log.d("Merly", "uuid " + CommonFunctionArea.getDeviceUUID(getApplicationContext()));
-                        Log.d("Merly", "online " + new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
-                        String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
-                        LogDetails logDetails = new LogDetails();
-                        AppDataBase appDataBase = AppDataBase.getInstance(context);
-                        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-                        logDetails.setLocation(cityName);
-                        logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
-                        logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
-                        logDetails.setApp_details(currentForegrounApp);
-                        logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
-                        digitalWellBeingDao.insertLogDetails(logDetails);
-                        //   new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(cityName, new CommonFunctionArea().getTimeStamp(), new CommonFunctionArea().getDeviceLocked(getApplicationContext()), currentForegrounApp));
-                    }
-                }
-//                intent.putExtra("Latitude", ""+loc.getLatitude());
-//                intent.putExtra("Longitude", ""+loc.getLongitude());
-//                intent.putExtra("Provider", loc.getProvider());
-//                sendBroadcast(intent);
-
-
-            }
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        public void onProviderDisabled(String provider) {
-            Toast.makeText(getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT).show();
-        }
-
-
-        public void onProviderEnabled(String provider) {
-            Toast.makeText(getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
     }
 }

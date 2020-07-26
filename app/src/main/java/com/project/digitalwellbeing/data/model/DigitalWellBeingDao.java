@@ -35,6 +35,8 @@ public interface DigitalWellBeingDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertLockUnlockData(LockUnlock lockUnlock);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAppDta(BlockedApps blockedApps);
 
     @Query("SELECT * FROM UserInfo where phoneNumber = :phNo AND password = :password")
     UserInfo getUserData(String phNo,String password);
@@ -45,11 +47,14 @@ public interface DigitalWellBeingDao {
     @Query("SELECT * FROM UserDetails")
     List<UserDetails> getUserDetails();
 
+    @Query("SELECT * FROM BlockedApps where childId =:uuid")
+    List<BlockedApps> getAppData(String uuid);
+
     @Query("SELECT * FROM LogDetails where childId =:id")
     List<LogDetails> getLogDetails(String id);
 
-    @Query("SELECT * FROM CallDetails")
-    List<CallDetails> getCallDetails();
+    @Query("SELECT * FROM CallDetails where date =:date")
+    List<CallDetails> getCallDetails(String date);
 
     @Query("SELECT * FROM LockUnlock where childId =:id")
    LockUnlock getLockUnlockDetails(String id);
@@ -78,6 +83,12 @@ public interface DigitalWellBeingDao {
     @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name)")
    Boolean getBlockedAppDetails(String name);
 
+    @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name and childId =:chid)")
+    Boolean ifAppDetailsExists(String name,String chid);
+
+    @Query("SELECT * FROM BlockedApps where packagename = :pName ")
+    BlockedApps getBlockedAppDetail(String pName);
+
     @Query("SELECT EXISTS ( SELECT * FROM TaskDetails where logId = :id and childId =:cId)")
     Boolean taskExists(int id,String cId);
 
@@ -90,8 +101,8 @@ public interface DigitalWellBeingDao {
     @Query("SELECT EXISTS ( SELECT * FROM UserInfo where phoneNumber = :phNo AND password = :password)")
     Boolean checkLoginppDetails(String phNo,String password);
 
-    @Query("SELECT * FROM BlockedApps ")
-    List<BlockedApps> getBlockedApps();
+    @Query("SELECT * FROM BlockedApps where isChecked = :checked")
+    List<BlockedApps> getBlockedApps(boolean checked);
 
     @Query("DELETE FROM BlockedApps WHERE packagename = :packagename")
     void deleteByPackagename(String packagename);
@@ -109,4 +120,10 @@ public interface DigitalWellBeingDao {
 
     @Query("UPDATE LockUnlock SET isLocked= :status AND password =:pass WHERE childId = :id")
     public abstract int updateLockUnlock(String id, boolean status,String pass);
+
+    @Query("UPDATE BlockedApps SET totalTimeInForeground =:forTime  WHERE packagename = :name AND childId =:chid")
+    public abstract int updateAppDetails(long forTime,String name,String chid);
+
+    @Query("UPDATE BlockedApps SET isChecked =:checked WHERE packagename = :name")
+    public abstract int updateBlockStatus(boolean checked, String name);
 }

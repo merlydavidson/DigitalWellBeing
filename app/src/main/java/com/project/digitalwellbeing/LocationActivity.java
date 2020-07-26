@@ -119,8 +119,8 @@ public class LocationActivity extends AppCompatActivity {
                 if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy",datefrom,dateto)){
                     List<LogDetails> details=getcallDetails();
                     for(LogDetails d:details){
-                        if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",datefrom,d.getDate()) &&
-                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",d.getDate(),dateto)){
+                        if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",datefrom,d.getTimeStamp()) &&
+                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",d.getTimeStamp(),dateto)){
                             sortedList.add(d);
                         }
                     }
