@@ -25,6 +25,7 @@ import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.FCMMessages;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.project.digitalwellbeing.utils.CommonDataArea.APP_BLOCK_PIN;
@@ -53,39 +54,110 @@ public class FCMActions {
             lockUnlock(remoteMessage.getNotification().getBody());
         } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("6")) {//add call details to db
             insertCallDetails(remoteMessage.getNotification().getBody());
-        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("7")) {//update task details to db
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("7")) {//update task details to db
             UpdateTaskDetails(remoteMessage.getNotification().getBody());
-        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("8")) {//update appusage details to db
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("8")) {//update appusage details to db
             UpdateApplicationUsage(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("8_A")) {//update appusage details to db
+            UpdateApplicationUsageStatus(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("7_A")) {//update task details to db
+            UpdateTaskDetailsStatus(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("3_A")) {
+            insertLogDetailsStatus(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("4_A")) { //add task details to db ack
+            insertTaskDetailsAck(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("6_A")) {//add call details to db ack
+            insertCallDetailsAck(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("5_A")) {//lock unlock ack
+            lockUnlockAck(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("9")) {//block apps
+            UpdateBlockeAppStatus(remoteMessage.getNotification().getBody());
+        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("9_A")) {//block apps ack
+            UpdateBlockeAppStatusAck(remoteMessage.getNotification().getBody());
         }
     }
 
-    private void UpdateApplicationUsage(String body) {
+    private void UpdateBlockeAppStatusAck(String body) {
         Gson gson = new Gson();
         Type listType = new TypeToken<List<BlockedApps>>() {
         }.getType();
         List<BlockedApps> list = gson.fromJson(body, listType);
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        for (BlockedApps u : list) {
-            if(!digitalWellBeingDao.ifAppDetailsExists(u.getPackagename(),CommonDataArea.CURRENTCHILDID)) {
-                BlockedApps blockedApps = new BlockedApps();
-                blockedApps.setPackagename(u.getPackagename());
-                blockedApps.setLastTimeUsed(u.getLastTimeUsed());
-                blockedApps.setTotalTimeInForeground( u.getTotalTimeInForeground());
-                blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
-                blockedApps.setChecked(false);
-                digitalWellBeingDao.insertAppDta(blockedApps);
-            }else{
-
-                long t2=u.getTotalTimeInForeground();
-                int istrue= digitalWellBeingDao.updateAppDetails(t2,
-                        u.getPackagename(), CommonDataArea.CURRENTCHILDID);
-
-            }}
+        for(BlockedApps b:list) {
+            if (digitalWellBeingDao.ifAppDetailsExists(b.getPackagename(), b.getChildId())) {
+                digitalWellBeingDao.updateBlockStatus2(b.getChecked(), b.getPackagename(), "1", b.getChildId());
+            }
+        }
     }
 
-    private void UpdateTaskDetails(String body) {
+    private void lockUnlockAck(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<LockUnlock>>() {
+        }.getType();
+        List<LockUnlock> list = gson.fromJson(body, listType);
+
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        for (LockUnlock l : list) {
+            if (digitalWellBeingDao.LockUnLock1(l.getId(), l.getChildId()))
+                digitalWellBeingDao.updateLockUnlockAck(l.getId(), "1");
+        }
+    }
+
+    private void insertCallDetailsAck(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<CallDetails>>() {
+        }.getType();
+        List<CallDetails> list = gson.fromJson(body, listType);
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        String child_id = "";
+        for (CallDetails t : list) {
+            child_id = t.getChildId();
+            if (getCallEntry(t.getCallerLogId(), t.getChildId())) {
+                digitalWellBeingDao.updateCallDetailStatus(t.getCallerId(), "1", t.getChildId());
+            }
+        }
+        new Communicator(context).sendMessage(FCMMessages.sendCallDetailsAck(list, child_id));
+    }
+
+    private void insertTaskDetailsAck(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<TaskDetails>>() {
+        }.getType();
+        List<TaskDetails> list = gson.fromJson(body, listType);
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        for (TaskDetails taskDetails : list) {
+            if (digitalWellBeingDao.taskExists(taskDetails.getLogId(), taskDetails.getChildId())) {
+                digitalWellBeingDao.updateTaskdetailsStatus(taskDetails.getLogId(), "1", taskDetails.getChildId());
+            }
+        }
+    }
+
+    private void insertLogDetailsStatus(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<LogDetails>>() {
+        }.getType();
+        List<LogDetails> list = gson.fromJson(body, listType);
+       /* if (response.isOnline()) {
+            response.setOnline(false);
+        } else
+            response.setOnline(true);*/
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        String child_id = "";
+        for (LogDetails l : list) {
+            if (digitalWellBeingDao.checkLogdetails(l.getChildId(), l.getLogId()))
+                digitalWellBeingDao.updateLogdetailsAck(l.logId, "1", l.getChildId());
+        }
+
+
+    }
+
+    private void UpdateTaskDetailsStatus(String body) {
         Gson gson = new Gson();
         Type listType = new TypeToken<List<TaskDetails>>() {
         }.getType();
@@ -94,43 +166,126 @@ public class FCMActions {
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         for (TaskDetails taskDetails : list) {
-            if(digitalWellBeingDao.taskExists(taskDetails.getLogId(),taskDetails.getChildId())){
-                digitalWellBeingDao.updateTaskdetails(taskDetails.getLogId(),taskDetails.getStatus());
+            if (digitalWellBeingDao.taskExists(taskDetails.getLogId(), taskDetails.getChildId())) {
+                digitalWellBeingDao.updateTaskdetails(taskDetails.getLogId(), "1", taskDetails.getStatus());
             }
-           }
+        }
+    }
+
+    private void UpdateApplicationUsage(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<BlockedApps>>() {
+        }.getType();
+        String child_id = "";
+        List<BlockedApps> list = gson.fromJson(body, listType);
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        for (BlockedApps u : list) {
+            if (!digitalWellBeingDao.ifAppDetailsExists(u.getPackagename(), u.getChildId())) {
+                BlockedApps blockedApps = new BlockedApps();
+                blockedApps.setPackagename(u.getPackagename());
+                blockedApps.setLastTimeUsed(u.getLastTimeUsed());
+                blockedApps.setTotalTimeInForeground(u.getTotalTimeInForeground());
+                blockedApps.setChildId(u.getChildId());
+                blockedApps.setChecked(false);
+                blockedApps.setAcknowlwdgement("1");
+                child_id = u.getChildId();
+                digitalWellBeingDao.insertAppDta(blockedApps);
+            } else {
+
+                long t2 = u.getTotalTimeInForeground();
+                int istrue = digitalWellBeingDao.updateAppDetails(t2,
+                        u.getPackagename(), "1", u.getChildId());
+
+            }
+            if (!child_id.equals(""))
+                new Communicator(context).sendMessage(FCMMessages.sendAppdataAck(list, child_id));
+
+        }
+    }
+
+    private void UpdateBlockeAppStatus(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<BlockedApps>>() {
+        }.getType();
+        String child_id = "";
+        List<BlockedApps> list = gson.fromJson(body, listType);
+        List<BlockedApps> list2 = new ArrayList<>();
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        for (BlockedApps u : list) {
+            if (u.getChildId().equals(CommonFunctionArea.getDeviceUUID(context))) {
+                list2.add(u);
+                if (digitalWellBeingDao.ifAppDetailsExists(u.getPackagename(), u.getChildId())) {
+                    digitalWellBeingDao.updateBlockStatus3(u.getChecked(), u.getPackagename(), u.getChildId());
+                }
+            }
+
+        }
+        if (!CommonDataArea.FIREBASETOPIC.contains(CommonFunctionArea.getDeviceUUID(context))
+                && !CommonDataArea.FIREBASETOPIC.equals("/topics/"))
+            new Communicator(context).sendMessage(FCMMessages.BlockAppsAck(list2, CommonDataArea.FIREBASETOPIC));
+    }
+
+    private void UpdateApplicationUsageStatus(String body) {//updating acknowledge status in child
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<BlockedApps>>() {
+        }.getType();
+        String child_id = "";
+        List<BlockedApps> list = gson.fromJson(body, listType);
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        for (BlockedApps u : list) {
+
+
+            long t2 = u.getTotalTimeInForeground();
+            int istrue = digitalWellBeingDao.updateAppDetails(t2,
+                    u.getPackagename(), "1", u.getChildId());
+
+
+        }
+    }
+
+    private void UpdateTaskDetails(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<TaskDetails>>() {
+        }.getType();
+        List<TaskDetails> list = gson.fromJson(body, listType);
+        String child_id = "";
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        for (TaskDetails taskDetails : list) {
+            if (digitalWellBeingDao.taskExists(taskDetails.getLogId(), taskDetails.getChildId())) {
+                child_id = taskDetails.getChildId();
+                digitalWellBeingDao.updateTaskdetails2(taskDetails.getChildId(), "1", taskDetails.getStatus(), taskDetails.getLogId());
+            }
+        }
+        new Communicator(context).sendMessage(FCMMessages.updateTaskDetailsStatus(list, child_id));
+
     }
 
     private void lockUnlock(String body) {
-        /*sharedPreferences =context.getSharedPreferences(
-                CommonDataArea.prefName, Context.MODE_PRIVATE);
-        CommonDataArea.editor = sharedPreferences.edit();
-        if(!body.equals("")){
-            String[] result=body.split("_");
-            if(result[0].equals("lock")){
-                editor.putBoolean(BLOCKAPPS, true);
-                editor.putString(APP_BLOCK_PIN,result[1]);
-                editor.commit();
-            }else{
-                editor.putBoolean(BLOCKAPPS, true);
-                editor.putString(APP_BLOCK_PIN,"");
-                editor.commit();
-            }
-        }*/
+
         Gson gson = new Gson();
         Type listType = new TypeToken<List<LockUnlock>>() {
         }.getType();
         List<LockUnlock> list = gson.fromJson(body, listType);
+        List<LockUnlock> list2 = new ArrayList<>();
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         for (LockUnlock l : list) {
             if (l.getChildId().equals(CommonDataArea.CURRENTCHILDID)) {
+                list2.add(l);
                 if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
-                    digitalWellBeingDao.updateLockUnlock(l.getChildId(), l.isLocked(), l.getPassword());
+                    digitalWellBeingDao.updateLockUnlock(l.getChildId(), l.isLocked(), l.getPassword(), "1");
                 } else if (!digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
                     digitalWellBeingDao.insertLockUnlockData(l);
                 }
             }
         }
+        if (!CommonDataArea.FIREBASETOPIC.contains(CommonFunctionArea.getDeviceUUID(context)) && !list2.isEmpty())
+            new Communicator(context).sendMessage(FCMMessages.LockUnlockAck(list2, CommonDataArea.FIREBASETOPIC));
+
         /* */
     }
 
@@ -139,41 +294,53 @@ public class FCMActions {
         Type listType = new TypeToken<List<TaskDetails>>() {
         }.getType();
         List<TaskDetails> list = gson.fromJson(body, listType);
-
+        List<TaskDetails> list2 = new ArrayList<>();
+        String child_id = "";
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         for (TaskDetails taskDetails : list) {
-            if (taskDetails.getChildId().equals(CommonDataArea.CURRENTCHILDID)) {
-            if (!digitalWellBeingDao.taskExists(taskDetails.getLogId(), CommonDataArea.CURRENTCHILDID)) {
-                digitalWellBeingDao.insertTaskDetails(taskDetails);
 
-            }/*else if(digitalWellBeingDao.taskExists(taskDetails.getLogId(),CommonDataArea.CURRENTCHILDID)){
-                digitalWellBeingDao.updateTaskdetails(taskDetails.getLogId(),taskDetails.getStatus());
-            }*/
-        }}
-        // digitalWellBeingDao.insertTaskDetails(response);
+            if (taskDetails.getChildId().equals(CommonDataArea.CURRENTCHILDID)) {
+                list2.add(taskDetails);
+                child_id = taskDetails.getChildId();
+                if (!digitalWellBeingDao.taskExists(taskDetails.getLogId(), CommonDataArea.CURRENTCHILDID)) {
+                    digitalWellBeingDao.insertTaskDetails(taskDetails);
+
+                }
+            }
+        }
+        if (!CommonDataArea.FIREBASETOPIC.contains(CommonFunctionArea.getDeviceUUID(context)) && !list2.isEmpty())
+            new Communicator(context).sendMessage(FCMMessages.sendTasksAck(list2, CommonDataArea.FIREBASETOPIC));
+        list2.clear();
+
+
     }
 
     private void insertCallDetails(String body) {
         Gson gson = new Gson();
-        Type listType = new TypeToken<List<CallDetails>>() {}.getType();
+        Type listType = new TypeToken<List<CallDetails>>() {
+        }.getType();
         List<CallDetails> list = gson.fromJson(body, listType);
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        for(CallDetails t:list) {
-            if (!getCallEntry(t.getCallerLogId(),t.getChildId())) {
+        String child_id = "";
+        for (CallDetails t : list) {
+            child_id = t.getChildId();
+            if (!getCallEntry(t.getCallerLogId(), t.getChildId())) {
                 digitalWellBeingDao.insertCallDetails(t);
             }
         }
+        new Communicator(context).sendMessage(FCMMessages.sendCallDetailsAck(list, child_id));
+
         // digitalWellBeingDao.insertTaskDetails(response);
     }
 
-    public boolean getCallEntry(int callId,String chId) {
+    public boolean getCallEntry(int callId, String chId) {
         boolean isExist = false;
 
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<CallDetails> callDetails = digitalWellBeingDao.getaCallDetails(callId,chId);
+        List<CallDetails> callDetails = digitalWellBeingDao.getaCallDetails(callId, chId);
         if (callDetails.size() > 0)
             isExist = true;
         return isExist;
@@ -182,7 +349,8 @@ public class FCMActions {
 
     private void insertLogDetails(String body) {
         Gson gson = new Gson();
-        Type listType = new TypeToken<List<LogDetails>>() {}.getType();
+        Type listType = new TypeToken<List<LogDetails>>() {
+        }.getType();
         List<LogDetails> list = gson.fromJson(body, listType);
        /* if (response.isOnline()) {
             response.setOnline(false);
@@ -190,11 +358,16 @@ public class FCMActions {
             response.setOnline(true);*/
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        for(LogDetails l:list){
-            if(!digitalWellBeingDao.checkLogExists(l.getChildId(),l.logId)){
+        String child_id = "";
+        for (LogDetails l : list) {
+            if (!digitalWellBeingDao.checkLogExists(l.getChildId(), l.logId)) {
                 digitalWellBeingDao.insertLogDetails(l);
+                child_id = l.getChildId();
             }
         }
+        if (!child_id.equals(""))
+            new Communicator(context).sendMessage(FCMMessages.sendLogsAck(list, child_id));
+
     }
 
     private void inserChildDetails(String body) {
@@ -213,7 +386,7 @@ public class FCMActions {
                     CommonDataArea.prefName, Context.MODE_PRIVATE);
             CommonDataArea.editor = sharedPreferences.edit();
             editor.putBoolean(isRegisterd, true);
-            String body=remoteMessage.getNotification().getBody();
+            String body = remoteMessage.getNotification().getBody();
             editor.putString(PARENT, body);
             editor.apply();
 //            Toast.makeText(context, "Paired with "+remoteMessage.getNotification().getBody(), Toast.LENGTH_SHORT).show();
