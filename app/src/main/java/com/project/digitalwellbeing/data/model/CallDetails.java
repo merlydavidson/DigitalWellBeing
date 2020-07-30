@@ -39,6 +39,18 @@ public class CallDetails {
     @SerializedName("callTimeStamp")
     String callTimeStamp;
 
+    @ColumnInfo(defaultValue = "0",name ="acknowlwdgement")
+    @SerializedName("acknowlwdgement")
+    public String acknowlwdgement;
+
+    public String getAcknowlwdgement() {
+        return acknowlwdgement;
+    }
+
+    public void setAcknowlwdgement(String acknowlwdgement) {
+        this.acknowlwdgement = acknowlwdgement;
+    }
+
     public String getDate() {
         return date;
     }

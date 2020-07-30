@@ -67,11 +67,11 @@ Context mContext;
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                  if(checkedId == R.id.completed) {
                     holder.status.setText("Completed");
-                    digitalWellBeingDao.updateTaskdetails(logDetails.get(position).getLogId(),1);
+                    digitalWellBeingDao.updateTaskdetails(logDetails.get(position).getLogId(),"0",1);
 
                 } else if(checkedId == R.id.incomplete){
                     holder.status.setText("Incomplete");
-                    digitalWellBeingDao.updateTaskdetails(logDetails.get(position).getLogId(),2);
+                    digitalWellBeingDao.updateTaskdetails(logDetails.get(position).getLogId(),"0",2);
                 }
             }
         });

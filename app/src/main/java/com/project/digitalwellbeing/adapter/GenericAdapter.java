@@ -60,7 +60,10 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         this.activity=activity;
         notifyDataSetChanged();
     }
-
+public void updateList(TaskDetails c){
+        taskDetails.add(0,c);
+        notifyItemChanged(0);
+}
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -112,7 +115,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
                 final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
 
-                holder.timeText.setText(applicationName);
+                holder.app_text.setText(applicationName);
                 Drawable icon = context.getPackageManager().getApplicationIcon(logDetails.get(position).getApp_details());
                 holder.icon.setImageDrawable(icon);
             } catch (Exception e) {
@@ -159,18 +162,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         if (logDetails.size() > 0) {
             holder.locationText.setText(logDetails.get(position).getLocation());
             holder.timeText.setText(logDetails.get(position).getTimeStamp());
-           /* final PackageManager pm = context.getPackageManager();
-            ApplicationInfo ai;
-            try {
-                ai = pm.getApplicationInfo(logDetails.get(position).getApp_details(), 0);
 
-                final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-
-                holder.timeText.setText(applicationName);
-                Drawable icon = context.getPackageManager().getApplicationIcon(logDetails.get(position).getApp_details());
-                holder.icon.setImageDrawable(icon);
-            } catch (Exception e) {
-            }*/
         }
     }
 

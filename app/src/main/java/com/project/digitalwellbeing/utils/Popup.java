@@ -30,6 +30,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.project.digitalwellbeing.R;
+import com.project.digitalwellbeing.TaskActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.TaskDetails;
@@ -173,7 +174,7 @@ public class Popup extends Activity {
        // alertDialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);//new line added for max width
         alertDialog.show();
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-
+        calenderEdt.setText(CommonDataArea.getDAte("dd/MM/yyyy"));
         lp.copyFrom(alertDialog.getWindow().getAttributes());
         lp.width = 900;
         lp.height = 1200;
@@ -315,13 +316,18 @@ public class Popup extends Activity {
                     taskDetails.setEndtime(endClockEdt.getText().toString());
                     taskDetails.setUpload(0);
                     taskDetails.setStatus(0);
+                    taskDetails.setAcknowlwdgement("0");
                     taskDetails.setEnableApps(appdisabled);
                     taskDetails.setChildId(CommonDataArea.CURRENTCHILDID);
 
                     AppDataBase appDataBase = AppDataBase.getInstance(context);
                     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
                     digitalWellBeingDao.insertTaskDetails(taskDetails);
+                    TaskActivity t=new TaskActivity();
+                    //t.addtaskToListView(taskDetails);
                     alertDialog.dismiss();
+                   
+
                    // Toast.makeText(getApplicationContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
                 }
             }
