@@ -10,10 +10,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Browser;
+import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -46,20 +49,25 @@ import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.LockUnlock;
 import com.project.digitalwellbeing.data.model.TaskDetails;
+import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.service.DigitalWellBeingService;
 import com.project.digitalwellbeing.utils.BrowserObserver;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
+import com.project.digitalwellbeing.utils.FCMMessages;
 import com.project.digitalwellbeing.utils.Popup;
 import com.project.digitalwellbeing.utils.TaskCompletedDialog;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import me.everything.providers.android.browser.BrowserProvider;
 import me.everything.providers.android.browser.Search;
 import me.everything.providers.core.Data;
 
+import static com.project.digitalwellbeing.utils.CommonDataArea.APP_BLOCK_PIN;
+import static com.project.digitalwellbeing.utils.CommonDataArea.BLOCKAPPS;
 import static com.project.digitalwellbeing.utils.CommonDataArea.editor;
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
@@ -207,12 +215,8 @@ requestPermission();
         }, 2000);
 
         showTaskCompletionDialog();
-<<<<<<< HEAD
-       // pairKeytext.setText(CommonDataArea.CURRENTCHILDID);
-
-=======
         pairKeytext.setText(CommonDataArea.CURRENTCHILDID);
->>>>>>> 1951b3902702c4387dd01eecf8bb88ac49a2a067
+
     }
 
     private void showTaskCompletionDialog() {
