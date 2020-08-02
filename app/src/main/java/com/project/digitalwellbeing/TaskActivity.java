@@ -19,9 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.adapter.GenericAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
@@ -37,43 +37,46 @@ import java.util.List;
 
 public class TaskActivity extends AppCompatActivity {
     ProgressDialog progress;
-    List<TaskDetails> task=new ArrayList<>();
+    List<TaskDetails> task = new ArrayList<>();
     FloatingActionButton floatingActionButtonAddtask;
+    Button go;
+    EditText dateFrom, dateTo;
+    RecyclerView recyclerViewCall;
     private Toolbar toolbar;
     private LinearLayout linearLayoutDashBoard;
     private int count = 0;
     private long startMillis = 0;
     private PieChart pieChart;
-
     private RecyclerView callLogRecycler;
     private DatePickerDialog picker;
     private LinearLayoutManager layoutManager;
     private GenericAdapter mAdapter;
-    Button go;
-EditText dateFrom,dateTo;
+    private SwipeRefreshLayout pullToRefresh;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
-        dateFrom=findViewById(R.id.date_from);
-        dateTo=findViewById(R.id.date_to);
-        go=findViewById(R.id.result);
-        task=getTaskDetails();
-        recyclerViewCall = (RecyclerView) findViewById(R.id.task_recyclerview);
+        dateFrom = findViewById(R.id.date_from);
+        dateTo = findViewById(R.id.date_to);
+        go = findViewById(R.id.result);
+        task = getTaskDetails();
+        recyclerViewCall = findViewById(R.id.task_recyclerview);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         dateFrom.setText(CommonDataArea.getDAte("dd/MM/yyyy"));
         dateTo.setText(CommonDataArea.getDAte("dd/MM/yyyy"));
         //drawPieChart();
-        floatingActionButtonAddtask = (FloatingActionButton) findViewById(R.id.floatingActionButton_task);
+        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.pullToRefresh);
+        floatingActionButtonAddtask = findViewById(R.id.floatingActionButton_task);
         if (CommonDataArea.ROLE == 1)
             //TODO://disable floatin button for child
-           // floatingActionButtonAddtask.setVisibility(View.GONE);
-        floatingActionButtonAddtask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Popup(TaskActivity.this).taskPopup("Add task", TaskActivity.this);
-            }
-        });
+             floatingActionButtonAddtask.setVisibility(View.GONE);
+            floatingActionButtonAddtask.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new Popup(TaskActivity.this).taskPopup("Add task", TaskActivity.this);
+                }
+            });
         dateFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,12 +89,12 @@ EditText dateFrom,dateTo;
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                if(monthOfYear<10 && dayOfMonth<10)
-                                    dateFrom.setText("0"+dayOfMonth + "/" +"0"+(monthOfYear + 1) + "/" + year);
-                                else if(dayOfMonth<10)
-                                    dateFrom.setText("0"+dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                                else if(monthOfYear<10)
-                                    dateFrom.setText(dayOfMonth + "/" +"0"+ (monthOfYear + 1) + "/" + year);
+                                if (monthOfYear < 10 && dayOfMonth < 10)
+                                    dateFrom.setText("0" + dayOfMonth + "/" + "0" + (monthOfYear + 1) + "/" + year);
+                                else if (dayOfMonth < 10)
+                                    dateFrom.setText("0" + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                else if (monthOfYear < 10)
+                                    dateFrom.setText(dayOfMonth + "/" + "0" + (monthOfYear + 1) + "/" + year);
                                 else
                                     dateFrom.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                             }
@@ -112,12 +115,12 @@ EditText dateFrom,dateTo;
                         new DatePickerDialog.OnDateSetListener() {
                             @Override
                             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                                if(monthOfYear<10 && dayOfMonth<10)
-                                    dateTo.setText("0"+dayOfMonth + "/" +"0"+(monthOfYear + 1) + "/" + year);
-                                else if(dayOfMonth<10)
-                                    dateTo.setText("0"+dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                                else if(monthOfYear<10)
-                                    dateTo.setText(dayOfMonth + "/" +"0"+ (monthOfYear + 1) + "/" + year);
+                                if (monthOfYear < 10 && dayOfMonth < 10)
+                                    dateTo.setText("0" + dayOfMonth + "/" + "0" + (monthOfYear + 1) + "/" + year);
+                                else if (dayOfMonth < 10)
+                                    dateTo.setText("0" + dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                                else if (monthOfYear < 10)
+                                    dateTo.setText(dayOfMonth + "/" + "0" + (monthOfYear + 1) + "/" + year);
                                 else
                                     dateTo.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
                             }
@@ -132,46 +135,66 @@ EditText dateFrom,dateTo;
                 progress = ProgressDialog.show(TaskActivity.this, "Loading..",
                         "Please wait...", true);
                 progress.show();
-                List<TaskDetails> sortedList=new ArrayList<>();
-                String datefrom=dateFrom.getText().toString();
-                String dateto=dateTo.getText().toString();
-                if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy",datefrom,dateto)){
-                    List<TaskDetails> details=getTaskDetails();
-                    for(TaskDetails d:details){
-                        if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy",datefrom,d.getDate()) &&
-                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy",d.getDate(),dateto)){
+                List<TaskDetails> sortedList = new ArrayList<>();
+                String datefrom = dateFrom.getText().toString();
+                String dateto = dateTo.getText().toString();
+                if (CommonFunctionArea.compareDateTimes("dd/MM/yyyy", datefrom, dateto)) {
+                    List<TaskDetails> details = getTaskDetails();
+                    for (TaskDetails d : details) {
+                        if (CommonFunctionArea.compareDateTimes("dd/MM/yyyy", datefrom, d.getDate()) &&
+                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy", d.getDate(), dateto)) {
                             sortedList.add(d);
                         }
                     }
-                    mAdapter = new GenericAdapter(TaskActivity.this, 3,sortedList ,TaskActivity.this);
+                    mAdapter = new GenericAdapter(TaskActivity.this, 3, sortedList, TaskActivity.this);
                     recyclerViewCall.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
 
-                }else{
+                } else {
                     Toast.makeText(TaskActivity.this, "Date from must be less than date to..", Toast.LENGTH_SHORT).show();
                 }
                 progress.dismiss();
             }
         });
     }
-    RecyclerView recyclerViewCall;
+
     @Override
     protected void onResume() {
         super.onResume();
         progress = ProgressDialog.show(TaskActivity.this, "Loading..",
                 "Please wait...", true);
         progress.show();
-       // callLogRecycler = findViewById(R.id.task_recyclerview);
-        Log.d("LifeCycle","TaskActivity onresume called");
+        // callLogRecycler = findViewById(R.id.task_recyclerview);
+        Log.d("LifeCycle", "TaskActivity onresume called");
         recyclerViewCall.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerViewCall.setLayoutManager(layoutManager);
 
-        mAdapter = new GenericAdapter(TaskActivity.this, 3,task,this);
+        mAdapter = new GenericAdapter(TaskActivity.this, 3, task, this);
         recyclerViewCall.setAdapter(mAdapter);
-       // mAdapter.notifyItemChanged(0);
+        // mAdapter.notifyItemChanged(0);
         mAdapter.notifyDataSetChanged();
         progress.dismiss();
+
+
+
+
+
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            int Refreshcounter = 1; //Counting how many times user have refreshed the layout
+
+            @Override
+            public void onRefresh() {
+
+                mAdapter = new GenericAdapter(TaskActivity.this, 3, getTaskDetails(), TaskActivity.this);
+                recyclerViewCall.setAdapter(mAdapter);
+                // mAdapter.notifyItemChanged(0);
+                mAdapter.notifyDataSetChanged();
+                pullToRefresh.setRefreshing(false);
+            }
+        });
+
+
     }
 
     @Override
@@ -209,9 +232,10 @@ EditText dateFrom,dateTo;
 
         return taskDetails;
     }
-    public void addtaskToListView(TaskDetails t){
 
-        mAdapter = new GenericAdapter(TaskActivity.this, 3,getTaskDetails() ,TaskActivity.this);
+    public void addtaskToListView(TaskDetails t) {
+
+        mAdapter = new GenericAdapter(TaskActivity.this, 3, getTaskDetails(), TaskActivity.this);
         recyclerViewCall.setAdapter(mAdapter);
     }
 

@@ -44,10 +44,11 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(userDetails.size()>0) {
-            logDetails=new CommonFunctionArea().getLogList(context,userDetails.get(position).getChildDeviceUUID());
-            if(logDetails!=null) {
-                holder.childName.setText(userDetails.get(position).getChildName());
+        if (userDetails.size() > 0) {
+            holder.childName.setText(userDetails.get(position).getChildName());
+            logDetails = new CommonFunctionArea().getLogList(context, userDetails.get(position).getChildDeviceUUID());
+            if (logDetails != null) {
+
                 holder.childPlace.setText(logDetails.getLocation());
                 holder.childTime.setText(logDetails.getTimeStamp());
 
@@ -55,17 +56,17 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
                     holder.onoffline.setBackgroundResource(R.drawable.online);
                 else
                     holder.onoffline.setBackgroundResource(R.drawable.offline);
-
-                holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(context, DashboardActivity.class);
-                        CommonDataArea.FIREBASETOPIC = "/topics/" + userDetails.get(position).getChildDeviceUUID();
-                        CommonDataArea.CURRENTCHILDID = userDetails.get(position).getChildDeviceUUID();
-                        context.startActivity(intent);
-                    }
-                });
             }
+            holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, DashboardActivity.class);
+                    CommonDataArea.FIREBASETOPIC = "/topics/" + userDetails.get(position).getChildDeviceUUID();
+                    CommonDataArea.CURRENTCHILDID = userDetails.get(position).getChildDeviceUUID();
+                    context.startActivity(intent);
+                }
+            });
+
         }
     }
 
@@ -75,7 +76,7 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView childName, childPlace,childTime;
+        TextView childName, childPlace, childTime;
         ImageView onoffline;
         LinearLayout linearLayoutChild;
 

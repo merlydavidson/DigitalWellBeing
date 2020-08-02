@@ -1,18 +1,11 @@
 package com.project.digitalwellbeing.service;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.ActivityManager;
-import android.app.AlertDialog;
 import android.app.AppOpsManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.Service;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -21,7 +14,6 @@ import android.graphics.PixelFormat;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
@@ -31,21 +23,14 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.WindowManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
-import com.google.gson.Gson;
 import com.project.digitalwellbeing.CloseAppActivity;
-import com.project.digitalwellbeing.ContactListActivity;
-import com.project.digitalwellbeing.R;
-import com.project.digitalwellbeing.TaskActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
@@ -57,12 +42,10 @@ import com.project.digitalwellbeing.data.model.UserDetails;
 import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
-import com.project.digitalwellbeing.utils.CommonFunctionArea.*;
 import com.project.digitalwellbeing.utils.FCMMessages;
 
 import java.io.IOException;
 import java.util.List;
-
 import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -547,7 +530,7 @@ private void sendUpdatedTaskDetails(){//child to parent
                 AppDataBase appDataBase = AppDataBase.getInstance(context);
                 DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
                 LogDetails logDetails=new LogDetails();
-                logDetails.setLocation(city);
+                logDetails.setLocation(address);
                 logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
                 logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
                 logDetails.setApp_details(currentForegrounApp);
