@@ -243,8 +243,10 @@ private void sendUpdatedTaskDetails(){//child to parent
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails("0");
-        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals("/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this) ))
+        if (!calldetails.isEmpty()) {
+            if (!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals("/topics/" + CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this)))
                 new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.FIREBASETOPIC));
+        }
     }
 
 

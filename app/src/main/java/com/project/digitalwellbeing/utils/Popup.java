@@ -326,7 +326,7 @@ public class Popup extends Activity {
                     TaskActivity t=new TaskActivity();
                     //t.addtaskToListView(taskDetails);
                     alertDialog.dismiss();
-                   
+
 
                    // Toast.makeText(getApplicationContext(), "Task added successfully", Toast.LENGTH_SHORT).show();
                 }

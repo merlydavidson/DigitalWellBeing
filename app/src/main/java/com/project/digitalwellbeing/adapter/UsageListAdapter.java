@@ -154,22 +154,24 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
         }else{
             viewHolder.getProgressBar().setProgressTintList(ColorStateList.valueOf(Color.GREEN));
         }
-        if (CommonDataArea.ROLE == 1){
-            //TODO:viewHolder.selector.setVisibility(View.GONE);
-            viewHolder.selector.setVisibility(View.GONE);
-        }
+
 
         viewHolder.getProgressBar().setProgress((int)percent);
         viewHolder.selector.setOnCheckedChangeListener(null);
 
 
             BlockedApps blockedApps = digitalWellBeingDao.getBlockedAppDetail(mCustomUsageStatsList.get(position).getPackagename());
+        if (CommonDataArea.ROLE == 1){
+            //TODO:viewHolder.selector.setVisibility(View.GONE);
+            viewHolder.selector.setVisibility(View.GONE);
+        }else{
         if(blockedApps.getChecked()) {
             viewHolder.lock.setVisibility(View.VISIBLE);
             viewHolder.selector.setVisibility(View.GONE);
         }else{
             viewHolder.lock.setVisibility(View.GONE);
             viewHolder.selector.setVisibility(View.VISIBLE);
+        }
         }
 
 
