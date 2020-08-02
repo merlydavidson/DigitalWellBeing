@@ -1,10 +1,10 @@
 package com.project.digitalwellbeing.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.project.digitalwellbeing.SignupActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
@@ -17,12 +17,9 @@ import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.data.model.UserInfo;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-
-import static java.lang.String.*;
 
 public class FCMMessages {
     Context context;
@@ -91,6 +88,7 @@ public class FCMMessages {
             JSONObject jsonObj = null;
             Gson gson = new GsonBuilder().create();
             String json = gson.toJson(logDetails);
+        Log.d("Merly","logDetails "+json);
             fcmMessage.setTo(topic);
             //fcmMessageData.setBody("test");
             fcmMessageData.setContent_available("yes");
@@ -145,6 +143,7 @@ public class FCMMessages {
         JSONObject jsonObj = null;
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(taskDetails);
+        Log.d("Merly","taskDetails "+json);
         fcmMessage.setTo(topic);
         //fcmMessageData.setBody("test");
         fcmMessageData.setContent_available("yes");
@@ -190,6 +189,8 @@ public class FCMMessages {
         JSONObject jsonObj = null;
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(callDetails);
+        Log.d("Merly","callDetails "+json);
+
         fcmMessage.setTo(topic);
         //fcmMessageData.setBody("test");
         fcmMessageData.setContent_available("yes");
@@ -235,6 +236,7 @@ public class FCMMessages {
         JSONObject jsonObj = null;
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(taskDetails);
+        Log.d("Merly","taskDetails "+json);
         fcmMessage.setTo(topic);
         //fcmMessageData.setBody("test");
         fcmMessageData.setContent_available("yes");
@@ -279,6 +281,7 @@ public class FCMMessages {
         JSONObject jsonObj = null;
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(blockedApps);
+        Log.d("Merly","blockedApps "+json);
         fcmMessage.setTo(topic);
         //fcmMessageData.setBody("test");
         fcmMessageData.setContent_available("yes");
@@ -317,6 +320,7 @@ public class FCMMessages {
     public static FCMMessage LockUnlock(List<LockUnlock> lockUnlock,String topic) {
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(lockUnlock);
+        Log.d("Merly","unlock "+json);
         FCMMessage fcmMessage = new FCMMessage();
         FCMMessageData fcmMessageData = new FCMMessageData();
         FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();

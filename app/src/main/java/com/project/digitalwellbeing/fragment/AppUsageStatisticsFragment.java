@@ -122,11 +122,7 @@ public class AppUsageStatisticsFragment extends Fragment {
                 "Please wait...", true);
         progress.show();
         mSpinnerTimeSpan = (Spinner) rootView.findViewById(R.id.spinner_time_span);
-      if (CommonDataArea.ROLE == 1) {
-          block.setVisibility(View.GONE);
-          floatingActionButton.setVisibility(View.GONE);
-      }
-
+        if (CommonDataArea.ROLE == 1) //TODO:block.setVisibility(View.GONE);
             block.setOnClickListener(new View.OnClickListener() {
                 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                 @Override
@@ -142,7 +138,13 @@ public class AppUsageStatisticsFragment extends Fragment {
                            // CustomUsageStats states = b;
                             if (b.getChecked()) {
                                 digitalWellBeingDao.updateBlockStatus2(true,b.getPackagename(),"0",b.getChildId());
-
+                               /* if (!digitalWellBeingDao.getBlockedAppDetails(b.getPackagename())) {
+                                    BlockedApps blockedApps = new BlockedApps();
+                                    blockedApps.setPackagename(b.getPackagename());
+                                    blockedApps.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
+                                    blockedApps.setChildId( CommonDataArea.FIREBASETOPIC);
+                                    digitalWellBeingDao.insertSelectedAppps(blockedApps);
+                                }*/
                             }
                         }
                        // Toast.makeText(getActivity(), "Apps Blocked Successfully", Toast.LENGTH_SHORT).show();
@@ -181,18 +183,11 @@ public class AppUsageStatisticsFragment extends Fragment {
                 String[] strings = getResources().getStringArray(R.array.action_timespan);
                 StatsUsageInterval statsUsageInterval = StatsUsageInterval
                         .getValue(strings[position]);
-
                 if (statsUsageInterval != null) {
-                    List<BlockedApps> sortedList=new ArrayList<>();
                     usageStatsList = getUsageStatistics(statsUsageInterval.mInterval);
                     Collections.sort(usageStatsList, new timeInForegroundComparator());
-                  /*  for(int i=usageStatsList.size()-1;i>=0;i--){
-                        sortedList.add(usageStatsList.get(i));
-                    }*/
                     updateAppsList(usageStatsList);
-
                     progress.dismiss();
-
                 }
             }
 
@@ -249,7 +244,7 @@ public class AppUsageStatisticsFragment extends Fragment {
                     }
                 });
             }else{
-                Log.d("ListApPS>>",queryUsageStats.toString());
+
                 for (UsageStats u : queryUsageStats) {
                     if(!digitalWellBeingDao.getBlockedAppDetails(u.getPackageName())) {
                         BlockedApps blockedApps = new BlockedApps();
@@ -258,13 +253,13 @@ public class AppUsageStatisticsFragment extends Fragment {
                         blockedApps.setTotalTimeInForeground( u.getTotalTimeInForeground());
                         blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
                         blockedApps.setChecked(false);
-                        blockedApps.setAcknowlwdgement("0");
                         digitalWellBeingDao.insertAppDta(blockedApps);
                     }else{
-
+                        long t=u.getTotalTimeVisible();
+                        long t1=u.getLastTimeForegroundServiceUsed();
                         long t2=u.getTotalTimeInForeground();
-                       digitalWellBeingDao.updateAppDetails(t2,
-                              u.getPackageName(),"0",CommonFunctionArea.getDeviceUUID(getActivity()));
+                        digitalWellBeingDao.updateAppDetails(t2,
+                                u.getPackageName(),"0",CommonFunctionArea.getDeviceUUID(getActivity()));
 
                     }
                 }

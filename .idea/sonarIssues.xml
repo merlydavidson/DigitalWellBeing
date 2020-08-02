@@ -18,6 +18,41 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/build/intermediates/manifests/full/debug/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/src/main/java/com/example/acer/appusagetracker/MainActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/android-AppUsageStatistics-master/Application/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/android-AppUsageStatistics-master/Application/src/main/java/com/example/android/appusagestatistics/AppUsageStatisticsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Documents/Android Projects/android-AppUsageStatistics-master/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/build.gradle">
           <value>
             <set />
@@ -63,6 +98,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/LocationActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/SplashScreenActivity.java">
           <value>
             <set />
@@ -93,7 +133,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/data/FCMActions.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/data/model/AppDataBase.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/data/model/BlockedApps.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/data/model/DigitalWellBeingDao.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/data/model/GoogleFitDetails.java">
           <value>
             <set />
           </value>
@@ -118,7 +178,22 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/utils/CommonDataArea.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/utils/CommonFunctionArea.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/utils/FCMMessages.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/utils/GoogleFitData.java">
           <value>
             <set />
           </value>
@@ -178,6 +253,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_google_fit.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/appusage_list_item.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/call_view.xml">
           <value>
             <set />
@@ -194,6 +279,21 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/custom_task_view.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/generic_layout.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/location_view.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/recent_activity_item.xml">
           <value>
             <set />
           </value>
@@ -574,41 +674,6 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/values/strings.xml">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/build.gradle">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/build/intermediates/manifests/full/debug/AndroidManifest.xml">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/app/src/main/java/com/example/acer/appusagetracker/MainActivity.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$USER_HOME$/Documents/Android Projects/APP-USAGE-TRACKER-master/build.gradle">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$USER_HOME$/Documents/Android Projects/android-AppUsageStatistics-master/Application/build.gradle">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$USER_HOME$/Documents/Android Projects/android-AppUsageStatistics-master/Application/src/main/java/com/example/android/appusagestatistics/AppUsageStatisticsFragment.java">
-          <value>
-            <set />
-          </value>
-        </entry>
-        <entry key="$USER_HOME$/Documents/Android Projects/android-AppUsageStatistics-master/build.gradle">
           <value>
             <set />
           </value>

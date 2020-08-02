@@ -24,6 +24,9 @@ public interface DigitalWellBeingDao {
     void insertTaskDetails(TaskDetails taskDetails);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertGoogleDetails(GoogleFitDetails googleFitDetails);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertCallDetails(CallDetails callDetails);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -37,6 +40,9 @@ public interface DigitalWellBeingDao {
 
     @Query("SELECT * FROM UserInfo where phoneNumber = :phNo AND password = :password")
     UserInfo getUserData(String phNo,String password);
+
+    @Query("SELECT * FROM GoogleFitDetails where date = :date")
+   List<GoogleFitDetails>  getGoogleData(String date);
 
     @Query("SELECT * FROM UserDetails")
     List<UserDetails> getUserDetails();
@@ -118,6 +124,9 @@ public interface DigitalWellBeingDao {
 
     @Query("DELETE FROM BlockedApps WHERE packagename = :packagename")
     void deleteByPackagename(String packagename);
+
+    @Query("DELETE FROM GoogleFitDetails WHERE date = :date")
+    void deleteGoogleDetails(String date);
 
     @Query("SELECT * FROM TaskDetails where date = :date AND status = :status")
     List<TaskDetails> getCompletedTasks(String date,int status);
