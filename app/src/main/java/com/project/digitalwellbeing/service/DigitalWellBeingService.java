@@ -61,9 +61,11 @@ import com.project.digitalwellbeing.utils.CommonFunctionArea.*;
 import com.project.digitalwellbeing.utils.FCMMessages;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Locale;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -71,7 +73,7 @@ import static com.project.digitalwellbeing.utils.CommonDataArea.TASK;
 import static com.project.digitalwellbeing.utils.CommonDataArea.context;
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
-public class DigitalWellBeingService extends Service{
+public class DigitalWellBeingService extends Service {
     public static final String BROADCAST_ACTION = "Digital Well Being";
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     public int counter = 0;
@@ -84,6 +86,7 @@ public class DigitalWellBeingService extends Service{
     private String cityName = "";
     private Timer timer;
     private TimerTask timerTask;
+    Random rand = new Random();
 
     public static Thread performOnBackgroundThread(final Runnable runnable) {
         final Thread t = new Thread() {
@@ -108,99 +111,177 @@ public class DigitalWellBeingService extends Service{
         int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
 
 
-        if (role == 1)
+        if (role == 1) {
             sendToParent();
-         if (role == 0)
-        sendDatatoChild();
+            continiousCheck();
+        }
+        if (role == 0)
+            sendDatatoChild();
 
     }
 
     private void sendToParent() {
 
-         t1 = new Timer();
+        t1 = new Timer();
         t1.scheduleAtFixedRate(new TimerTask() {
-                                  @Override
-                                  public void run() {
-                                      sendApplicationUsage();
-                                      sendUpdatedTaskDetails();
-                                      sendLocationDetails();
-                                      sendCallDetailsToParent();
-                                      lookForTasks();//High priority
-                                      if (!blockApps) {
-                                          lookForscreenLock();  //medium priority
-                                          if (!isBlocked)
-                                              lookForBlockedApps();//low priority
-                                      }
-                                  }
-                              },
+                                   @Override
+                                   public void run() {
+                                       sendApplicationUsage();
+                                       sendUpdatedTaskDetails();
+                                       sendLocationDetails();
+                                       sendCallDetailsToParent();
+
+                                   }
+                               },
                 0,
-                1000*30*1);
+                1000 * 30);
     }
-    Timer t1,t2;
+
+    private void continiousCheck() {
+        t3 = new Timer();
+        t3.scheduleAtFixedRate(new TimerTask() {
+                                   @Override
+                                   public void run() {
+
+                                       lookForTasks();//High priority
+                                       if (!blockApps) {
+                                           lookForscreenLock();  //medium priority
+                                           if (!isBlocked)
+                                               lookForBlockedApps();//low priority
+                                       }
+                                   }
+                               },
+                0,
+                1000 * 10);
+    }
+
+    Timer t1, t2, t3;
+
     private void sendDatatoChild() {
 
-      t2  = new Timer();
+        t2 = new Timer();
         t2.scheduleAtFixedRate(new TimerTask() {
-                                  @Override
-                                  public void run() {
-                                      blockAllApps();
-                                      sendTasks();
-                                  }
-                              },
+                                   @Override
+                                   public void run() {
+                                       blockAllApps();
+                                       sendTasks();
+                                       sendSelectedAppstoBlock();
+                                   }
+                               },
                 0,
-                1000*30*1);
+                1000 * 30 * 1);
     }
 
-    private void sendApplicationUsage(){
+    private void sendSelectedAppstoBlock() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<BlockedApps> appdetails=digitalWellBeingDao.getAppData(CommonFunctionArea.getDeviceUUID(this));
-        String uuid="/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
-        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals( uuid))
-            new Communicator(this).sendMessage(FCMMessages.sendAppdata(appdetails, CommonDataArea.FIREBASETOPIC));
+        List<UserDetails> userDetails = digitalWellBeingDao.getUserDetails();
+        if (!userDetails.isEmpty()) {
+            for (UserDetails user : userDetails) {
+                List<BlockedApps> blockedAppsList = digitalWellBeingDao.getBlockedAppsAck("0", user.getChildDeviceUUID());
+                if (userDetails != null && !blockedAppsList.isEmpty()) {
+                    Log.d("FBDATA>>", blockedAppsList.toString());
+                    new Communicator(this).sendMessage(FCMMessages.blockedApps(blockedAppsList, "/topics/" + user.getChildDeviceUUID()));
 
+                }
+            }
+        }
 
     }
-private void sendUpdatedTaskDetails(){
-    AppDataBase appDataBase = AppDataBase.getInstance(this);
-    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-    List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails2(CommonDataArea.CURRENTCHILDID);
-    String uuid="/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
-    if(!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals( uuid))
-        new Communicator(this).sendMessage(FCMMessages.updateTaskDetails(taskDetails, CommonDataArea.FIREBASETOPIC));
 
-}
+    private void sendApplicationUsage() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<BlockedApps> appdetails = digitalWellBeingDao.getAppDataAck(CommonFunctionArea.getDeviceUUID(this), "0");
+        if (!appdetails.isEmpty()) {
+            //Log.d("FBDATA>>",appdetails.toString());
+            List<BlockedApps> newList = getRandomApps(appdetails, 10);
+
+            String uuid = CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.contains(uuid) && !newList.isEmpty())
+                new Communicator(this).sendMessage(FCMMessages.sendAppdata(newList, CommonDataArea.PARENT_UUID));
+
+        }
+    }
+
+    public List<BlockedApps> getRandomApps(List<BlockedApps> list,
+                                           int totalItems) {
+        Random rand = new Random();
+
+        // create a temporary list for storing
+        // selected element
+        List<BlockedApps> newList = new ArrayList<>();
+        for (int i = 0; i < totalItems; i++) {
+
+            // take a raundom index between 0 to size
+            // of given List
+            int randomIndex = rand.nextInt(list.size());
+
+            // add element in temporary list
+            newList.add(list.get(randomIndex));
+
+            // Remove selected element from orginal list
+            list.remove(randomIndex);
+        }
+        return newList;
+    }
+
+    private void sendUpdatedTaskDetails() {//child to parent
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetailsAck(CommonDataArea.CURRENTCHILDID, "0");
+        if (!taskDetails.isEmpty()) {
+            Log.d("FBDATA>>", taskDetails.toString());
+            String uuid = CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.equals(uuid))
+                new Communicator(this).sendMessage(FCMMessages.updateTaskDetails(taskDetails, CommonDataArea.PARENT_UUID));
+
+        }
+    }
+
     private void blockAllApps() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<LockUnlock> taskDetails = digitalWellBeingDao.getLockUnlockDetailsList(CommonDataArea.CURRENTCHILDID);
-        List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
-        for(UserDetails user: userDetails) {
-            if (userDetails!=null && taskDetails != null) {
 
-                new Communicator(this).sendMessage(FCMMessages.LockUnlock(taskDetails, "/topics/" + user.getChildDeviceUUID()));
+        List<UserDetails> userDetails = digitalWellBeingDao.getUserDetails();
+        if (!userDetails.isEmpty()) {
+            for (UserDetails user : userDetails) {
+                List<LockUnlock> taskDetails = digitalWellBeingDao.getLockUnlockDetailsList("0", user.getChildDeviceUUID());
+                if (taskDetails != null && !taskDetails.isEmpty()) {
+                    Log.d("FBDATA>>", taskDetails.toString());
+                    new Communicator(this).sendMessage(FCMMessages.LockUnlock(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
+                }
             }
         }
-   }
-    private void sendLocationDetails(){
+    }
+
+    private void sendLocationDetails() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<LogDetails> logDetails = digitalWellBeingDao.getLogDetails(CommonDataArea.CURRENTCHILDID);
-        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals("/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this) ))
-         new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(logDetails,CommonDataArea.FIREBASETOPIC));
+        List<LogDetails> logDetails = digitalWellBeingDao.getLogDetails2(CommonDataArea.CURRENTCHILDID, "0");
+        if (!logDetails.isEmpty()) {
+            Log.d("FBDATA>>", logDetails.toString());
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") &&
+                    !CommonDataArea.PARENT_UUID.equals("/topics/" + CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this)))
+                new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(logDetails, CommonDataArea.PARENT_UUID));
 
+        }
     }
+
     private void sendTasks() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails();
-        List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
-        for(UserDetails user: userDetails) {
-            if (userDetails!=null && taskDetails != null) {
 
+        List<UserDetails> userDetails = digitalWellBeingDao.getUserDetails();
+        if (!userDetails.isEmpty()) {
+            for (UserDetails user : userDetails) {
+                List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails("0", user.getChildDeviceUUID());
+                if (userDetails != null && taskDetails != null && !taskDetails.isEmpty()) {
+                    Log.d("FBDATA>>", taskDetails.toString());
                     new Communicator(this).sendMessage(FCMMessages.sendTasks(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
+                }
             }
         }
     }
@@ -208,11 +289,37 @@ private void sendUpdatedTaskDetails(){
     private void sendCallDetailsToParent() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails(CommonDataArea.getDAte("dd/MM/yyyy"));
-        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals("/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this) ))
-                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.FIREBASETOPIC));
+        List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails("0");
+        if (!calldetails.isEmpty()) {
+            List<CallDetails> newLis = getRandomCalls(calldetails, 10);
+            //Log.d("FBDATA>>",calldetails.toString());
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !newLis.isEmpty() &&
+                    !CommonDataArea.PARENT_UUID.equals(CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this)))
+                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(newLis, CommonDataArea.PARENT_UUID));
+        }
     }
 
+    public List<CallDetails> getRandomCalls(List<CallDetails> list,
+                                            int totalItems) {
+        Random rand = new Random();
+
+        // create a temporary list for storing
+        // selected element
+        List<CallDetails> newList = new ArrayList<>();
+        for (int i = 0; i < totalItems; i++) {
+
+            // take a raundom index between 0 to size
+            // of given List
+            int randomIndex = rand.nextInt(list.size());
+
+            // add element in temporary list
+            newList.add(list.get(randomIndex));
+
+            // Remove selected element from orginal list
+            list.remove(randomIndex);
+        }
+        return newList;
+    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -222,24 +329,29 @@ private void sendUpdatedTaskDetails(){
         if (!hasPermission()) {
             usageAccessSettingsPage();
         }
-        initializeLocationManager();
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[1]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "network provider does not exist, " + ex.getMessage());
-        }
-        try {
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
-                    mLocationListeners[0]);
-        } catch (java.lang.SecurityException ex) {
-            Log.i(TAG, "fail to request location update, ignore", ex);
-        } catch (IllegalArgumentException ex) {
-            Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+        sharedPreferences = getSharedPreferences(
+                CommonDataArea.prefName, Context.MODE_PRIVATE);
+        int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        if (role == 1) {
+            initializeLocationManager();
+            try {
+                mLocationManager.requestLocationUpdates(
+                        LocationManager.NETWORK_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                        mLocationListeners[1]);
+            } catch (java.lang.SecurityException ex) {
+                Log.i(TAG, "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex) {
+                Log.d(TAG, "network provider does not exist, " + ex.getMessage());
+            }
+            try {
+                mLocationManager.requestLocationUpdates(
+                        LocationManager.GPS_PROVIDER, LOCATION_INTERVAL, LOCATION_DISTANCE,
+                        mLocationListeners[0]);
+            } catch (java.lang.SecurityException ex) {
+                Log.i(TAG, "fail to request location update, ignore", ex);
+            } catch (IllegalArgumentException ex) {
+                Log.d(TAG, "gps provider does not exist " + ex.getMessage());
+            }
         }
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.O)
             startMyOwnForeground();
@@ -291,16 +403,19 @@ private void sendUpdatedTaskDetails(){
     }
 
 
-
     public void stoptimertask() {
 
-        if(t1!=null){
+        if (t1 != null) {
             t1.cancel();
             t1 = null;
         }
-        if(t2!=null){
+        if (t2 != null) {
             t2.cancel();
             t2 = null;
+        }
+        if (t3 != null) {
+            t3.cancel();
+            t3 = null;
         }
     }
 
@@ -309,7 +424,6 @@ private void sendUpdatedTaskDetails(){
     public IBinder onBind(Intent intent) {
         return null;
     }
-
 
 
     @Override
@@ -434,8 +548,8 @@ private void sendUpdatedTaskDetails(){
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         String package_name = CommonFunctionArea.foregroundApplication(this);
-       BlockedApps b = digitalWellBeingDao.getBlockedAppDetail(package_name);
-        if(b!=null) {
+        BlockedApps b = digitalWellBeingDao.getBlockedAppDetail(package_name);
+        if (b != null) {
             if (b.getChecked()) {
                 Intent i = new Intent(DigitalWellBeingService.this, CloseAppActivity.class);
                 Bundle bundle = new Bundle();
@@ -488,23 +602,41 @@ private void sendUpdatedTaskDetails(){
             Geocoder geocoder;
             List<Address> addresses;
             geocoder = new Geocoder(DigitalWellBeingService.this, Locale.getDefault());
-
+            sharedPreferences = getSharedPreferences(
+                    CommonDataArea.prefName, Context.MODE_PRIVATE);
+            int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+            if (role == 1) {
             try {
                 addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
                 String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
                 String city = addresses.get(0).getLocality();
+                String state = addresses.get(0).getAdminArea();
+                String country = addresses.get(0).getCountryName();
+                String postalCode = addresses.get(0).getPostalCode();
                 String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
                 AppDataBase appDataBase = AppDataBase.getInstance(context);
                 DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-                LogDetails logDetails=new LogDetails();
-                logDetails.setLocation(city);
+                LogDetails logDetails = new LogDetails();
+                logDetails.setLocation(city+","+state+","+postalCode);
                 logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
                 logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
                 logDetails.setApp_details(currentForegrounApp);
                 logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
+                logDetails.setAcknowlwdgement("0");
+                final PackageManager pm = context.getPackageManager();
+                try {
+                    ApplicationInfo ai = pm.getApplicationInfo(currentForegrounApp, 0);
+                    final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+                    logDetails.setAppname(applicationName);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+                logDetails.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
                 digitalWellBeingDao.insertLogDetails(logDetails);
+
             } catch (IOException e) {
                 e.printStackTrace();
+            }
             }
         }
 
@@ -523,17 +655,19 @@ private void sendUpdatedTaskDetails(){
             Log.e(TAG, "onStatusChanged: " + provider);
         }
     }
+
     LocationListener[] mLocationListeners = new LocationListener[]{
             new LocationListener(LocationManager.GPS_PROVIDER),
             new LocationListener(LocationManager.NETWORK_PROVIDER)
     };
+
     private void initializeLocationManager() {
         Log.e(TAG, "initializeLocationManager");
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
     }
-    }
+}
 
 
 

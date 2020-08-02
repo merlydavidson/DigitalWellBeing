@@ -1,8 +1,10 @@
 package com.project.digitalwellbeing;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,7 +36,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class TaskActivity extends AppCompatActivity {
-
+    ProgressDialog progress;
+    List<TaskDetails> task=new ArrayList<>();
     FloatingActionButton floatingActionButtonAddtask;
     private Toolbar toolbar;
     private LinearLayout linearLayoutDashBoard;
@@ -55,6 +58,7 @@ EditText dateFrom,dateTo;
         dateFrom=findViewById(R.id.date_from);
         dateTo=findViewById(R.id.date_to);
         go=findViewById(R.id.result);
+        task=getTaskDetails();
         recyclerViewCall = (RecyclerView) findViewById(R.id.task_recyclerview);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         dateFrom.setText(CommonDataArea.getDAte("dd/MM/yyyy"));
@@ -63,7 +67,7 @@ EditText dateFrom,dateTo;
         floatingActionButtonAddtask = (FloatingActionButton) findViewById(R.id.floatingActionButton_task);
         if (CommonDataArea.ROLE == 1)
             //TODO://disable floatin button for child
-           // floatingActionButtonAddtask.setVisibility(View.GONE);
+           floatingActionButtonAddtask.setVisibility(View.GONE);
         floatingActionButtonAddtask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,6 +129,9 @@ EditText dateFrom,dateTo;
         go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progress = ProgressDialog.show(TaskActivity.this, "Loading..",
+                        "Please wait...", true);
+                progress.show();
                 List<TaskDetails> sortedList=new ArrayList<>();
                 String datefrom=dateFrom.getText().toString();
                 String dateto=dateTo.getText().toString();
@@ -139,9 +146,11 @@ EditText dateFrom,dateTo;
                     mAdapter = new GenericAdapter(TaskActivity.this, 3,sortedList ,TaskActivity.this);
                     recyclerViewCall.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
+
                 }else{
                     Toast.makeText(TaskActivity.this, "Date from must be less than date to..", Toast.LENGTH_SHORT).show();
                 }
+                progress.dismiss();
             }
         });
     }
@@ -149,16 +158,20 @@ EditText dateFrom,dateTo;
     @Override
     protected void onResume() {
         super.onResume();
+        progress = ProgressDialog.show(TaskActivity.this, "Loading..",
+                "Please wait...", true);
+        progress.show();
        // callLogRecycler = findViewById(R.id.task_recyclerview);
-
+        Log.d("LifeCycle","TaskActivity onresume called");
         recyclerViewCall.setHasFixedSize(true);
         layoutManager = new LinearLayoutManager(this);
         recyclerViewCall.setLayoutManager(layoutManager);
-        mAdapter = new GenericAdapter(TaskActivity.this, 3,getTaskDetails() ,this);
-        recyclerViewCall.setAdapter(mAdapter);
-        mAdapter.notifyItemChanged(0);
-        mAdapter.notifyDataSetChanged();
 
+        mAdapter = new GenericAdapter(TaskActivity.this, 3,task,this);
+        recyclerViewCall.setAdapter(mAdapter);
+       // mAdapter.notifyItemChanged(0);
+        mAdapter.notifyDataSetChanged();
+        progress.dismiss();
     }
 
     @Override
@@ -196,6 +209,10 @@ EditText dateFrom,dateTo;
 
         return taskDetails;
     }
+    public void addtaskToListView(TaskDetails t){
 
+        mAdapter = new GenericAdapter(TaskActivity.this, 3,getTaskDetails() ,TaskActivity.this);
+        recyclerViewCall.setAdapter(mAdapter);
+    }
 
 }

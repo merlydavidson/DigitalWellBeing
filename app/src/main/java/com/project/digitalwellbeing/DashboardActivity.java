@@ -89,21 +89,25 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
         int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        String parent = sharedPreferences.getString(CommonDataArea.PARENT,"");
         if (role == 1) {
             CommonDataArea.CURRENTCHILDID = CommonFunctionArea.getDeviceUUID(this);
+            CommonDataArea.PARENT_UUID="/topics/" +parent;
+            Log.d("CurrentTopic>>",CommonDataArea.PARENT_UUID);
         }
         /****************************************************************************/
-requestPermission();
+        requestPermission();
         /****************************************************************************/
 
 
     }
+
     private void requestPermission() {
         Dexter.withActivity(this)
                 .withPermissions(
                         Manifest.permission.READ_CONTACTS,
                         Manifest.permission.READ_CALL_LOG,
-                        Manifest.permission.ACTIVITY_RECOGNITION,
+                       // Manifest.permission.ACTIVITY_RECOGNITION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new MultiplePermissionsListener() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -111,8 +115,8 @@ requestPermission();
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-                           // Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
-                        doTasks();
+                            // Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+                            doTasks();
                         }
 
                         // check for permanent denial of any permission
@@ -136,6 +140,7 @@ requestPermission();
                 .onSameThread()
                 .check();
     }
+
     private void showSettingsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
         builder.setTitle("Need Permissions");
@@ -155,12 +160,14 @@ requestPermission();
         });
         builder.show();
     }
+
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", getPackageName(), null);
         intent.setData(uri);
         startActivityForResult(intent, 101);
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private boolean hasPermission() {
         try {
@@ -177,6 +184,7 @@ requestPermission();
             return false;
         }
     }
+
     public void usageAccessSettingsPage() {//permission for reading foreground task
         try {
             Intent intent = new Intent();
@@ -192,10 +200,19 @@ requestPermission();
         } catch (Exception e) {
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void doTasks() {
         if (!hasPermission()) {
             usageAccessSettingsPage();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                if (intent.resolveActivity(getPackageManager()) != null)
+                    startActivityForResult(intent, 0);
+            }
         }
         initViews();
         getAllData();
@@ -347,9 +364,14 @@ requestPermission();
                 startActivity(locationIntent);
                 break;
             case R.id.apps_layout:
-                if (!getAppUsagePermissionStatus()) {
-                    new Popup(DashboardActivity.this).doubleChoice("App Usage Permission", "You need to allow App usage permission", 2, DashboardActivity.this);
-                } else {
+                if(CommonDataArea.ROLE==1) {
+                    if (!getAppUsagePermissionStatus()) {
+                        new Popup(DashboardActivity.this).doubleChoice("App Usage Permission", "You need to allow App usage permission", 2, DashboardActivity.this);
+                    } else {
+                        Intent appUsageIntent = new Intent(DashboardActivity.this, AppusageActivity.class);
+                        startActivity(appUsageIntent);
+                    }
+                }else{
                     Intent appUsageIntent = new Intent(DashboardActivity.this, AppusageActivity.class);
                     startActivity(appUsageIntent);
                 }
@@ -401,28 +423,31 @@ requestPermission();
                         if (role == 0) {
                             if (text.getText().toString() != null && text.getText().toString().length() > 0) {
                                 if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
-                                    digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, true, text.getText().toString());
+                                    digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID,
+                                            true, text.getText().toString(), "0");
                                     dialogButton.setText("Unblock");
                                     Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
                                 } else {
-                                    digitalWellBeingDao.insertLockUnlockData(new LockUnlock(CommonDataArea.CURRENTCHILDID,
-                                            text.getText().toString(), true));
+                                   LockUnlock unlock=new LockUnlock();
+                                   unlock.setChildId(CommonDataArea.CURRENTCHILDID);
+                                   unlock.setPassword(text.getText().toString());
+                                   unlock.setLocked(true);
+                                   unlock.setAcknowledgement("0");
+                                    digitalWellBeingDao.insertLockUnlockData(unlock);
+                                    dialogButton.setText("Unblock");
                                 }
-                         /*  editor.putBoolean(BLOCKAPPS, true);
-                            editor.putString(APP_BLOCK_PIN,text.getText().toString());
-                           dialogButton.setText("Unblock");
-                            Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
-                           editor.commit();*/
+
                             }
+                        } else {
+                            Toast.makeText(DashboardActivity.this, "Not allowed", Toast.LENGTH_SHORT).show();
                         }
                     } else if (dialogButton.getText().toString().equalsIgnoreCase("Unblock")) {
-                        //editor.putBoolean(BLOCKAPPS, false);
+
                         if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
                             if (digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID).getPassword().
                                     equalsIgnoreCase(text.getText().toString())) {
-                                digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, false, "");
-                                //dialogButton.setText("Block");
-                                // Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
+                                digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, false, "", "0");
+
                                 dialogButton.setText("Block");
                             }
                         }

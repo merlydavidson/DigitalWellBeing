@@ -151,10 +151,12 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             if (role == R.id.role_parent) {
                 Intent intent = new Intent(SignupActivity.this, ChildActivity.class);
                 startActivity(intent);
+                finish();
             } else {
 
                 Intent intent = new Intent(SignupActivity.this, DashboardActivity.class);
                 startActivity(intent);
+                finish();
 
             }
         }

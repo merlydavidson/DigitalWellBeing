@@ -250,11 +250,13 @@ public class ContactListActivity extends AppCompatActivity {
                 String formateDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(callDayTime);
                 callDetails.setCallTimeStamp(formateDate);
                 callDetails.setCallerLogId(idNumber);
+                callDetails.setAcknowlwdgement("0");
                 callDetails.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
                 callDetails.setChildId(CommonFunctionArea.getDeviceUUID(this));
                 if (!getCallEntry(idNumber)) {
                     insertCallDetails(callDetails);
                 }
+
             }
             managedCursor.close();
             Log.i("Calllog>>", sb.toString());

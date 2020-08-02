@@ -15,7 +15,27 @@ public class LogDetails {
     @SerializedName("location")
     public String location;
 
+    public String getAppname() {
+        return appname;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname;
+    }
+
+    @ColumnInfo(name ="appname")
+    @SerializedName("appname")
+    public String appname;
+
     public LogDetails() {
+    }
+
+    public String getAcknowlwdgement() {
+        return acknowlwdgement;
+    }
+
+    public void setAcknowlwdgement(String acknowlwdgement) {
+        this.acknowlwdgement = acknowlwdgement;
     }
 
     public LogDetails(String location, String date, String timeStamp, String app_details, String childId, boolean isOnline) {
@@ -42,6 +62,10 @@ public class LogDetails {
     @ColumnInfo(name ="timestamp")
     @SerializedName("timestamp")
     public String timeStamp;
+
+    @ColumnInfo(defaultValue = "0",name ="acknowlwdgement")
+    @SerializedName("acknowlwdgement")
+    public String acknowlwdgement;
 
     @ColumnInfo(name ="uuid")
     @SerializedName("uuid")
