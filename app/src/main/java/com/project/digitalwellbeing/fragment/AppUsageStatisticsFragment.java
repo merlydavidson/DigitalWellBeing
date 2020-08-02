@@ -253,6 +253,15 @@ public class AppUsageStatisticsFragment extends Fragment {
                         blockedApps.setTotalTimeInForeground( u.getTotalTimeInForeground());
                         blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
                         blockedApps.setChecked(false);
+                        PackageManager pm= getActivity().getPackageManager();
+                        try {
+                            ApplicationInfo  ai=pm.getApplicationInfo(u.getPackageName(), 0);
+                            final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+                            blockedApps.setAppname(applicationName);
+                        } catch (PackageManager.NameNotFoundException e) {
+                            e.printStackTrace();
+                        }
+
                         digitalWellBeingDao.insertAppDta(blockedApps);
                     }else{
                         long t=u.getTotalTimeVisible();

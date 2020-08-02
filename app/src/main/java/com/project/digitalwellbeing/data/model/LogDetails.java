@@ -15,6 +15,18 @@ public class LogDetails {
     @SerializedName("location")
     public String location;
 
+    public String getAppname() {
+        return appname;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname;
+    }
+
+    @ColumnInfo(name ="appname")
+    @SerializedName("appname")
+    public String appname;
+
     public LogDetails() {
     }
 

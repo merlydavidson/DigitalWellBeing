@@ -14,6 +14,18 @@ public class BlockedApps {
     @SerializedName("packagename")
     String packagename;
 
+    public String getAppname() {
+        return appname;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname;
+    }
+
+    @ColumnInfo(name = "appname")
+    @SerializedName("appname")
+    String appname;
+
     @ColumnInfo(name = "date")
     @SerializedName("date")
     String date;

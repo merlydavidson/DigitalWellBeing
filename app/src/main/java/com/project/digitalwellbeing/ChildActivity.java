@@ -85,6 +85,7 @@ ChildActivity extends AppCompatActivity {
       //  CommonFunctionArea.getBrowserHistory(ChildActivity.this);
        // new CommonFunctionArea.FetchCategoryTask(ChildActivity.this).execute();
 
+
     }
 
 

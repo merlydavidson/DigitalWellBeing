@@ -115,7 +115,7 @@ public void updateList(TaskDetails c){
 
                 final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
 
-                holder.app_text.setText(applicationName);
+                holder.app_text.setText(logDetails.get(position).getAppname());
                 Drawable icon = context.getPackageManager().getApplicationIcon(logDetails.get(position).getApp_details());
                 holder.icon.setImageDrawable(icon);
             } catch (Exception e) {

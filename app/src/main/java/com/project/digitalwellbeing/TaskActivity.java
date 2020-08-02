@@ -67,7 +67,7 @@ EditText dateFrom,dateTo;
         floatingActionButtonAddtask = (FloatingActionButton) findViewById(R.id.floatingActionButton_task);
         if (CommonDataArea.ROLE == 1)
             //TODO://disable floatin button for child
-           // floatingActionButtonAddtask.setVisibility(View.GONE);
+           floatingActionButtonAddtask.setVisibility(View.GONE);
         floatingActionButtonAddtask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
