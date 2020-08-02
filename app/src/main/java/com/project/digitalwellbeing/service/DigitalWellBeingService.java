@@ -208,7 +208,7 @@ private void sendUpdatedTaskDetails(){//child to parent
         List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
         for(UserDetails user: userDetails) {
             List<LockUnlock> taskDetails = digitalWellBeingDao.getLockUnlockDetailsList("0",user.getChildDeviceUUID());
-            if (userDetails!=null && taskDetails != null) {
+            if (userDetails!=null && taskDetails != null && !taskDetails.isEmpty()) {
 
                 new Communicator(this).sendMessage(FCMMessages.LockUnlock(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
@@ -231,7 +231,7 @@ private void sendUpdatedTaskDetails(){//child to parent
         List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
         for(UserDetails user: userDetails) {
             List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails("0",user.getChildDeviceUUID());
-            if (userDetails!=null && taskDetails != null) {
+            if (userDetails!=null && taskDetails != null && !taskDetails.isEmpty()) {
 
                     new Communicator(this).sendMessage(FCMMessages.sendTasks(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
