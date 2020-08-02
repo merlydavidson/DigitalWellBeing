@@ -89,8 +89,11 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
         int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        String parent = sharedPreferences.getString(CommonDataArea.PARENT,"");
         if (role == 1) {
             CommonDataArea.CURRENTCHILDID = CommonFunctionArea.getDeviceUUID(this);
+            CommonDataArea.PARENT_UUID="/topics/" +parent;
+            Log.d("CurrentTopic>>",CommonDataArea.PARENT_UUID);
         }
         /****************************************************************************/
         requestPermission();
@@ -104,7 +107,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 .withPermissions(
                         Manifest.permission.READ_CONTACTS,
                         Manifest.permission.READ_CALL_LOG,
-                        Manifest.permission.ACTIVITY_RECOGNITION,
+                       // Manifest.permission.ACTIVITY_RECOGNITION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new MultiplePermissionsListener() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -361,9 +364,14 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                 startActivity(locationIntent);
                 break;
             case R.id.apps_layout:
-                if (!getAppUsagePermissionStatus()) {
-                    new Popup(DashboardActivity.this).doubleChoice("App Usage Permission", "You need to allow App usage permission", 2, DashboardActivity.this);
-                } else {
+                if(CommonDataArea.ROLE==1) {
+                    if (!getAppUsagePermissionStatus()) {
+                        new Popup(DashboardActivity.this).doubleChoice("App Usage Permission", "You need to allow App usage permission", 2, DashboardActivity.this);
+                    } else {
+                        Intent appUsageIntent = new Intent(DashboardActivity.this, AppusageActivity.class);
+                        startActivity(appUsageIntent);
+                    }
+                }else{
                     Intent appUsageIntent = new Intent(DashboardActivity.this, AppusageActivity.class);
                     startActivity(appUsageIntent);
                 }

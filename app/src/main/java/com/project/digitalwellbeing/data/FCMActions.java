@@ -3,6 +3,7 @@ package com.project.digitalwellbeing.data;
 import android.app.usage.UsageStats;
 import android.content.Context;
 import android.os.Build;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -41,6 +42,8 @@ public class FCMActions {
     public void parseResult(RemoteMessage remoteMessage, Context context) {
         CommonDataArea.remoteMessage = remoteMessage;
         CommonDataArea.context = context;
+        Log.d("FABDATA2>>",remoteMessage.getNotification().getTitle());
+        Log.d("FABDATA2>>",remoteMessage.toString());
         if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("1")) {
 
             registerParent(remoteMessage);
@@ -119,7 +122,7 @@ public class FCMActions {
                 digitalWellBeingDao.updateCallDetailStatus(t.getCallerId(), "1", t.getChildId());
             }
         }
-        new Communicator(context).sendMessage(FCMMessages.sendCallDetailsAck(list, child_id));
+       // new Communicator(context).sendMessage(FCMMessages.sendCallDetailsAck(list, child_id));
     }
 
     private void insertTaskDetailsAck(String body) {
@@ -222,9 +225,9 @@ public class FCMActions {
             }
 
         }
-        if (!CommonDataArea.FIREBASETOPIC.contains(CommonFunctionArea.getDeviceUUID(context))
-                && !CommonDataArea.FIREBASETOPIC.equals("/topics/"))
-            new Communicator(context).sendMessage(FCMMessages.BlockAppsAck(list2, CommonDataArea.FIREBASETOPIC));
+        if (!CommonDataArea.PARENT_UUID.contains(CommonFunctionArea.getDeviceUUID(context) )
+                && !CommonDataArea.PARENT_UUID.equals("/topics/"))
+            new Communicator(context).sendMessage(FCMMessages.BlockAppsAck(list2, CommonDataArea.PARENT_UUID));
     }
 
     private void UpdateApplicationUsageStatus(String body) {//updating acknowledge status in child
@@ -283,8 +286,9 @@ public class FCMActions {
                 }
             }
         }
-        if (!CommonDataArea.FIREBASETOPIC.contains(CommonFunctionArea.getDeviceUUID(context)) && !list2.isEmpty())
-            new Communicator(context).sendMessage(FCMMessages.LockUnlockAck(list2, CommonDataArea.FIREBASETOPIC));
+        if ((!CommonDataArea.PARENT_UUID.contains(CommonFunctionArea.getDeviceUUID(context)) ||
+                !CommonDataArea.PARENT_UUID.equals("/topics/")) && !list2.isEmpty())
+            new Communicator(context).sendMessage(FCMMessages.LockUnlockAck(list2, CommonDataArea.PARENT_UUID));
 
         /* */
     }
@@ -309,8 +313,9 @@ public class FCMActions {
                 }
             }
         }
-        if (!CommonDataArea.FIREBASETOPIC.contains(CommonFunctionArea.getDeviceUUID(context)) && !list2.isEmpty())
-            new Communicator(context).sendMessage(FCMMessages.sendTasksAck(list2, CommonDataArea.FIREBASETOPIC));
+        if ((!CommonDataArea.PARENT_UUID.contains(CommonFunctionArea.getDeviceUUID(context)) ||
+                !CommonDataArea.PARENT_UUID.equals("/topics/") ) && !list2.isEmpty())
+            new Communicator(context).sendMessage(FCMMessages.sendTasksAck(list2, CommonDataArea.PARENT_UUID));
         list2.clear();
 
 

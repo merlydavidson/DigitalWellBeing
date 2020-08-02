@@ -169,13 +169,14 @@ public class DigitalWellBeingService extends Service{
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
+        if (!userDetails.isEmpty()) {
+            for (UserDetails user : userDetails) {
+                List<BlockedApps> blockedAppsList = digitalWellBeingDao.getBlockedAppsAck("0", user.getChildDeviceUUID());
+                if (userDetails != null && !blockedAppsList.isEmpty()) {
+                    Log.d("FBDATA>>",blockedAppsList.toString());
+                    new Communicator(this).sendMessage(FCMMessages.blockedApps(blockedAppsList, "/topics/" + user.getChildDeviceUUID()));
 
-        for(UserDetails user: userDetails) {
-            List<BlockedApps> blockedAppsList=digitalWellBeingDao.getBlockedAppsAck("0",user.getChildDeviceUUID());
-            if (userDetails!=null && !blockedAppsList.isEmpty()) {
-
-                new Communicator(this).sendMessage(FCMMessages.blockedApps(blockedAppsList, "/topics/" + user.getChildDeviceUUID()));
-
+                }
             }
         }
 
@@ -185,9 +186,10 @@ public class DigitalWellBeingService extends Service{
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<BlockedApps> appdetails=digitalWellBeingDao.getAppDataAck(CommonFunctionArea.getDeviceUUID(this),"0");
         if (!appdetails.isEmpty()) {
-            String uuid = "/topics/" + CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
-            if (!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals(uuid))
-                new Communicator(this).sendMessage(FCMMessages.sendAppdata(appdetails, CommonDataArea.FIREBASETOPIC));
+            Log.d("FBDATA>>",appdetails.toString());
+            String uuid = CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.contains(uuid))
+                new Communicator(this).sendMessage(FCMMessages.sendAppdata(appdetails, CommonDataArea.PARENT_UUID));
 
         }
     }
@@ -196,9 +198,10 @@ private void sendUpdatedTaskDetails(){//child to parent
     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
     List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetailsAck(CommonDataArea.CURRENTCHILDID,"0");
     if (!taskDetails.isEmpty()){
-    String uuid="/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
-    if(!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals( uuid))
-        new Communicator(this).sendMessage(FCMMessages.updateTaskDetails(taskDetails, CommonDataArea.FIREBASETOPIC));
+        Log.d("FBDATA>>",taskDetails.toString());
+    String uuid=CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
+    if(!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.equals( uuid))
+        new Communicator(this).sendMessage(FCMMessages.updateTaskDetails(taskDetails, CommonDataArea.PARENT_UUID));
 
 }}
     private void blockAllApps() {
@@ -206,12 +209,14 @@ private void sendUpdatedTaskDetails(){//child to parent
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
 
         List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
-        for(UserDetails user: userDetails) {
-            List<LockUnlock> taskDetails = digitalWellBeingDao.getLockUnlockDetailsList("0",user.getChildDeviceUUID());
-            if (userDetails!=null && taskDetails != null && !taskDetails.isEmpty()) {
+        if (!userDetails.isEmpty()) {
+            for (UserDetails user : userDetails) {
+                List<LockUnlock> taskDetails = digitalWellBeingDao.getLockUnlockDetailsList("0", user.getChildDeviceUUID());
+                if (taskDetails != null && !taskDetails.isEmpty()) {
+                    Log.d("FBDATA>>",taskDetails.toString());
+                    new Communicator(this).sendMessage(FCMMessages.LockUnlock(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
-                new Communicator(this).sendMessage(FCMMessages.LockUnlock(taskDetails, "/topics/" + user.getChildDeviceUUID()));
-
+                }
             }
         }
    }
@@ -220,8 +225,10 @@ private void sendUpdatedTaskDetails(){//child to parent
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<LogDetails> logDetails = digitalWellBeingDao.getLogDetails2(CommonDataArea.CURRENTCHILDID,"0");
         if(!logDetails.isEmpty()){
-        if(!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals("/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this) ))
-         new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(logDetails,CommonDataArea.FIREBASETOPIC));
+            Log.d("FBDATA>>",logDetails.toString());
+        if(!CommonDataArea.PARENT_UUID.equals("/topics/") &&
+                !CommonDataArea.PARENT_UUID.equals("/topics/"+CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this) ))
+         new Communicator(getApplicationContext()).sendMessage(FCMMessages.sendLogs(logDetails,CommonDataArea.PARENT_UUID));
 
     }}
     private void sendTasks() {
@@ -229,12 +236,14 @@ private void sendUpdatedTaskDetails(){//child to parent
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
 
         List<UserDetails> userDetails=digitalWellBeingDao.getUserDetails();
-        for(UserDetails user: userDetails) {
-            List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails("0",user.getChildDeviceUUID());
-            if (userDetails!=null && taskDetails != null && !taskDetails.isEmpty()) {
-
+        if (!userDetails.isEmpty()) {
+            for (UserDetails user : userDetails) {
+                List<TaskDetails> taskDetails = digitalWellBeingDao.getaTaskDetails("0", user.getChildDeviceUUID());
+                if (userDetails != null && taskDetails != null && !taskDetails.isEmpty()) {
+                    Log.d("FBDATA>>",taskDetails.toString());
                     new Communicator(this).sendMessage(FCMMessages.sendTasks(taskDetails, "/topics/" + user.getChildDeviceUUID()));
 
+                }
             }
         }
     }
@@ -244,8 +253,9 @@ private void sendUpdatedTaskDetails(){//child to parent
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails("0");
         if (!calldetails.isEmpty()) {
-            if (!CommonDataArea.FIREBASETOPIC.equals("/topics/") && !CommonDataArea.FIREBASETOPIC.equals("/topics/" + CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this)))
-                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.FIREBASETOPIC));
+            //Log.d("FBDATA>>",calldetails.toString());
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.equals(CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this)))
+                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.PARENT_UUID));
         }
     }
 

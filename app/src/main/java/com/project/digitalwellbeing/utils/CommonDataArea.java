@@ -14,6 +14,7 @@ public class CommonDataArea {
     public static final String DB_NAME = "DigitalWellBeing";
     public static final String ISGOOGLESUCCESS = "googleFitSignIn";
     public static String FIREBASETOPIC="";
+    public static String PARENT_UUID="";
     public static String CURRENTCHILDID="";
     public static RemoteMessage remoteMessage=null;
     public static SharedPreferences sharedPreferences;
