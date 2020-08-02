@@ -137,7 +137,7 @@ public class AppUsageStatisticsFragment extends Fragment {
                         for (BlockedApps b : selectedItems) {
                            // CustomUsageStats states = b;
                             if (b.getChecked()) {
-                                digitalWellBeingDao.updateBlockStatus(true,b.getPackagename());
+                                digitalWellBeingDao.updateBlockStatus2(true,b.getPackagename(),"0",b.getChildId());
                                /* if (!digitalWellBeingDao.getBlockedAppDetails(b.getPackagename())) {
                                     BlockedApps blockedApps = new BlockedApps();
                                     blockedApps.setPackagename(b.getPackagename());
@@ -258,8 +258,8 @@ public class AppUsageStatisticsFragment extends Fragment {
                         long t=u.getTotalTimeVisible();
                         long t1=u.getLastTimeForegroundServiceUsed();
                         long t2=u.getTotalTimeInForeground();
-                       int istrue= digitalWellBeingDao.updateAppDetails(t2,
-                              u.getPackageName(),CommonFunctionArea.getDeviceUUID(getActivity()));
+                        digitalWellBeingDao.updateAppDetails(t2,
+                                u.getPackageName(),"0",CommonFunctionArea.getDeviceUUID(getActivity()));
 
                     }
                 }

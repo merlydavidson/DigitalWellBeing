@@ -13,11 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.project.digitalwellbeing.DashboardActivity;
-import com.project.digitalwellbeing.TaskActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.UserDetails;
 import com.project.digitalwellbeing.utils.CommonDataArea;
+import com.project.digitalwellbeing.utils.CommonFunctionArea;
 
 import java.util.List;
 
@@ -26,10 +26,10 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
     List<UserDetails> userDetails;
     LogDetails logDetails;
 
-    public UsersListAdapter(Context context, List<UserDetails> userDetails, LogDetails logDetails) {
+    public UsersListAdapter(Context context, List<UserDetails> userDetails) {
         this.context = context;
         this.userDetails = userDetails;
-        this.logDetails = logDetails;
+
     }
 
     @NonNull
@@ -44,25 +44,28 @@ public class UsersListAdapter extends RecyclerView.Adapter<UsersListAdapter.View
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if(userDetails.size()>0&&logDetails!=null) {
-            holder.childName.setText(userDetails.get(position).getChildName());
-            holder.childPlace.setText(logDetails.getLocation());
-            holder.childTime.setText(logDetails.getTimeStamp());
+        if(userDetails.size()>0) {
+            logDetails=new CommonFunctionArea().getLogList(context,userDetails.get(position).getChildDeviceUUID());
+            if(logDetails!=null) {
+                holder.childName.setText(userDetails.get(position).getChildName());
+                holder.childPlace.setText(logDetails.getLocation());
+                holder.childTime.setText(logDetails.getTimeStamp());
 
-            if (logDetails.isOnline())
-                holder.onoffline.setBackgroundResource(R.drawable.online);
-            else
-                holder.onoffline.setBackgroundResource(R.drawable.offline);
+                if (logDetails.isOnline())
+                    holder.onoffline.setBackgroundResource(R.drawable.online);
+                else
+                    holder.onoffline.setBackgroundResource(R.drawable.offline);
 
-            holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, DashboardActivity.class);
-                    CommonDataArea.FIREBASETOPIC = "/topics/" + userDetails.get(position).getChildDeviceUUID();
-                    CommonDataArea.CURRENTCHILDID=userDetails.get(position).getChildDeviceUUID();
-                    context.startActivity(intent);
-                }
-            });
+                holder.linearLayoutChild.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(context, DashboardActivity.class);
+                        CommonDataArea.FIREBASETOPIC = "/topics/" + userDetails.get(position).getChildDeviceUUID();
+                        CommonDataArea.CURRENTCHILDID = userDetails.get(position).getChildDeviceUUID();
+                        context.startActivity(intent);
+                    }
+                });
+            }
         }
     }
 

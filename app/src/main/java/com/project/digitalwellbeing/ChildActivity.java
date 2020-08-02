@@ -1,12 +1,5 @@
 package com.project.digitalwellbeing;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,10 +9,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.adapter.UsersListAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.UserDetails;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
@@ -43,6 +44,7 @@ ChildActivity extends AppCompatActivity {
     LinearLayout linearLayoutDashBoard;
     private int count = 0;
     private long startMillis = 0;
+    LogDetails logDetails;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +93,7 @@ ChildActivity extends AppCompatActivity {
         super.onResume();
         Log.d("UUIDofParent",CommonFunctionArea.getDeviceUUID(this));
         if (CommonDataArea.ROLE == 0 && getStimulationList().size() > 0) {
-            mAdapter = new UsersListAdapter(this, getStimulationList(), new CommonFunctionArea().getLogList(ChildActivity.this));
+            mAdapter = new UsersListAdapter(this, getStimulationList());
             childRecyclerview.setAdapter(mAdapter);
 
             pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -101,7 +103,7 @@ ChildActivity extends AppCompatActivity {
                 public void onRefresh() {
                     //Here you can update your data from internet or from local SQLite data
                     //   communicator.checkPrescriptionDelete(CommonDataArea.patientID);
-                    mAdapter = new UsersListAdapter(ChildActivity.this, getStimulationList(), new CommonFunctionArea().getLogList(ChildActivity.this));
+                    mAdapter = new UsersListAdapter(ChildActivity.this, getStimulationList());
                     childRecyclerview.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
                     pullToRefresh.setRefreshing(false);
@@ -117,6 +119,7 @@ ChildActivity extends AppCompatActivity {
             AppDataBase appDataBase = AppDataBase.getInstance(ChildActivity.this);
             DigitalWellBeingDao stimulationSessionsDao = appDataBase.userDetailsDao();
             userDetails = stimulationSessionsDao.getUserDetails();
+
         } catch (Exception e) {
             Log.e("Exception", e.getMessage());
         }
