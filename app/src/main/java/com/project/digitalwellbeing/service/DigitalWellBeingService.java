@@ -115,7 +115,7 @@ public class DigitalWellBeingService extends Service {
                                   }
                               },
                 0,
-                1000*30*1);
+                1000);
     }
     Timer t1,t2;
     private void sendDatatoChild() {
@@ -129,7 +129,7 @@ public class DigitalWellBeingService extends Service {
                                   }
                               },
                 0,
-                1000*30*1);
+                1000);
     }
 
     private void sendApplicationUsage(){

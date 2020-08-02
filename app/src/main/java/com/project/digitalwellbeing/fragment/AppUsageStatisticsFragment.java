@@ -7,14 +7,10 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,11 +28,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.BlockedAppsActivity;
-import com.project.digitalwellbeing.DashboardActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.adapter.UsageListAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
@@ -44,7 +38,6 @@ import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
-import com.project.digitalwellbeing.utils.CustomUsageStats;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -52,9 +45,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-
-import static com.project.digitalwellbeing.utils.CommonDataArea.context;
-import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
 
 public class AppUsageStatisticsFragment extends Fragment {
@@ -255,8 +245,13 @@ public class AppUsageStatisticsFragment extends Fragment {
                         blockedApps.setChecked(false);
                         digitalWellBeingDao.insertAppDta(blockedApps);
                     }else{
-                        long t=u.getTotalTimeVisible();
-                        long t1=u.getLastTimeForegroundServiceUsed();
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                            long t1=u.getLastTimeForegroundServiceUsed();
+                            long t=u.getTotalTimeVisible();
+                        }
+
+
+
                         long t2=u.getTotalTimeInForeground();
                        int istrue= digitalWellBeingDao.updateAppDetails(t2,
                               u.getPackageName(),CommonFunctionArea.getDeviceUUID(getActivity()));

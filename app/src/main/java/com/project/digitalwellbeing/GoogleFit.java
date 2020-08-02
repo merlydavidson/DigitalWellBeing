@@ -108,12 +108,12 @@ public class GoogleFit extends AppCompatActivity {
             }
         });
 
-        ;
-        createGoogleApiClient();
+        if (CommonDataArea.ROLE == 1) {
+            createGoogleApiClient();
 
-        new GoogleFitData().connectGoogle(GoogleFit.this, getParsedData());
+            new GoogleFitData().connectGoogle(GoogleFit.this, getParsedData());
 
-
+        }
         pieChart = (PieChart) findViewById(R.id.idPieChart);
 
         pieChart.setRotationEnabled(true);

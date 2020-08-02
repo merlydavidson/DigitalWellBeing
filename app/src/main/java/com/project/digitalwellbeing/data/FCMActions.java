@@ -1,16 +1,13 @@
 package com.project.digitalwellbeing.data;
 
-import android.app.usage.UsageStats;
 import android.content.Context;
 import android.os.Build;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 
 import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.project.digitalwellbeing.DashboardActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
@@ -21,14 +18,11 @@ import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.data.model.UserDetails;
 import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.utils.CommonDataArea;
-import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.FCMMessages;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static com.project.digitalwellbeing.utils.CommonDataArea.APP_BLOCK_PIN;
-import static com.project.digitalwellbeing.utils.CommonDataArea.BLOCKAPPS;
 import static com.project.digitalwellbeing.utils.CommonDataArea.PARENT;
 import static com.project.digitalwellbeing.utils.CommonDataArea.context;
 import static com.project.digitalwellbeing.utils.CommonDataArea.editor;
@@ -122,6 +116,8 @@ public class FCMActions {
         List<LockUnlock> list = gson.fromJson(body, listType);
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        if(list!=null)
+        {
         for (LockUnlock l : list) {
             if (l.getChildId().equals(CommonDataArea.CURRENTCHILDID)) {
                 if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
@@ -130,6 +126,7 @@ public class FCMActions {
                     digitalWellBeingDao.insertLockUnlockData(l);
                 }
             }
+        }
         }
         /* */
     }
