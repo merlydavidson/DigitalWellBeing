@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.PieEntry;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.adapter.GenericAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
@@ -47,11 +48,11 @@ public class TaskActivity extends AppCompatActivity {
     private int count = 0;
     private long startMillis = 0;
     private PieChart pieChart;
+    private SwipeRefreshLayout pullToRefresh;
     private RecyclerView callLogRecycler;
     private DatePickerDialog picker;
     private LinearLayoutManager layoutManager;
     private GenericAdapter mAdapter;
-    private SwipeRefreshLayout pullToRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
