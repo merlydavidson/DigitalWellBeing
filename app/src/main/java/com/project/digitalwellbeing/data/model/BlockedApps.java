@@ -9,10 +9,22 @@ import com.google.gson.annotations.SerializedName;
 public class BlockedApps {
     @PrimaryKey(autoGenerate = true)
     int id;
-
+//new comment
     @ColumnInfo(name = "packagename")
     @SerializedName("packagename")
     String packagename;
+
+    public String getAppname() {
+        return appname;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname;
+    }
+
+    @ColumnInfo(name = "appname")
+    @SerializedName("appname")
+    String appname;
 
     @ColumnInfo(name = "date")
     @SerializedName("date")

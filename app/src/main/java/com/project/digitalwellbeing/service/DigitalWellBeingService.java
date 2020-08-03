@@ -599,6 +599,7 @@ public class DigitalWellBeingService extends Service {
                 String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
                 AppDataBase appDataBase = AppDataBase.getInstance(context);
                 DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+
                 LogDetails logDetails=new LogDetails();
                 logDetails.setLocation(address);
                 logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
