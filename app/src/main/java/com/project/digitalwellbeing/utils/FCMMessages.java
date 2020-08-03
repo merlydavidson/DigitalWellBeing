@@ -1,10 +1,10 @@
 package com.project.digitalwellbeing.utils;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.project.digitalwellbeing.SignupActivity;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
@@ -12,17 +12,15 @@ import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.FCMMessage;
 import com.project.digitalwellbeing.data.model.FCMMessageData;
 import com.project.digitalwellbeing.data.model.FCMMessageNotification;
+import com.project.digitalwellbeing.data.model.GoogleFitDetails;
 import com.project.digitalwellbeing.data.model.LockUnlock;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
 import com.project.digitalwellbeing.data.model.UserInfo;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
-
-import static java.lang.String.*;
 
 public class FCMMessages {
     Context context;
@@ -91,6 +89,7 @@ public class FCMMessages {
             JSONObject jsonObj = null;
             Gson gson = new GsonBuilder().create();
             String json = gson.toJson(logDetails);
+        Log.d("Merly","logDetails "+json);
             fcmMessage.setTo(topic);
             //fcmMessageData.setBody("test");
             fcmMessageData.setContent_available("yes");
@@ -108,7 +107,59 @@ public class FCMMessages {
 
         return fcmMessage;
     }
+
+    public static FCMMessage sendLogsAck(List<LogDetails> logDetails,String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(logDetails);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("3_A");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+
+
+
+
+        return fcmMessage;
+    }
     public static FCMMessage sendTasks(List<TaskDetails> taskDetails,String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(taskDetails);
+        Log.d("Merly","taskDetails "+json);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("4");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+       return fcmMessage;
+     }
+
+    public static FCMMessage sendTasksAck(List<TaskDetails> taskDetails,String topic) {
         FCMMessage fcmMessage = new FCMMessage();
         FCMMessageData fcmMessageData = new FCMMessageData();
         FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
@@ -125,12 +176,37 @@ public class FCMMessages {
         fcmMessageNotification.setBody(json);
         fcmMessageNotification.setContent_available("yes");
         fcmMessageNotification.setPriority("yes");
-        fcmMessageNotification.setTitle("4");
+        fcmMessageNotification.setTitle("4_A");
         fcmMessage.setFcmMessageData(fcmMessageData);
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
-       return fcmMessage;
-     }
+        return fcmMessage;
+    }
     public static FCMMessage sendCallDetails(List<CallDetails> callDetails,String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(callDetails);
+        Log.d("Merly","callDetails "+json);
+
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("6");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+
+    public static FCMMessage sendCallDetailsAck(List<CallDetails> callDetails,String topic) {
         FCMMessage fcmMessage = new FCMMessage();
         FCMMessageData fcmMessageData = new FCMMessageData();
         FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
@@ -147,12 +223,58 @@ public class FCMMessages {
         fcmMessageNotification.setBody(json);
         fcmMessageNotification.setContent_available("yes");
         fcmMessageNotification.setPriority("yes");
-        fcmMessageNotification.setTitle("6");
+        fcmMessageNotification.setTitle("6_A");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+
+    public static FCMMessage googleFitAck(List<GoogleFitDetails> callDetails,String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(callDetails);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("10_A");
         fcmMessage.setFcmMessageData(fcmMessageData);
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
         return fcmMessage;
     }
     public static FCMMessage updateTaskDetails(List<TaskDetails> taskDetails,String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(taskDetails);
+        Log.d("Merly","taskDetails "+json);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("7");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+    public static FCMMessage updateTaskDetailsStatus(List<TaskDetails> taskDetails,String topic) {
         FCMMessage fcmMessage = new FCMMessage();
         FCMMessageData fcmMessageData = new FCMMessageData();
         FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
@@ -169,12 +291,58 @@ public class FCMMessages {
         fcmMessageNotification.setBody(json);
         fcmMessageNotification.setContent_available("yes");
         fcmMessageNotification.setPriority("yes");
-        fcmMessageNotification.setTitle("7");
+        fcmMessageNotification.setTitle("7_A");
         fcmMessage.setFcmMessageData(fcmMessageData);
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
         return fcmMessage;
     }
     public static FCMMessage sendAppdata(List<BlockedApps> blockedApps, String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(blockedApps);
+        Log.d("Merly","blockedApps "+json);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("8");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+    public static FCMMessage sendGoogleFit(List<GoogleFitDetails> blockedApps, String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(blockedApps);
+        Log.d("Merly","blockedApps "+json);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("10");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+    public static FCMMessage sendAppdataAck(List<BlockedApps> blockedApps, String topic) {
         FCMMessage fcmMessage = new FCMMessage();
         FCMMessageData fcmMessageData = new FCMMessageData();
         FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
@@ -191,12 +359,33 @@ public class FCMMessages {
         fcmMessageNotification.setBody(json);
         fcmMessageNotification.setContent_available("yes");
         fcmMessageNotification.setPriority("yes");
-        fcmMessageNotification.setTitle("8");
+        fcmMessageNotification.setTitle("8_A");
         fcmMessage.setFcmMessageData(fcmMessageData);
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
         return fcmMessage;
     }
     public static FCMMessage LockUnlock(List<LockUnlock> lockUnlock,String topic) {
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(lockUnlock);
+        Log.d("Merly","unlock "+json);
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+        fcmMessage.setTo(topic);
+        fcmMessageData.setBody(json);
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("test");
+        //fcmMessageNotification.setBody(CommonFunctionArea.getDeviceUUID(context));
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("5");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+
+    public static FCMMessage blockedApps(List<BlockedApps> lockUnlock,String topic) {
         Gson gson = new GsonBuilder().create();
         String json = gson.toJson(lockUnlock);
         FCMMessage fcmMessage = new FCMMessage();
@@ -210,7 +399,45 @@ public class FCMMessages {
         //fcmMessageNotification.setBody(CommonFunctionArea.getDeviceUUID(context));
         fcmMessageNotification.setContent_available("yes");
         fcmMessageNotification.setPriority("yes");
-        fcmMessageNotification.setTitle("5");
+        fcmMessageNotification.setTitle("9");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+    public static FCMMessage LockUnlockAck(List<LockUnlock> lockUnlock,String topic) {
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(lockUnlock);
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+        fcmMessage.setTo(topic);
+        fcmMessageData.setBody(json);
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("test");
+        //fcmMessageNotification.setBody(CommonFunctionArea.getDeviceUUID(context));
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("5_A");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+    public static FCMMessage BlockAppsAck(List<BlockedApps> lockUnlock,String topic) {
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(lockUnlock);
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+        fcmMessage.setTo(topic);
+        fcmMessageData.setBody(json);
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("test");
+        //fcmMessageNotification.setBody(CommonFunctionArea.getDeviceUUID(context));
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("9_A");
         fcmMessage.setFcmMessageData(fcmMessageData);
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
         return fcmMessage;

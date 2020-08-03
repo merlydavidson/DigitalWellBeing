@@ -10,13 +10,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Browser;
-import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
@@ -49,25 +46,20 @@ import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.LockUnlock;
 import com.project.digitalwellbeing.data.model.TaskDetails;
-import com.project.digitalwellbeing.remote.Communicator;
 import com.project.digitalwellbeing.service.DigitalWellBeingService;
 import com.project.digitalwellbeing.utils.BrowserObserver;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
-import com.project.digitalwellbeing.utils.FCMMessages;
 import com.project.digitalwellbeing.utils.Popup;
 import com.project.digitalwellbeing.utils.TaskCompletedDialog;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import me.everything.providers.android.browser.BrowserProvider;
 import me.everything.providers.android.browser.Search;
 import me.everything.providers.core.Data;
 
-import static com.project.digitalwellbeing.utils.CommonDataArea.APP_BLOCK_PIN;
-import static com.project.digitalwellbeing.utils.CommonDataArea.BLOCKAPPS;
 import static com.project.digitalwellbeing.utils.CommonDataArea.editor;
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
@@ -76,11 +68,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     LinearLayout pairKeyLinearLayout, taskLinearLayout, googleFitLinearLayout, webHistoryLinearLayout, callLogLinearLayout, locationLinearLayout, appUsageLinearLayout, recentActivitiesLinearLayout, lockDeviceLinearLayout;
     TextView pairKeytext, tasktext, googleFitText, webHistoryText, callLogText, locationText, appusageText, recentActivitiesText;
     LinearLayout lockDeviceText;
+    List<TaskDetails> completedTaskList;
     private Toolbar toolbar;
     private BrowserObserver browserObserver;
     private DigitalWellBeingService mDigitalWellBeingService;
     private Intent mServiceIntent;
-    List<TaskDetails> completedTaskList;
+    int role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,22 +81,26 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_dashboard2);
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
-        int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        String parent = sharedPreferences.getString(CommonDataArea.PARENT, "");
         if (role == 1) {
             CommonDataArea.CURRENTCHILDID = CommonFunctionArea.getDeviceUUID(this);
+            CommonDataArea.PARENT_UUID = "/topics/" + parent;
+            Log.d("CurrentTopic>>", CommonDataArea.PARENT_UUID);
         }
         /****************************************************************************/
-requestPermission();
+        requestPermission();
         /****************************************************************************/
 
 
     }
+
     private void requestPermission() {
         Dexter.withActivity(this)
                 .withPermissions(
                         Manifest.permission.READ_CONTACTS,
                         Manifest.permission.READ_CALL_LOG,
-                        Manifest.permission.ACTIVITY_RECOGNITION,
+                        // Manifest.permission.ACTIVITY_RECOGNITION,
                         Manifest.permission.ACCESS_FINE_LOCATION)
                 .withListener(new MultiplePermissionsListener() {
                     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -111,8 +108,8 @@ requestPermission();
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         // check if all permissions are granted
                         if (report.areAllPermissionsGranted()) {
-                           // Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
-                        doTasks();
+                            // Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+                            doTasks();
                         }
 
                         // check for permanent denial of any permission
@@ -136,6 +133,7 @@ requestPermission();
                 .onSameThread()
                 .check();
     }
+
     private void showSettingsDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(DashboardActivity.this);
         builder.setTitle("Need Permissions");
@@ -155,12 +153,14 @@ requestPermission();
         });
         builder.show();
     }
+
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
         Uri uri = Uri.fromParts("package", getPackageName(), null);
         intent.setData(uri);
         startActivityForResult(intent, 101);
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private boolean hasPermission() {
         try {
@@ -177,6 +177,7 @@ requestPermission();
             return false;
         }
     }
+
     public void usageAccessSettingsPage() {//permission for reading foreground task
         try {
             Intent intent = new Intent();
@@ -192,10 +193,19 @@ requestPermission();
         } catch (Exception e) {
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     private void doTasks() {
         if (!hasPermission()) {
             usageAccessSettingsPage();
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                if (intent.resolveActivity(getPackageManager()) != null)
+                    startActivityForResult(intent, 0);
+            }
         }
         initViews();
         getAllData();
@@ -213,8 +223,8 @@ requestPermission();
 
             }
         }, 2000);
-
-        showTaskCompletionDialog();
+        if (role == 1)
+            showTaskCompletionDialog();
         pairKeytext.setText(CommonDataArea.CURRENTCHILDID);
     }
 
@@ -293,17 +303,20 @@ requestPermission();
         taskLinearLayout = (LinearLayout) findViewById(R.id.task_layout);
         googleFitLinearLayout = (LinearLayout) findViewById(R.id.google_fit_layout);
         callLogLinearLayout = (LinearLayout) findViewById(R.id.call_layout);
-        webHistoryLinearLayout = (LinearLayout) findViewById(R.id.web_layout);
+        //  webHistoryLinearLayout = (LinearLayout) findViewById(R.id.web_layout);
         locationLinearLayout = (LinearLayout) findViewById(R.id.location_layout);
         appUsageLinearLayout = (LinearLayout) findViewById(R.id.apps_layout);
         recentActivitiesLinearLayout = (LinearLayout) findViewById(R.id.log_layout);
         lockDeviceLinearLayout = (LinearLayout) findViewById(R.id.lock_layout);
 
+        if (CommonDataArea.ROLE == 1)
+            lockDeviceLinearLayout.setVisibility(View.GONE);
+
         pairKeyLinearLayout.setOnClickListener(this);
         taskLinearLayout.setOnClickListener(this);
         googleFitLinearLayout.setOnClickListener(this);
         callLogLinearLayout.setOnClickListener(this);
-        webHistoryLinearLayout.setOnClickListener(this);
+//        webHistoryLinearLayout.setOnClickListener(this);
         locationLinearLayout.setOnClickListener(this);
         appUsageLinearLayout.setOnClickListener(this);
         recentActivitiesLinearLayout.setOnClickListener(this);
@@ -314,7 +327,7 @@ requestPermission();
         tasktext = (TextView) findViewById(R.id.txt_task);
         googleFitText = (TextView) findViewById(R.id.txt_google_fit);
         callLogText = (TextView) findViewById(R.id.txt_call);
-        webHistoryText = (TextView) findViewById(R.id.txt_web);
+        // webHistoryText = (TextView) findViewById(R.id.txt_web);
         locationText = (TextView) findViewById(R.id.txt_location);
         appusageText = (TextView) findViewById(R.id.txt_app);
         recentActivitiesText = (TextView) findViewById(R.id.txt_log);
@@ -339,16 +352,21 @@ requestPermission();
                 Intent callIntent = new Intent(DashboardActivity.this, ContactListActivity.class);
                 startActivity(callIntent);
                 break;
-            case R.id.web_layout:
-                getWebHistory();
-                break;
+            //case R.id.web_layout:
+            //  getWebHistory();
+            // break;
             case R.id.location_layout:
                 Intent locationIntent = new Intent(DashboardActivity.this, LocationActivity.class);
                 startActivity(locationIntent);
                 break;
             case R.id.apps_layout:
-                if (!getAppUsagePermissionStatus()) {
-                    new Popup(DashboardActivity.this).doubleChoice("App Usage Permission", "You need to allow App usage permission", 2, DashboardActivity.this);
+                if (CommonDataArea.ROLE == 1) {
+                    if (!getAppUsagePermissionStatus()) {
+                        new Popup(DashboardActivity.this).doubleChoice("App Usage Permission", "You need to allow App usage permission", 2, DashboardActivity.this);
+                    } else {
+                        Intent appUsageIntent = new Intent(DashboardActivity.this, AppusageActivity.class);
+                        startActivity(appUsageIntent);
+                    }
                 } else {
                     Intent appUsageIntent = new Intent(DashboardActivity.this, AppusageActivity.class);
                     startActivity(appUsageIntent);
@@ -365,81 +383,6 @@ requestPermission();
 
         }
     }
-
-    public class ViewDialog {
-
-        public void showDialog(Activity activity, Context context) {
-            final Dialog dialog = new Dialog(activity);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.setCancelable(false);
-            dialog.setContentView(R.layout.lock_app_dialog);
-            dialog.setCancelable(true);
-            EditText text = (EditText) dialog.findViewById(R.id.password);
-            sharedPreferences = getSharedPreferences(
-                    CommonDataArea.prefName, Context.MODE_PRIVATE);
-            CommonDataArea.editor = sharedPreferences.edit();
-
-            Button dialogButton = (Button) dialog.findViewById(R.id.block);
-            AppDataBase appDataBase = AppDataBase.getInstance(context);
-            DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-            LockUnlock lockUnlock = digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID);
-            // boolean  isBlocked = sharedPreferences.getBoolean(BLOCKAPPS, false);
-            boolean isBlocked = false;
-            if (lockUnlock != null) {
-                isBlocked = lockUnlock.isLocked();
-                if (isBlocked)
-                    dialogButton.setText("Unblock");
-                else
-                    dialogButton.setText("Block");
-            }
-
-            dialogButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (dialogButton.getText().toString().equalsIgnoreCase("Block")) {
-                        int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
-                        if (role == 0) {
-                            if (text.getText().toString() != null && text.getText().toString().length() > 0) {
-                                if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
-                                    digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, true, text.getText().toString());
-                                    dialogButton.setText("Unblock");
-                                    Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
-                                } else {
-                                    digitalWellBeingDao.insertLockUnlockData(new LockUnlock(CommonDataArea.CURRENTCHILDID,
-                                            text.getText().toString(), true));
-                                }
-                         /*  editor.putBoolean(BLOCKAPPS, true);
-                            editor.putString(APP_BLOCK_PIN,text.getText().toString());
-                           dialogButton.setText("Unblock");
-                            Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
-                           editor.commit();*/
-                            }
-                        }
-                    } else if (dialogButton.getText().toString().equalsIgnoreCase("Unblock")) {
-                        //editor.putBoolean(BLOCKAPPS, false);
-                        if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
-                            if (digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID).getPassword().
-                                    equalsIgnoreCase(text.getText().toString())) {
-                                digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, false, "");
-                                //dialogButton.setText("Block");
-                                // Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
-                                dialogButton.setText("Block");
-                            }
-                        }
-
-                        // editor.commit();
-                        Toast.makeText(DashboardActivity.this, "Unlocked successfully", Toast.LENGTH_SHORT).show();
-
-                    }
-                    dialog.dismiss();
-                }
-            });
-
-            dialog.show();
-
-        }
-    }
-
 
     private void getWebHistory() {
         BrowserProvider browserProvider = new BrowserProvider(this);
@@ -479,7 +422,6 @@ requestPermission();
         return check;
 
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -600,6 +542,83 @@ requestPermission();
         }
         Log.i("Service status", "Not running");
         return false;
+    }
+
+    public class ViewDialog {
+
+        public void showDialog(Activity activity, Context context) {
+            final Dialog dialog = new Dialog(activity);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.setCancelable(false);
+            dialog.setContentView(R.layout.lock_app_dialog);
+            dialog.setCancelable(true);
+            EditText text = (EditText) dialog.findViewById(R.id.password);
+            sharedPreferences = getSharedPreferences(
+                    CommonDataArea.prefName, Context.MODE_PRIVATE);
+            CommonDataArea.editor = sharedPreferences.edit();
+
+            Button dialogButton = (Button) dialog.findViewById(R.id.block);
+            AppDataBase appDataBase = AppDataBase.getInstance(context);
+            DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+            LockUnlock lockUnlock = digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID);
+            // boolean  isBlocked = sharedPreferences.getBoolean(BLOCKAPPS, false);
+            boolean isBlocked = false;
+            if (lockUnlock != null) {
+                isBlocked = lockUnlock.isLocked();
+                if (isBlocked)
+                    dialogButton.setText("Unblock");
+                else
+                    dialogButton.setText("Block");
+            }
+
+            dialogButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (dialogButton.getText().toString().equalsIgnoreCase("Block")) {
+                        int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+                        if (role == 0) {
+                            if (text.getText().toString() != null && text.getText().toString().length() > 0) {
+                                if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
+                                    digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID,
+                                            true, text.getText().toString(), "0");
+                                    dialogButton.setText("Unblock");
+                                    Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    LockUnlock unlock = new LockUnlock();
+                                    unlock.setChildId(CommonDataArea.CURRENTCHILDID);
+                                    unlock.setPassword(text.getText().toString());
+                                    unlock.setLocked(true);
+                                    unlock.setAcknowledgement("0");
+                                    digitalWellBeingDao.insertLockUnlockData(unlock);
+                                    dialogButton.setText("Unblock");
+                                }
+
+                            }
+                        } else {
+                            Toast.makeText(DashboardActivity.this, "Not allowed", Toast.LENGTH_SHORT).show();
+                        }
+                    } else if (dialogButton.getText().toString().equalsIgnoreCase("Unblock")) {
+
+                        if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
+                            if (digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID).getPassword().
+                                    equalsIgnoreCase(text.getText().toString())) {
+                                digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, false, "", "0");
+
+                                dialogButton.setText("Block");
+                            }
+                        }
+
+                        // editor.commit();
+                        Toast.makeText(DashboardActivity.this, "Unlocked successfully", Toast.LENGTH_SHORT).show();
+
+                    }
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+
+        }
     }
 
 }
