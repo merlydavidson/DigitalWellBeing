@@ -44,6 +44,9 @@ public interface DigitalWellBeingDao {
     @Query("SELECT * FROM GoogleFitDetails where date = :date")
    List<GoogleFitDetails>  getGoogleData(String date);
 
+    @Query("SELECT * FROM GoogleFitDetails where acknowledgement = :ack")
+   List<GoogleFitDetails>  getGoogleData1(String ack);
+
     @Query("SELECT * FROM UserDetails")
     List<UserDetails> getUserDetails();
 
@@ -88,6 +91,9 @@ public interface DigitalWellBeingDao {
 
     @Query("SELECT * FROM TaskDetails where date = :date")
     List<TaskDetails> getTasks(String date);
+
+    @Query("SELECT EXISTS ( SELECT * FROM GoogleFitDetails where googleFitID = :id AND childId =:childId)")
+    Boolean googleFitExists(int id,String childId);
 
     @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name)")
    Boolean getBlockedAppDetails(String name);
@@ -163,4 +169,7 @@ public interface DigitalWellBeingDao {
 
     @Query("UPDATE LogDetails SET  acknowlwdgement =:ack WHERE logId = :logid AND childId =:chid")
     public abstract int updateLogdetailsAck(int logid,String ack, String chid);
+
+    @Query("UPDATE GoogleFitDetails SET  acknowledgement =:ack WHERE googleFitID = :id AND childId =:chid")
+    public abstract int updateGooglefitAck(int id,String ack, String chid);
 }

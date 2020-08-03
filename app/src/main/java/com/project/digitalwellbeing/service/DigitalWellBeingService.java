@@ -31,10 +31,12 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.project.digitalwellbeing.CloseAppActivity;
+import com.project.digitalwellbeing.GoogleFit;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.data.model.GoogleFitDetails;
 import com.project.digitalwellbeing.data.model.LockUnlock;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
@@ -113,11 +115,20 @@ public class DigitalWellBeingService extends Service {
                                        sendUpdatedTaskDetails();
                                        sendLocationDetails();
                                        sendCallDetailsToParent();
+                                       sendGoogleFitData();
 
                                    }
                                },
                 0,
                 1000 * 30);
+    }
+    private void sendGoogleFitData(){
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+         List<GoogleFitDetails> googleDetails = digitalWellBeingDao.getGoogleData1("0");
+        String uuid = CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
+        if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.contains(uuid) && !googleDetails.isEmpty())
+            new Communicator(this).sendMessage(FCMMessages.sendGoogleFit(googleDetails, CommonDataArea.PARENT_UUID));
     }
 
     private void continiousCheck() {
@@ -607,7 +618,7 @@ public class DigitalWellBeingService extends Service {
                 logDetails.setApp_details(currentForegrounApp);
                 logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
                 logDetails.setAcknowlwdgement("0");
-                final PackageManager pm = context.getPackageManager();
+                final PackageManager pm = DigitalWellBeingService.this.getPackageManager();
                 try {
                     ApplicationInfo ai = pm.getApplicationInfo(currentForegrounApp, 0);
                     final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");

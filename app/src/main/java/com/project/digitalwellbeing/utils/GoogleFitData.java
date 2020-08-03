@@ -330,7 +330,8 @@ public class GoogleFitData {
             googleFitDetails.setTotalCalorie(stillCalorie);
             googleFitDetails.setTotalSteps(Integer.parseInt(String.valueOf(total)));
             googleFitDetails.setDate(selecteddate);
-
+            googleFitDetails.setAcknowledgement("0");
+            googleFitDetails.setChildId(CommonFunctionArea.getDeviceUUID(mContext));
             AppDataBase appDataBase = AppDataBase.getInstance(mContext);
             DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
             if (digitalWellBeingDao.getGoogleData(selecteddate).size() <= 0)

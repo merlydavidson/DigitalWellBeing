@@ -16,6 +16,7 @@ import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.data.model.GoogleFitDetails;
 import com.project.digitalwellbeing.data.model.LockUnlock;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
@@ -77,7 +78,42 @@ public class FCMActions {
             UpdateBlockeAppStatus(remoteMessage.getNotification().getBody());
         }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("9_A")) {//block apps ack
             UpdateBlockeAppStatusAck(remoteMessage.getNotification().getBody());
+        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("10")) {//block apps ack
+            InsertGoogleFitData(remoteMessage.getNotification().getBody());
+        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("10_A")) {//block apps ack
+            UpdateGoogleFitAck(remoteMessage.getNotification().getBody());
         }
+    }
+
+    private void UpdateGoogleFitAck(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<GoogleFitDetails>>() {
+        }.getType();
+        List<GoogleFitDetails> list = gson.fromJson(body, listType);
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+
+        for (GoogleFitDetails t : list) {
+
+            if(digitalWellBeingDao.googleFitExists(t.getGoogleFitID(),t.getChildId()))
+                digitalWellBeingDao.updateGooglefitAck(t.getGoogleFitID(),"1",t.getChildId());
+        }
+    }
+
+    private void InsertGoogleFitData(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<GoogleFitDetails>>() {
+        }.getType();
+        List<GoogleFitDetails> list = gson.fromJson(body, listType);
+        AppDataBase appDataBase = AppDataBase.getInstance(context);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        String child_id = "";
+        for (GoogleFitDetails t : list) {
+            child_id = t.getChildId();
+            if(!digitalWellBeingDao.googleFitExists(t.getGoogleFitID(),t.getChildId()))
+                digitalWellBeingDao.insertGoogleDetails(t);
+        }
+        new Communicator(context).sendMessage(FCMMessages.googleFitAck(list, child_id));
     }
 
     private void UpdateBlockeAppStatusAck(String body) {
