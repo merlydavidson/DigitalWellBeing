@@ -126,7 +126,7 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
             ai = null;
         }
         final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-        viewHolder.getPackageName().setText(mCustomUsageStatsList.get(position).getAppname());
+        viewHolder.getPackageName().setText(applicationName);
 
        ydata.add(applicationName);
 
@@ -195,7 +195,16 @@ public class UsageListAdapter extends RecyclerView.Adapter<UsageListAdapter.View
                 dialog.setContentView(R.layout.app_dialog);
                 dialog.setTitle("Usage Details");
                 TextView text = (TextView) dialog.findViewById(R.id.appname);
-                text.setText(mCustomUsageStatsList.get(position).getAppname());
+                final PackageManager pm= context.getPackageManager();
+                ApplicationInfo ai=null;
+                try {
+                    ai=pm.getApplicationInfo(mCustomUsageStatsList.get(position).getPackagename(), 0);
+
+                }catch (final PackageManager.NameNotFoundException e) {
+                    ai = null;
+                }
+                final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+                text.setText(applicationName);
                 TextView lastused = (TextView) dialog.findViewById(R.id.last_used);
                 lastused.setText("Last Used : "+dateFormat.format(new Date(mCustomUsageStatsList.get(position).getLastTimeUsed())));
                 TextView totalused = (TextView) dialog.findViewById(R.id.total_used);
