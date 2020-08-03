@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 public class BlockedApps {
     @PrimaryKey(autoGenerate = true)
     int id;
-
+//new comment
     @ColumnInfo(name = "packagename")
     @SerializedName("packagename")
     String packagename;

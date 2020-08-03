@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 public class LogDetails {
     @PrimaryKey(autoGenerate = true)
     public int logId;
-
+//new comments
     @ColumnInfo(name ="location")
     @SerializedName("location")
     public String location;
