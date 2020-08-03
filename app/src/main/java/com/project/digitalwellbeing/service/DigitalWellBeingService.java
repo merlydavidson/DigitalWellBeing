@@ -59,17 +59,23 @@ import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreference
 public class DigitalWellBeingService extends Service {
     public static final String BROADCAST_ACTION = "Digital Well Being";
     private static final int TWO_MINUTES = 1000 * 60 * 2;
-    public int counter = 0;
     private static final String TAG = "TESTGPS";
-    private LocationManager mLocationManager = null;
     private static final int LOCATION_INTERVAL = 100;
     private static final float LOCATION_DISTANCE = 10f;
+    public int counter = 0;
     boolean blockApps = false;
     Intent intent;
+    Random rand = new Random();
+    Timer t1, t2, t3;
+    boolean isBlocked = false;
+    LocationListener[] mLocationListeners = new LocationListener[]{
+            new LocationListener(LocationManager.GPS_PROVIDER),
+            new LocationListener(LocationManager.NETWORK_PROVIDER)
+    };
+    private LocationManager mLocationManager = null;
     private String cityName = "";
     private Timer timer;
     private TimerTask timerTask;
-    Random rand = new Random();
 
     public static Thread performOnBackgroundThread(final Runnable runnable) {
         final Thread t = new Thread() {
@@ -137,8 +143,6 @@ public class DigitalWellBeingService extends Service {
                 0,
                 1000 * 10);
     }
-
-    Timer t1, t2, t3;
 
     private void sendDatatoChild() {
 
@@ -304,7 +308,6 @@ public class DigitalWellBeingService extends Service {
         return newList;
     }
 
-
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate() {
@@ -385,7 +388,6 @@ public class DigitalWellBeingService extends Service {
         }
     }
 
-
     public void stoptimertask() {
 
         if (t1 != null) {
@@ -408,7 +410,6 @@ public class DigitalWellBeingService extends Service {
         return null;
     }
 
-
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
@@ -416,7 +417,6 @@ public class DigitalWellBeingService extends Service {
         startService(restartServiceIntent);
         super.onTaskRemoved(rootIntent);
     }
-
 
     public void usageAccessSettingsPage() {//permission for reading foreground task
         try {
@@ -433,7 +433,6 @@ public class DigitalWellBeingService extends Service {
         } catch (Exception e) {
         }
     }
-
 
     public void showDialog() {
 
@@ -525,8 +524,6 @@ public class DigitalWellBeingService extends Service {
         }
     }
 
-    boolean isBlocked = false;
-
     private void lookForBlockedApps() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
@@ -570,6 +567,13 @@ public class DigitalWellBeingService extends Service {
         }
     }
 
+    private void initializeLocationManager() {
+        Log.e(TAG, "initializeLocationManager");
+        if (mLocationManager == null) {
+            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+        }
+    }
+
     private class LocationListener implements android.location.LocationListener {
         Location mLastLocation;
 
@@ -582,6 +586,7 @@ public class DigitalWellBeingService extends Service {
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
+            PackageManager pm=null;
             Geocoder geocoder;
             List<Address> addresses;
             geocoder = new Geocoder(DigitalWellBeingService.this, Locale.getDefault());
@@ -589,38 +594,41 @@ public class DigitalWellBeingService extends Service {
                     CommonDataArea.prefName, Context.MODE_PRIVATE);
             int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
             if (role == 1) {
-            try {
-                addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
-                String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                String postalCode = addresses.get(0).getPostalCode();
-                String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
-                AppDataBase appDataBase = AppDataBase.getInstance(context);
-                DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-
-                LogDetails logDetails=new LogDetails();
-                logDetails.setLocation(address);
-                logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
-                logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
-                logDetails.setApp_details(currentForegrounApp);
-                logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
-                logDetails.setAcknowlwdgement("0");
-                final PackageManager pm = context.getPackageManager();
                 try {
-                    ApplicationInfo ai = pm.getApplicationInfo(currentForegrounApp, 0);
-                    final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-                    logDetails.setAppname(applicationName);
-                } catch (PackageManager.NameNotFoundException e) {
+                    addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1); // Here 1 represent max location result to returned, by documents it recommended 1 to 5
+                    String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+                    String city = addresses.get(0).getLocality();
+                    String state = addresses.get(0).getAdminArea();
+                    String country = addresses.get(0).getCountryName();
+                    String postalCode = addresses.get(0).getPostalCode();
+                    String currentForegrounApp = CommonFunctionArea.foregroundApplication(DigitalWellBeingService.this);
+                    AppDataBase appDataBase = AppDataBase.getInstance(context);
+                    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+
+                    LogDetails logDetails = new LogDetails();
+                    logDetails.setLocation(address);
+                    logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
+                    logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));
+                    logDetails.setApp_details(currentForegrounApp);
+                    logDetails.setChildId(CommonDataArea.CURRENTCHILDID);
+                    logDetails.setAcknowlwdgement("0");
+
+                    try {
+                        if (context != null) {
+                            pm = DigitalWellBeingService.this.getPackageManager();
+                            ApplicationInfo ai = pm.getApplicationInfo(currentForegrounApp, 0);
+                            final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+                            logDetails.setAppname(applicationName);
+                        }
+                    } catch (PackageManager.NameNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    logDetails.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
+                    digitalWellBeingDao.insertLogDetails(logDetails);
+
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-                logDetails.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
-                digitalWellBeingDao.insertLogDetails(logDetails);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             }
         }
 
@@ -637,18 +645,6 @@ public class DigitalWellBeingService extends Service {
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             Log.e(TAG, "onStatusChanged: " + provider);
-        }
-    }
-
-    LocationListener[] mLocationListeners = new LocationListener[]{
-            new LocationListener(LocationManager.GPS_PROVIDER),
-            new LocationListener(LocationManager.NETWORK_PROVIDER)
-    };
-
-    private void initializeLocationManager() {
-        Log.e(TAG, "initializeLocationManager");
-        if (mLocationManager == null) {
-            mLocationManager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         }
     }
 }
