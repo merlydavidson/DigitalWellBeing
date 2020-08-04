@@ -14,14 +14,24 @@ public class LockUnlock {
     @SerializedName("childId")
     String childId;
 
+    @ColumnInfo(defaultValue = "0",name = "acknowledgement")
+    @SerializedName("acknowledgement")
+    String acknowledgement;
+
     @ColumnInfo(name = "password")
     @SerializedName("password")
     String password;
 
-    public LockUnlock(String childId, String password, boolean isLocked) {
-        this.childId = childId;
-        this.password = password;
-        this.isLocked = isLocked;
+    public String getAcknowledgement() {
+        return acknowledgement;
+    }
+
+    public void setAcknowledgement(String acknowledgement) {
+        this.acknowledgement = acknowledgement;
+    }
+
+    public LockUnlock() {
+
     }
 
     public int getId() {
