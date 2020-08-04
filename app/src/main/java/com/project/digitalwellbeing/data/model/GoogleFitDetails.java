@@ -34,6 +34,31 @@ public class GoogleFitDetails {
     @SerializedName("date")
     public String date;
 
+    @ColumnInfo(name = "acknowledgement")
+    @SerializedName("acknowledgement")
+    public String acknowledgement;
+
+    public String getAcknowledgement() {
+        return acknowledgement;
+    }
+
+    public void setAcknowledgement(String acknowledgement) {
+        this.acknowledgement = acknowledgement;
+    }
+
+    public String getChildId() {
+        return childId;
+    }
+
+    public void setChildId(String childId) {
+        this.childId = childId;
+    }
+
+    @ColumnInfo(name = "childId")
+    @SerializedName("childId")
+    public String childId;
+
+
 
     @PrimaryKey(autoGenerate = true)
     int googleFitID;

@@ -73,6 +73,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private BrowserObserver browserObserver;
     private DigitalWellBeingService mDigitalWellBeingService;
     private Intent mServiceIntent;
+    int role;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_dashboard2);
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
-        int role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
+        role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
         String parent = sharedPreferences.getString(CommonDataArea.PARENT, "");
         if (role == 1) {
             CommonDataArea.CURRENTCHILDID = CommonFunctionArea.getDeviceUUID(this);
@@ -222,8 +223,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
 
             }
         }, 2000);
-
-        showTaskCompletionDialog();
+        if (role == 1)
+            showTaskCompletionDialog();
         pairKeytext.setText(CommonDataArea.CURRENTCHILDID);
     }
 
@@ -302,7 +303,7 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         taskLinearLayout = (LinearLayout) findViewById(R.id.task_layout);
         googleFitLinearLayout = (LinearLayout) findViewById(R.id.google_fit_layout);
         callLogLinearLayout = (LinearLayout) findViewById(R.id.call_layout);
-      //  webHistoryLinearLayout = (LinearLayout) findViewById(R.id.web_layout);
+        //  webHistoryLinearLayout = (LinearLayout) findViewById(R.id.web_layout);
         locationLinearLayout = (LinearLayout) findViewById(R.id.location_layout);
         appUsageLinearLayout = (LinearLayout) findViewById(R.id.apps_layout);
         recentActivitiesLinearLayout = (LinearLayout) findViewById(R.id.log_layout);

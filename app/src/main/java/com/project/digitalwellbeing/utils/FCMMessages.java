@@ -12,6 +12,7 @@ import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.FCMMessage;
 import com.project.digitalwellbeing.data.model.FCMMessageData;
 import com.project.digitalwellbeing.data.model.FCMMessageNotification;
+import com.project.digitalwellbeing.data.model.GoogleFitDetails;
 import com.project.digitalwellbeing.data.model.LockUnlock;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
@@ -227,6 +228,29 @@ public class FCMMessages {
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
         return fcmMessage;
     }
+
+    public static FCMMessage googleFitAck(List<GoogleFitDetails> callDetails,String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(callDetails);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("10_A");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
     public static FCMMessage updateTaskDetails(List<TaskDetails> taskDetails,String topic) {
         FCMMessage fcmMessage = new FCMMessage();
         FCMMessageData fcmMessageData = new FCMMessageData();
@@ -291,6 +315,29 @@ public class FCMMessages {
         fcmMessageNotification.setContent_available("yes");
         fcmMessageNotification.setPriority("yes");
         fcmMessageNotification.setTitle("8");
+        fcmMessage.setFcmMessageData(fcmMessageData);
+        fcmMessage.setFcmMessageNotification(fcmMessageNotification);
+        return fcmMessage;
+    }
+    public static FCMMessage sendGoogleFit(List<GoogleFitDetails> blockedApps, String topic) {
+        FCMMessage fcmMessage = new FCMMessage();
+        FCMMessageData fcmMessageData = new FCMMessageData();
+        FCMMessageNotification fcmMessageNotification = new FCMMessageNotification();
+
+
+        JSONObject jsonObj = null;
+        Gson gson = new GsonBuilder().create();
+        String json = gson.toJson(blockedApps);
+        Log.d("Merly","blockedApps "+json);
+        fcmMessage.setTo(topic);
+        //fcmMessageData.setBody("test");
+        fcmMessageData.setContent_available("yes");
+        fcmMessageData.setPriority("yes");
+        fcmMessageData.setTitle("log");
+        fcmMessageNotification.setBody(json);
+        fcmMessageNotification.setContent_available("yes");
+        fcmMessageNotification.setPriority("yes");
+        fcmMessageNotification.setTitle("10");
         fcmMessage.setFcmMessageData(fcmMessageData);
         fcmMessage.setFcmMessageNotification(fcmMessageNotification);
         return fcmMessage;

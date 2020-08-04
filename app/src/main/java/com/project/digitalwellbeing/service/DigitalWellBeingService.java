@@ -35,6 +35,7 @@ import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
+import com.project.digitalwellbeing.data.model.GoogleFitDetails;
 import com.project.digitalwellbeing.data.model.LockUnlock;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
@@ -119,11 +120,21 @@ public class DigitalWellBeingService extends Service {
                                        sendUpdatedTaskDetails();
                                        sendLocationDetails();
                                        sendCallDetailsToParent();
+                                       sendGoogleFitData();
 
                                    }
                                },
                 0,
                 1000 * 30);
+    }
+
+    private void sendGoogleFitData() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<GoogleFitDetails> googleDetails = digitalWellBeingDao.getGoogleData1("0");
+        String uuid = CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
+        if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.contains(uuid) && !googleDetails.isEmpty())
+            new Communicator(this).sendMessage(FCMMessages.sendGoogleFit(googleDetails, CommonDataArea.PARENT_UUID));
     }
 
     private void continiousCheck() {
@@ -308,6 +319,7 @@ public class DigitalWellBeingService extends Service {
         return newList;
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @Override
     public void onCreate() {
@@ -388,6 +400,7 @@ public class DigitalWellBeingService extends Service {
         }
     }
 
+
     public void stoptimertask() {
 
         if (t1 != null) {
@@ -410,6 +423,7 @@ public class DigitalWellBeingService extends Service {
         return null;
     }
 
+
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         Intent restartServiceIntent = new Intent(getApplicationContext(), this.getClass());
@@ -417,6 +431,7 @@ public class DigitalWellBeingService extends Service {
         startService(restartServiceIntent);
         super.onTaskRemoved(rootIntent);
     }
+
 
     public void usageAccessSettingsPage() {//permission for reading foreground task
         try {
@@ -586,7 +601,7 @@ public class DigitalWellBeingService extends Service {
         public void onLocationChanged(Location location) {
             Log.e(TAG, "onLocationChanged: " + location);
             mLastLocation.set(location);
-            PackageManager pm=null;
+            PackageManager pm = null;
             Geocoder geocoder;
             List<Address> addresses;
             geocoder = new Geocoder(DigitalWellBeingService.this, Locale.getDefault());
