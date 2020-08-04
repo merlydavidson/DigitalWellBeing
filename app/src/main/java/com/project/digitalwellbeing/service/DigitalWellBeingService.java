@@ -121,13 +121,23 @@ public class DigitalWellBeingService extends Service {
                                        sendLocationDetails();
                                        sendCallDetailsToParent();
                                        sendGoogleFitData();
+                                       unlockedAllApps();
 
                                    }
                                },
                 0,
                 1000 * 30);
     }
+private void unlockedAllApps(){
+    AppDataBase appDataBase = AppDataBase.getInstance(this);
+    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+    List<LockUnlock> lockdetails = digitalWellBeingDao.getLockUnlockDetailsList("0", CommonDataArea.CURRENTCHILDID);
+    if (!CommonDataArea.PARENT_UUID.equals("/topics/") &&
+            !CommonDataArea.PARENT_UUID.contains(CommonFunctionArea.getDeviceUUID(this)) && !lockdetails.isEmpty())
+    new Communicator(this).sendMessage(FCMMessages.LockUnlockUpdate(lockdetails, CommonDataArea.PARENT_UUID));
 
+
+}
     private void sendGoogleFitData() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();

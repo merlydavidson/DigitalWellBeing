@@ -82,6 +82,51 @@ public class FCMActions {
             InsertGoogleFitData(remoteMessage.getNotification().getBody());
         }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("10_A")) {//block apps ack
             UpdateGoogleFitAck(remoteMessage.getNotification().getBody());
+        } else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("11")) {//lock unlock ack
+            lockUnlockUpdate(remoteMessage.getNotification().getBody());
+        }else if (remoteMessage.getNotification().getTitle().equalsIgnoreCase("11_A")) {//lock unlock ack
+            lockUnlockUpdateAck(remoteMessage.getNotification().getBody());
+        }
+    }
+
+    private void lockUnlockUpdateAck(String body) {
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<LockUnlock>>() {
+        }.getType();
+        List<LockUnlock> list = gson.fromJson(body, listType);
+        if(!list.isEmpty()) {
+            for(LockUnlock l:list){
+                if(l.getChildId().equals(CommonFunctionArea.getDeviceUUID(context))){
+                    AppDataBase appDataBase = AppDataBase.getInstance(context);
+                    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+                    if (digitalWellBeingDao.LockUnLock1(l.getId(),l.getChildId())) {
+                        digitalWellBeingDao.updateLockUnlockAck(l.getId(),"1");
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    private void lockUnlockUpdate(String body) {//received at par
+        Gson gson = new Gson();
+        Type listType = new TypeToken<List<LockUnlock>>() {
+        }.getType();
+        List<LockUnlock> list = gson.fromJson(body, listType);
+        if(!list.isEmpty()) {
+            for (LockUnlock l : list) {
+
+                AppDataBase appDataBase = AppDataBase.getInstance(context);
+                DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+                String childId="";
+                if (digitalWellBeingDao.LockUnLock1(l.getId(),l.getChildId())) {
+                    childId=l.getChildId();
+                    digitalWellBeingDao.updateLockUnlock(l.getChildId(), l.isLocked(), l.getPassword(), "1");
+                }
+
+                new Communicator(context).sendMessage(FCMMessages.LockAck2(list, childId));
+            }
         }
     }
 
@@ -312,16 +357,18 @@ public class FCMActions {
         List<LockUnlock> list2 = new ArrayList<>();
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        if(list!=null && !list.isEmpty()){
         for (LockUnlock l : list) {
             if (l.getChildId().equals(CommonDataArea.CURRENTCHILDID)) {
                 list2.add(l);
                 if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
                     digitalWellBeingDao.updateLockUnlock(l.getChildId(), l.isLocked(), l.getPassword(), "1");
                 } else if (!digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
+                   l.setAcknowledgement("1");
                     digitalWellBeingDao.insertLockUnlockData(l);
                 }
             }
-        }
+        }}
         if ((!CommonDataArea.PARENT_UUID.contains(CommonFunctionArea.getDeviceUUID(context)) ||
                 !CommonDataArea.PARENT_UUID.equals("/topics/")) && !list2.isEmpty())
             new Communicator(context).sendMessage(FCMMessages.LockUnlockAck(list2, CommonDataArea.PARENT_UUID));

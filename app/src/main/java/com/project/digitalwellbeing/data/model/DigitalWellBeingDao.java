@@ -107,8 +107,9 @@ public interface DigitalWellBeingDao {
     @Query("SELECT EXISTS ( SELECT * FROM TaskDetails where logId = :id and childId =:cId)")
     Boolean taskExists(int id,String cId);
 
-    @Query("SELECT EXISTS ( SELECT * FROM LockUnlock where childId = :id)")
+    @Query("SELECT EXISTS ( SELECT * FROM LockUnlock where childId = :id )")
     Boolean LockUnLock(String id);
+
 
     @Query("SELECT EXISTS ( SELECT * FROM LockUnlock where childId = :chid AND id =:id)")
     Boolean LockUnLock1(int id,String chid);

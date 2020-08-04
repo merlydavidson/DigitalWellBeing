@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -74,11 +75,12 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
     private DigitalWellBeingService mDigitalWellBeingService;
     private Intent mServiceIntent;
     int role;
-
+    TextView txt_lock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard2);
+        txt_lock=findViewById(R.id.txt_lock);
         sharedPreferences = getSharedPreferences(
                 CommonDataArea.prefName, Context.MODE_PRIVATE);
         role = sharedPreferences.getInt(CommonDataArea.ROLESTR, 0);
@@ -226,6 +228,20 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
         if (role == 1)
             showTaskCompletionDialog();
         pairKeytext.setText(CommonDataArea.CURRENTCHILDID);
+        AppDataBase appDataBase = AppDataBase.getInstance(DashboardActivity.this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        LockUnlock lockUnlock = digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID);
+        if(lockUnlock!=null){
+            if(lockUnlock.isLocked() && lockUnlock.getAcknowledgement().equals("1")){
+                txt_lock.setText("Locked");
+                txt_lock.setTextColor(Color.GREEN);
+            }else if(lockUnlock.isLocked() && lockUnlock.getAcknowledgement().equals("0")){
+                txt_lock.setText("Locked");
+                txt_lock.setTextColor(Color.YELLOW);
+            }else{
+                txt_lock.setText("Unlocked");
+            }
+        }
     }
 
     private void showTaskCompletionDialog() {

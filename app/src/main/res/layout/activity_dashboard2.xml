@@ -475,7 +475,7 @@
                     android:layout_weight="0.5"
                     android:gravity="center_vertical"
                     android:paddingLeft="15dp"
-                    android:text="Lock Status" />
+                    android:text="Unlocked" />
             </LinearLayout>
 
 
