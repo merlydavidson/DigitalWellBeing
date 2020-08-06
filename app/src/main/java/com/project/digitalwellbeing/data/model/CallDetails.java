@@ -26,6 +26,19 @@ public class CallDetails {
     @ColumnInfo(name = "callerName")
     @SerializedName("callerName")
     String callerName;
+
+    public String getCallDate() {
+        return callDate;
+    }
+
+    public void setCallDate(String callDate) {
+        this.callDate = callDate;
+    }
+
+    @ColumnInfo(name = "callDate")
+    @SerializedName("callDate")
+    String callDate;
+
     @ColumnInfo(name = "callerNumber")
     @SerializedName("callerNumber")
     String callerNumber;
@@ -38,6 +51,18 @@ public class CallDetails {
     @ColumnInfo(name = "callTimeStamp")
     @SerializedName("callTimeStamp")
     String callTimeStamp;
+
+    @ColumnInfo(defaultValue = "0",name ="acknowlwdgement")
+    @SerializedName("acknowlwdgement")
+    public String acknowlwdgement;
+
+    public String getAcknowlwdgement() {
+        return acknowlwdgement;
+    }
+
+    public void setAcknowlwdgement(String acknowlwdgement) {
+        this.acknowlwdgement = acknowlwdgement;
+    }
 
     public String getDate() {
         return date;

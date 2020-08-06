@@ -61,7 +61,7 @@ public class CloseAppActivity extends AppCompatActivity {
                     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
                     LockUnlock lockUnlock = digitalWellBeingDao.getLockUnlockDetails(CommonDataArea.CURRENTCHILDID);
                     if(lockUnlock.getPassword().equals(pin.getText().toString())){
-                        digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, false, "");
+                        digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID, false, "","0");
 
                         finish();
                         Toast.makeText(CloseAppActivity.this, "Apps unlocked successfully", Toast.LENGTH_SHORT).show();
