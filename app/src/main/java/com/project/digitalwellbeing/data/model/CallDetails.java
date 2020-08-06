@@ -26,6 +26,19 @@ public class CallDetails {
     @ColumnInfo(name = "callerName")
     @SerializedName("callerName")
     String callerName;
+
+    public String getCallDate() {
+        return callDate;
+    }
+
+    public void setCallDate(String callDate) {
+        this.callDate = callDate;
+    }
+
+    @ColumnInfo(name = "callDate")
+    @SerializedName("callDate")
+    String callDate;
+
     @ColumnInfo(name = "callerNumber")
     @SerializedName("callerNumber")
     String callerNumber;

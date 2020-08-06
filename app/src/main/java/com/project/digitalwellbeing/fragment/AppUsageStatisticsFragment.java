@@ -236,23 +236,30 @@ public class AppUsageStatisticsFragment extends Fragment {
             } else {
 
                 for (UsageStats u : queryUsageStats) {
-                    if (!digitalWellBeingDao.getBlockedAppDetails(u.getPackageName())) {
-                        BlockedApps blockedApps = new BlockedApps();
-                        blockedApps.setPackagename(u.getPackageName());
-                        blockedApps.setLastTimeUsed(u.getLastTimeUsed());
-                        blockedApps.setTotalTimeInForeground(u.getTotalTimeInForeground());
-                        blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
-                        blockedApps.setChecked(false);
-                        PackageManager pm = getActivity().getPackageManager();
-                        try {
-                            ApplicationInfo ai = pm.getApplicationInfo(u.getPackageName(), 0);
-                            final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-                            blockedApps.setAppname(applicationName);
-                        } catch (PackageManager.NameNotFoundException e) {
-                            e.printStackTrace();
-                        }
+                    long time=u.getTotalTimeInForeground();
+                    int h=(int)(time/1000/60/60);
+                    int m=(int)((time/1000/60) % 60);
+                    float ti=Float.parseFloat(h+"."+m);
+                    if (!digitalWellBeingDao.getBlockedAppDetails(u.getPackageName())
+                            ) {
+                        if(ti>0.30) {
+                            BlockedApps blockedApps = new BlockedApps();
+                            blockedApps.setPackagename(u.getPackageName());
+                            blockedApps.setLastTimeUsed(u.getLastTimeUsed());
+                            blockedApps.setTotalTimeInForeground(u.getTotalTimeInForeground());
+                            blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
+                            blockedApps.setChecked(false);
+                            PackageManager pm = getActivity().getPackageManager();
+                            try {
+                                ApplicationInfo ai = pm.getApplicationInfo(u.getPackageName(), 0);
+                                final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+                                blockedApps.setAppname(applicationName);
+                            } catch (PackageManager.NameNotFoundException e) {
+                                e.printStackTrace();
+                            }
 
-                        digitalWellBeingDao.insertAppDta(blockedApps);
+                            digitalWellBeingDao.insertAppDta(blockedApps);
+                        }
                     } else {
                         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
                             long t = u.getTotalTimeVisible();

@@ -248,7 +248,9 @@ public class ContactListActivity extends AppCompatActivity {
                 callDetails.setCallDuration(callDuration);
                 callDetails.setCallType(dir);
                 String formateDate = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(callDayTime);
+                String formateDate2 = new SimpleDateFormat("dd/MM/yyyy").format(callDayTime);
                 callDetails.setCallTimeStamp(formateDate);
+                callDetails.setCallDate(formateDate2);
                 callDetails.setCallerLogId(idNumber);
                 callDetails.setAcknowlwdgement("0");
                 callDetails.setDate(CommonDataArea.getDAte("dd/MM/yyyy"));
