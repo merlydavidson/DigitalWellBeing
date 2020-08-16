@@ -36,7 +36,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
 //            notificationTitle = remoteMessage.getNotification().getTitle();
-//            notificationBody = remoteMessage.getNotification().getBody();
+          //String a = remoteMessage.get.getBody();
 
             new FCMActions().parseResult(remoteMessage,getApplicationContext());
 

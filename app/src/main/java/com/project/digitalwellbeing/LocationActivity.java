@@ -1,6 +1,7 @@
 package com.project.digitalwellbeing;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -31,6 +32,7 @@ public class LocationActivity extends AppCompatActivity {
     Button go;
     EditText dateFrom,dateTo;
     private DatePickerDialog picker;
+    ProgressDialog progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,9 +112,13 @@ public class LocationActivity extends AppCompatActivity {
                 picker.show();
             }
         });
+
         go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progress = ProgressDialog.show(LocationActivity.this, "Loading..",
+                        "Please wait...", true);
+                progress.show();
                 List<LogDetails> sortedList=new ArrayList<>();
                 String datefrom=dateFrom.getText().toString()+" 01:00";
                 String dateto=dateTo.getText().toString()+" 23:59";
@@ -127,9 +133,11 @@ public class LocationActivity extends AppCompatActivity {
                     mAdapter = new GenericAdapter(LocationActivity.this, sortedList, 2);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
+
                 }else{
                     Toast.makeText(LocationActivity.this, "Date from must be less than date to..", Toast.LENGTH_SHORT).show();
                 }
+                progress.dismiss();
             }
         });
     }
