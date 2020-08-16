@@ -60,8 +60,9 @@ public class GoogleFitDetails {
 
 
 
-    @PrimaryKey(autoGenerate = true)
-    int googleFitID;
+    @ColumnInfo(name = "googleFitID")
+    @SerializedName("googleFitID")
+    String googleFitID;
 
     public float getWalking() {
         return walking;
@@ -111,11 +112,11 @@ public class GoogleFitDetails {
         this.date = date;
     }
 
-    public int getGoogleFitID() {
+    public String getGoogleFitID() {
         return googleFitID;
     }
 
-    public void setGoogleFitID(int googleFitID) {
+    public void setGoogleFitID(String googleFitID) {
         this.googleFitID = googleFitID;
     }
 }

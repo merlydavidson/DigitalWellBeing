@@ -324,6 +324,7 @@ public class GoogleFitData {
             Log.i(TAG, "Total steps: " + aLong);
 
             GoogleFitDetails googleFitDetails = new GoogleFitDetails();
+            googleFitDetails.setGoogleFitID(CommonFunctionArea.idGenerator(mContext));
             googleFitDetails.setRunning(runningCalorie);
             googleFitDetails.setWalking(walkingCalorie);
             googleFitDetails.setStill(stillCalorie);

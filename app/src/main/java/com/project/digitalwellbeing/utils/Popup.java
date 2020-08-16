@@ -310,6 +310,7 @@ public class Popup extends Activity {
             public void onClick(View v) {
                 if (!activityEdt.getText().toString().equalsIgnoreCase("") && !calenderEdt.getText().toString().equalsIgnoreCase("") && !startClockEdt.getText().toString().equalsIgnoreCase("") && !endClockEdt.getText().toString().equalsIgnoreCase("")) {
                     TaskDetails taskDetails = new TaskDetails();
+                    taskDetails.setLogId(CommonFunctionArea.idGenerator(context));
                     taskDetails.setTaskName(activityEdt.getText().toString());
                     taskDetails.setDate(calenderEdt.getText().toString());
                     taskDetails.setStarttime(startClockEdt.getText().toString());

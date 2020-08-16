@@ -631,6 +631,7 @@ private void unlockedAllApps(){
                     DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
 
                     LogDetails logDetails = new LogDetails();
+                    logDetails.setLogId(CommonFunctionArea.idGenerator(DigitalWellBeingService.this));
                     logDetails.setLocation(address);
                     logDetails.setTimeStamp(CommonDataArea.getDAte("dd/MM/yyyy HH:mm"));
                     logDetails.setOnline(new CommonFunctionArea().getDeviceLocked(getApplicationContext()));

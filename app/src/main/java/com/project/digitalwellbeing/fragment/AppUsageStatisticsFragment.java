@@ -244,6 +244,7 @@ public class AppUsageStatisticsFragment extends Fragment {
                             ) {
                         if(ti>0.30) {
                             BlockedApps blockedApps = new BlockedApps();
+                            blockedApps.setId(CommonFunctionArea.idGenerator(getActivity()));
                             blockedApps.setPackagename(u.getPackageName());
                             blockedApps.setLastTimeUsed(u.getLastTimeUsed());
                             blockedApps.setTotalTimeInForeground(u.getTotalTimeInForeground());

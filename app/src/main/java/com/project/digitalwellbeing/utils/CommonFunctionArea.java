@@ -25,6 +25,7 @@ import org.jsoup.select.Elements;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -242,5 +243,19 @@ Context context;
         Log.i("package>>", currentApp);
         return currentApp;
 
+    }
+    public static String idGenerator(Context context){
+        String input=getDeviceUUID(context)+String.valueOf(System.currentTimeMillis());
+        List<Character> characters = new ArrayList<Character>();
+        for(char c:input.toCharArray()){
+            characters.add(c);
+        }
+        StringBuilder output = new StringBuilder(input.length());
+        while(characters.size()!=0){
+            int randPicker = (int)(Math.random()*characters.size());
+            output.append(characters.remove(randPicker));
+        }
+        System.out.println(output.toString());
+        return output.toString();
     }
 }

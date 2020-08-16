@@ -8,8 +8,9 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class LogDetails {
-    @PrimaryKey(autoGenerate = true)
-    public int logId;
+    @ColumnInfo(name ="logId")
+    @SerializedName("logId")
+    public String logId;
 //new comments
     @ColumnInfo(name ="location")
     @SerializedName("location")
@@ -99,11 +100,11 @@ public class LogDetails {
     @SerializedName("online")
     public boolean isOnline;
 
-    public int getLogId() {
+    public String getLogId() {
         return logId;
     }
 
-    public void setLogId(int logId) {
+    public void setLogId(String logId) {
         this.logId = logId;
     }
 

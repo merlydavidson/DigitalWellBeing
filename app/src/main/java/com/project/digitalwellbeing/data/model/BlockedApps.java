@@ -7,8 +7,9 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 @Entity
 public class BlockedApps {
-    @PrimaryKey(autoGenerate = true)
-    int id;
+    @ColumnInfo(name = "id")
+    @SerializedName("id")
+    String id;
 //new comment
     @ColumnInfo(name = "packagename")
     @SerializedName("packagename")
@@ -81,11 +82,11 @@ public class BlockedApps {
 
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

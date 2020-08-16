@@ -9,8 +9,9 @@ import com.google.gson.annotations.SerializedName;
 @Entity
 public class CallDetails {
 
-    @PrimaryKey(autoGenerate = true)
-    int callerId;
+    @ColumnInfo(name = "callerId")
+    @SerializedName("callerId")
+    String callerId;
 
     public int getCallerLogId() {
         return callerLogId;
@@ -89,11 +90,11 @@ public class CallDetails {
     String childId;
 
 
-    public int getCallerId() {
+    public String getCallerId() {
         return callerId;
     }
 
-    public void setCallerId(int callerId) {
+    public void setCallerId(String callerId) {
         this.callerId = callerId;
     }
 
