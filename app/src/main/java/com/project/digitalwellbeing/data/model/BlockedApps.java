@@ -1,5 +1,6 @@
 package com.project.digitalwellbeing.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -7,12 +8,27 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 @Entity
 public class BlockedApps {
-    @PrimaryKey(autoGenerate = true)
-    int id;
-
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
+    @SerializedName("id")
+    String id;
+//new comment
     @ColumnInfo(name = "packagename")
     @SerializedName("packagename")
     String packagename;
+
+    public String getAppname() {
+        return appname;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname;
+    }
+
+    @ColumnInfo(name = "appname")
+    @SerializedName("appname")
+    String appname;
 
     @ColumnInfo(name = "date")
     @SerializedName("date")
@@ -26,7 +42,17 @@ public class BlockedApps {
     @SerializedName("totalTimeInForeground")
     long totalTimeInForeground;
 
+    @ColumnInfo(defaultValue = "0",name ="acknowlwdgement")
+    @SerializedName("acknowlwdgement")
+    public String acknowlwdgement;
 
+    public String getAcknowlwdgement() {
+        return acknowlwdgement;
+    }
+
+    public void setAcknowlwdgement(String acknowlwdgement) {
+        this.acknowlwdgement = acknowlwdgement;
+    }
 
     boolean isChecked;
 
@@ -59,11 +85,11 @@ public class BlockedApps {
 
 
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

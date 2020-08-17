@@ -7,14 +7,10 @@ import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,11 +28,9 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
 import com.github.clans.fab.FloatingActionMenu;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.project.digitalwellbeing.BlockedAppsActivity;
-import com.project.digitalwellbeing.DashboardActivity;
 import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.adapter.UsageListAdapter;
 import com.project.digitalwellbeing.data.model.AppDataBase;
@@ -44,7 +38,6 @@ import com.project.digitalwellbeing.data.model.BlockedApps;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
-import com.project.digitalwellbeing.utils.CustomUsageStats;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -53,14 +46,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import static com.project.digitalwellbeing.utils.CommonDataArea.context;
-import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
-
 
 public class AppUsageStatisticsFragment extends Fragment {
-    ProgressDialog progress;
     private static final String TAG = AppUsageStatisticsFragment.class.getSimpleName();
-
+    ProgressDialog progress;
     //VisibleForTesting for variables below
     UsageStatsManager mUsageStatsManager;
     UsageListAdapter mUsageListAdapter;
@@ -68,11 +57,15 @@ public class AppUsageStatisticsFragment extends Fragment {
     Button mOpenUsageSettingButton, block;
     Spinner mSpinnerTimeSpan;
     Spinner mSpinnerSort;
-    private GridLayoutManager mGridLayoutManager;
     FloatingActionMenu materialDesignFAM;
     FloatingActionButton floatingActionButton;
     List<BlockedApps> usageStatsList;
     List<BlockedApps> selectedItems;
+    private GridLayoutManager mGridLayoutManager;
+
+    public AppUsageStatisticsFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -83,10 +76,6 @@ public class AppUsageStatisticsFragment extends Fragment {
     public static AppUsageStatisticsFragment newInstance() {
         AppUsageStatisticsFragment fragment = new AppUsageStatisticsFragment();
         return fragment;
-    }
-
-    public AppUsageStatisticsFragment() {
-        // Required empty public constructor
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -110,7 +99,7 @@ public class AppUsageStatisticsFragment extends Fragment {
     public void onViewCreated(View rootView, Bundle savedInstanceState) {
         super.onViewCreated(rootView, savedInstanceState);
         block = rootView.findViewById(R.id.blockapps);
-        floatingActionButton =(FloatingActionButton) rootView.findViewById(R.id.fab);
+        floatingActionButton = (FloatingActionButton) rootView.findViewById(R.id.fab);
         mUsageListAdapter = new UsageListAdapter(getContext());
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.recyclerview_app_usage);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -122,22 +111,25 @@ public class AppUsageStatisticsFragment extends Fragment {
                 "Please wait...", true);
         progress.show();
         mSpinnerTimeSpan = (Spinner) rootView.findViewById(R.id.spinner_time_span);
-        if (CommonDataArea.ROLE == 1) //TODO:block.setVisibility(View.GONE);
-            block.setOnClickListener(new View.OnClickListener() {
-                @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-                @Override
-                public void onClick(View v) {
-                    selectedItems = mUsageListAdapter.getSelectedItems();
-                    if (selectedItems == null || selectedItems.size() == 0) {
-                        Toast.makeText(getActivity(), "No application selected", Toast.LENGTH_SHORT).show();
-                    } else {
-                        AppDataBase appDataBase = AppDataBase.getInstance(getActivity());
-                        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        if (CommonDataArea.ROLE == 1) {
+            floatingActionButton.setVisibility(View.GONE);
+            block.setVisibility(View.GONE);
+        }
+        block.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+                selectedItems = mUsageListAdapter.getSelectedItems();
+                if (selectedItems == null || selectedItems.size() == 0) {
+                    Toast.makeText(getActivity(), "No application selected", Toast.LENGTH_SHORT).show();
+                } else {
+                    AppDataBase appDataBase = AppDataBase.getInstance(getActivity());
+                    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
 
-                        for (BlockedApps b : selectedItems) {
-                           // CustomUsageStats states = b;
-                            if (b.getChecked()) {
-                                digitalWellBeingDao.updateBlockStatus(true,b.getPackagename());
+                    for (BlockedApps b : selectedItems) {
+                        // CustomUsageStats states = b;
+                        if (b.getChecked()) {
+                            digitalWellBeingDao.updateBlockStatus2(true, b.getPackagename(), "0", b.getChildId());
                                /* if (!digitalWellBeingDao.getBlockedAppDetails(b.getPackagename())) {
                                     BlockedApps blockedApps = new BlockedApps();
                                     blockedApps.setPackagename(b.getPackagename());
@@ -145,13 +137,13 @@ public class AppUsageStatisticsFragment extends Fragment {
                                     blockedApps.setChildId( CommonDataArea.FIREBASETOPIC);
                                     digitalWellBeingDao.insertSelectedAppps(blockedApps);
                                 }*/
-                            }
                         }
-                       // Toast.makeText(getActivity(), "Apps Blocked Successfully", Toast.LENGTH_SHORT).show();
-                        mUsageListAdapter.updateViews();
                     }
+                    // Toast.makeText(getActivity(), "Apps Blocked Successfully", Toast.LENGTH_SHORT).show();
+                    mUsageListAdapter.updateViews();
                 }
-            });
+            }
+        });
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,8 +190,6 @@ public class AppUsageStatisticsFragment extends Fragment {
     }
 
 
-
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public List<BlockedApps> getUsageStatistics(int intervalType) {
         // Get the app statistics since one year ago from the current time.
@@ -243,23 +233,43 @@ public class AppUsageStatisticsFragment extends Fragment {
                         startActivity(new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS));
                     }
                 });
-            }else{
+            } else {
 
                 for (UsageStats u : queryUsageStats) {
-                    if(!digitalWellBeingDao.getBlockedAppDetails(u.getPackageName())) {
-                        BlockedApps blockedApps = new BlockedApps();
-                        blockedApps.setPackagename(u.getPackageName());
-                        blockedApps.setLastTimeUsed(u.getLastTimeUsed());
-                        blockedApps.setTotalTimeInForeground( u.getTotalTimeInForeground());
-                        blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
-                        blockedApps.setChecked(false);
-                        digitalWellBeingDao.insertAppDta(blockedApps);
-                    }else{
-                        long t=u.getTotalTimeVisible();
-                        long t1=u.getLastTimeForegroundServiceUsed();
-                        long t2=u.getTotalTimeInForeground();
-                       int istrue= digitalWellBeingDao.updateAppDetails(t2,
-                              u.getPackageName(),CommonFunctionArea.getDeviceUUID(getActivity()));
+                    long time=u.getTotalTimeInForeground();
+                    int h=(int)(time/1000/60/60);
+                    int m=(int)((time/1000/60) % 60);
+                    float ti=Float.parseFloat(h+"."+m);
+                    if (!digitalWellBeingDao.getBlockedAppDetails(u.getPackageName())
+                            ) {
+                        if(ti>0.30) {
+                            BlockedApps blockedApps = new BlockedApps();
+                            blockedApps.setId(CommonFunctionArea.idGenerator(getActivity()));
+                            blockedApps.setPackagename(u.getPackageName());
+                            blockedApps.setLastTimeUsed(u.getLastTimeUsed());
+                            blockedApps.setTotalTimeInForeground(u.getTotalTimeInForeground());
+                            blockedApps.setChildId(CommonDataArea.CURRENTCHILDID);
+                            blockedApps.setChecked(false);
+                            PackageManager pm = getActivity().getPackageManager();
+                            try {
+                                ApplicationInfo ai = pm.getApplicationInfo(u.getPackageName(), 0);
+                                final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
+                                blockedApps.setAppname(applicationName);
+                            } catch (PackageManager.NameNotFoundException e) {
+                                e.printStackTrace();
+                            }
+
+                            digitalWellBeingDao.insertAppDta(blockedApps);
+                        }
+                    } else {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+                            long t = u.getTotalTimeVisible();
+                            long t1 = u.getLastTimeForegroundServiceUsed();
+                        }
+
+                        long t2 = u.getTotalTimeInForeground();
+                        digitalWellBeingDao.updateAppDetails(t2,
+                                u.getPackageName(), "0", CommonFunctionArea.getDeviceUUID(getActivity()));
 
                     }
                 }
@@ -277,6 +287,30 @@ public class AppUsageStatisticsFragment extends Fragment {
         mRecyclerView.scrollToPosition(0);
     }
 
+
+    static enum StatsUsageInterval {
+        DAILY("Daily", UsageStatsManager.INTERVAL_DAILY),
+        WEEKLY("Weekly", UsageStatsManager.INTERVAL_WEEKLY),
+        MONTHLY("Monthly", UsageStatsManager.INTERVAL_MONTHLY),
+        YEARLY("Yearly", UsageStatsManager.INTERVAL_YEARLY);
+
+        private int mInterval;
+        private String mStringRepresentation;
+
+        StatsUsageInterval(String stringRepresentation, int interval) {
+            mStringRepresentation = stringRepresentation;
+            mInterval = interval;
+        }
+
+        static StatsUsageInterval getValue(String stringRepresentation) {
+            for (StatsUsageInterval statsUsageInterval : values()) {
+                if (statsUsageInterval.mStringRepresentation.equals(stringRepresentation)) {
+                    return statsUsageInterval;
+                }
+            }
+            return null;
+        }
+    }
 
     private class timeInForegroundComparator implements Comparator<BlockedApps> {
 
@@ -307,30 +341,6 @@ public class AppUsageStatisticsFragment extends Fragment {
             final String applicationNameRight = (String) (ai_right != null ? pm.getApplicationLabel(ai_right) : "(unknown)");
             return applicationNameLeft.compareTo(applicationNameRight);
 
-        }
-    }
-
-    static enum StatsUsageInterval {
-        DAILY("Daily", UsageStatsManager.INTERVAL_DAILY),
-        WEEKLY("Weekly", UsageStatsManager.INTERVAL_WEEKLY),
-        MONTHLY("Monthly", UsageStatsManager.INTERVAL_MONTHLY),
-        YEARLY("Yearly", UsageStatsManager.INTERVAL_YEARLY);
-
-        private int mInterval;
-        private String mStringRepresentation;
-
-        StatsUsageInterval(String stringRepresentation, int interval) {
-            mStringRepresentation = stringRepresentation;
-            mInterval = interval;
-        }
-
-        static StatsUsageInterval getValue(String stringRepresentation) {
-            for (StatsUsageInterval statsUsageInterval : values()) {
-                if (statsUsageInterval.mStringRepresentation.equals(stringRepresentation)) {
-                    return statsUsageInterval;
-                }
-            }
-            return null;
         }
     }
 

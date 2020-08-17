@@ -1,7 +1,6 @@
 package com.project.digitalwellbeing.utils;
 
 import android.app.ActivityManager;
-import android.app.AppOpsManager;
 import android.app.KeyguardManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
@@ -11,12 +10,8 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
-
-import androidx.annotation.RequiresApi;
-import androidx.loader.content.CursorLoader;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.project.digitalwellbeing.data.model.AppDataBase;
@@ -26,11 +21,11 @@ import com.project.digitalwellbeing.data.model.LogDetails;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.w3c.dom.Element;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -38,11 +33,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static android.app.AppOpsManager.MODE_ALLOWED;
-import static android.app.AppOpsManager.OPSTR_GET_USAGE_STATS;
-import static com.project.digitalwellbeing.utils.CommonDataArea.context;
 import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
-import static java.util.jar.Pack200.Packer.ERROR;
 
 public class CommonFunctionArea {
 
@@ -77,13 +68,13 @@ public class CommonFunctionArea {
         return new SimpleDateFormat("dd-MM-yyyy hh:mm:ss").format(Calendar.getInstance().getTime());
     }
 
-    public LogDetails getLogList(Context context) {
+    public LogDetails getLogList(Context context,String id) {
         List<LogDetails> logDetails = null;
         LogDetails logDetails1 = null;
         try {
             AppDataBase appDataBase = AppDataBase.getInstance(context);
             DigitalWellBeingDao stimulationSessionsDao = appDataBase.userDetailsDao();
-            logDetails = stimulationSessionsDao.getLogDetails(CommonDataArea.CURRENTCHILDID);
+            logDetails = stimulationSessionsDao.getLogDetails(id);
             logDetails1 = logDetails.get(logDetails.size() - 1);
         } catch (Exception e) {
             Log.e("Exception", e.getMessage());
@@ -252,5 +243,19 @@ Context context;
         Log.i("package>>", currentApp);
         return currentApp;
 
+    }
+    public static String idGenerator(Context context){
+        String input=getDeviceUUID(context)+String.valueOf(System.currentTimeMillis());
+        List<Character> characters = new ArrayList<Character>();
+        for(char c:input.toCharArray()){
+            characters.add(c);
+        }
+        StringBuilder output = new StringBuilder(input.length());
+        while(characters.size()!=0){
+            int randPicker = (int)(Math.random()*characters.size());
+            output.append(characters.remove(randPicker));
+        }
+        System.out.println(output.toString());
+        return output.toString();
     }
 }

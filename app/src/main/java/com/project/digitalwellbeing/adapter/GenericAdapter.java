@@ -4,16 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -23,7 +19,6 @@ import com.project.digitalwellbeing.R;
 import com.project.digitalwellbeing.data.model.CallDetails;
 import com.project.digitalwellbeing.data.model.LogDetails;
 import com.project.digitalwellbeing.data.model.TaskDetails;
-import com.project.digitalwellbeing.service.DigitalWellBeingService;
 import com.project.digitalwellbeing.utils.CommonDataArea;
 import com.project.digitalwellbeing.utils.CommonFunctionArea;
 import com.project.digitalwellbeing.utils.TaskCompletedDialog;
@@ -60,7 +55,10 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         this.activity=activity;
         notifyDataSetChanged();
     }
-
+public void updateList(TaskDetails c){
+        taskDetails.add(0,c);
+        notifyItemChanged(0);
+}
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -97,11 +95,11 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
     private void bindRecentDetails(ViewHolder holder, int position) {
         if (logDetails.size() > 0) {
             if(logDetails.get(position).isOnline()) {
-                holder.locationText.setText("Online");
+                holder.locationText.setText("Offline");
                // holder.locationText.setTextColor(Color.parseColor("3DA26B"));
             }
             if(!logDetails.get(position).isOnline()) {
-                holder.locationText.setText("Offline");
+                holder.locationText.setText("Online");
              //   holder.locationText.setTextColor(Color.parseColor("#D81B60"));
             }
             holder.timeText.setText(logDetails.get(position).getTimeStamp());
@@ -112,7 +110,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
                 final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
 
-                holder.timeText.setText(applicationName);
+                holder.app_text.setText(logDetails.get(position).getAppname());
                 Drawable icon = context.getPackageManager().getApplicationIcon(logDetails.get(position).getApp_details());
                 holder.icon.setImageDrawable(icon);
             } catch (Exception e) {
@@ -159,18 +157,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         if (logDetails.size() > 0) {
             holder.locationText.setText(logDetails.get(position).getLocation());
             holder.timeText.setText(logDetails.get(position).getTimeStamp());
-           /* final PackageManager pm = context.getPackageManager();
-            ApplicationInfo ai;
-            try {
-                ai = pm.getApplicationInfo(logDetails.get(position).getApp_details(), 0);
 
-                final String applicationName = (String) (ai != null ? pm.getApplicationLabel(ai) : "(unknown)");
-
-                holder.timeText.setText(applicationName);
-                Drawable icon = context.getPackageManager().getApplicationIcon(logDetails.get(position).getApp_details());
-                holder.icon.setImageDrawable(icon);
-            } catch (Exception e) {
-            }*/
         }
     }
 

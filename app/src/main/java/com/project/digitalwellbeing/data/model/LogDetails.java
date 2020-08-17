@@ -1,5 +1,6 @@
 package com.project.digitalwellbeing.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,14 +9,37 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class LogDetails {
-    @PrimaryKey(autoGenerate = true)
-    public int logId;
-
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name ="logId")
+    @SerializedName("logId")
+    public String logId;
+//new comments
     @ColumnInfo(name ="location")
     @SerializedName("location")
     public String location;
 
+    public String getAppname() {
+        return appname;
+    }
+
+    public void setAppname(String appname) {
+        this.appname = appname;
+    }
+
+    @ColumnInfo(name ="appname")
+    @SerializedName("appname")
+    public String appname;
+
     public LogDetails() {
+    }
+
+    public String getAcknowlwdgement() {
+        return acknowlwdgement;
+    }
+
+    public void setAcknowlwdgement(String acknowlwdgement) {
+        this.acknowlwdgement = acknowlwdgement;
     }
 
     public LogDetails(String location, String date, String timeStamp, String app_details, String childId, boolean isOnline) {
@@ -42,6 +66,10 @@ public class LogDetails {
     @ColumnInfo(name ="timestamp")
     @SerializedName("timestamp")
     public String timeStamp;
+
+    @ColumnInfo(defaultValue = "0",name ="acknowlwdgement")
+    @SerializedName("acknowlwdgement")
+    public String acknowlwdgement;
 
     @ColumnInfo(name ="uuid")
     @SerializedName("uuid")
@@ -75,11 +103,11 @@ public class LogDetails {
     @SerializedName("online")
     public boolean isOnline;
 
-    public int getLogId() {
+    public String getLogId() {
         return logId;
     }
 
-    public void setLogId(int logId) {
+    public void setLogId(String logId) {
         this.logId = logId;
     }
 

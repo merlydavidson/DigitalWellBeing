@@ -1,5 +1,6 @@
 package com.project.digitalwellbeing.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,8 +9,11 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class TaskDetails {
-    @PrimaryKey(autoGenerate = true)
-    public int logId;
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name ="taskId")
+    @SerializedName("taskId")
+    public String taskId;
 
     @ColumnInfo(name ="taskName")
     @SerializedName("taskName")
@@ -22,6 +26,18 @@ public class TaskDetails {
     @ColumnInfo(name ="starttime")
     @SerializedName("starttime")
     public String starttime;
+
+    @ColumnInfo(defaultValue = "0",name ="acknowlwdgement")
+    @SerializedName("acknowlwdgement")
+    public String acknowlwdgement;
+
+    public String getAcknowlwdgement() {
+        return acknowlwdgement;
+    }
+
+    public void setAcknowlwdgement(String acknowlwdgement) {
+        this.acknowlwdgement = acknowlwdgement;
+    }
 
     @ColumnInfo(name ="starttimeStamp")
     @SerializedName("starttimeStamp")
@@ -75,12 +91,12 @@ public class TaskDetails {
         this.enableApps = enableApps;
     }
 
-    public int getLogId() {
-        return logId;
+    public String getLogId() {
+        return taskId;
     }
 
-    public void setLogId(int logId) {
-        this.logId = logId;
+    public void setLogId(String logId) {
+        this.taskId = logId;
     }
 
     public String getTaskName() {
