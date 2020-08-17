@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,6 +31,7 @@ public class RecentActivity extends AppCompatActivity {
     Button go;
     EditText dateFrom,dateTo;
     private DatePickerDialog picker;
+    ProgressDialog progress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,23 +113,28 @@ public class RecentActivity extends AppCompatActivity {
         go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progress = ProgressDialog.show(RecentActivity.this, "Loading..",
+                        "Please wait...", true);
+                progress.show();
                 List<LogDetails> sortedList=new ArrayList<>();
                 String datefrom=dateFrom.getText().toString()+" 01:00";
                 String dateto=dateTo.getText().toString()+" 23:59";
                 if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy",datefrom,dateto)){
                     List<LogDetails> details=getcallDetails();
                     for(LogDetails d:details){
-                        if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",datefrom,d.getDate()) &&
-                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",d.getDate(),dateto)){
+                        if(CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",datefrom,d.getTimeStamp()) &&
+                                CommonFunctionArea.compareDateTimes("dd/MM/yyyy HH:mm",d.getTimeStamp(),dateto)){
                             sortedList.add(d);
                         }
                     }
-                    mAdapter = new GenericAdapter(RecentActivity.this, sortedList, 2);
+                    mAdapter = new GenericAdapter(RecentActivity.this, sortedList, 4);
                     recyclerView.setAdapter(mAdapter);
                     mAdapter.notifyDataSetChanged();
+
                 }else{
                     Toast.makeText(RecentActivity.this, "Date from must be less than date to..", Toast.LENGTH_SHORT).show();
                 }
+                progress.dismiss();
             }
         });
     }

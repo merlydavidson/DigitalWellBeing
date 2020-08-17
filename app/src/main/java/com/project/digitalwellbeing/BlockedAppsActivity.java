@@ -47,14 +47,15 @@ public class BlockedAppsActivity extends AppCompatActivity {
                 if (unblockList != null){
                     for (int i=0; i<unblockList.size(); i++){
                         if (unblockList.get(i).getChecked()){
-                           digitalWellBeingDao.updateBlockStatus(false,unblockList.get(i).getPackagename());
-
+                           digitalWellBeingDao.updateBlockStatus2(false,unblockList.get(i).getPackagename(),
+                                   "0",unblockList.get(i).getChildId());
+                            Toast.makeText(BlockedAppsActivity.this, "Apps Unblocked Successfully", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
 
                 mAdapter.updatelist();
-                 Toast.makeText(BlockedAppsActivity.this, "Apps Unblocked Successfully", Toast.LENGTH_SHORT).show();
+
             }
         });
 
