@@ -199,7 +199,7 @@ public class FCMActions {
         String child_id = "";
         for (CallDetails t : list) {
             child_id = t.getChildId();
-            if (getCallEntry(t.getCallerLogId(), t.getChildId())) {
+            if (getCallEntry(t.getCallerId(), t.getChildId())) {
                 digitalWellBeingDao.updateCallDetailStatus(t.getCallerId(), "1", t.getChildId());
             }
         }
@@ -414,7 +414,7 @@ public class FCMActions {
         String child_id = "";
         for (CallDetails t : list) {
             child_id = t.getChildId();
-            if (!getCallEntry(t.getCallerLogId(), t.getChildId())) {
+            if (!getCallEntry(t.getCallerId(), t.getChildId())) {
                 digitalWellBeingDao.insertCallDetails(t);
             }
         }
@@ -423,12 +423,12 @@ public class FCMActions {
         // digitalWellBeingDao.insertTaskDetails(response);
     }
 
-    public boolean getCallEntry(int callId, String chId) {
+    public boolean getCallEntry(String callId, String chId) {
         boolean isExist = false;
 
         AppDataBase appDataBase = AppDataBase.getInstance(context);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<CallDetails> callDetails = digitalWellBeingDao.getaCallDetails(callId, chId);
+        List<CallDetails> callDetails = digitalWellBeingDao.getaCallDetails2(callId, chId);
         if (callDetails.size() > 0)
             isExist = true;
         return isExist;
@@ -448,7 +448,7 @@ public class FCMActions {
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         String child_id = "";
         for (LogDetails l : list) {
-            if (!digitalWellBeingDao.checkLogExists(l.getChildId(), l.logId)) {
+            if (!digitalWellBeingDao.checkLogExists(l.getChildId(), l.getLogId())) {
                 digitalWellBeingDao.insertLogDetails(l);
                 child_id = l.getChildId();
             }

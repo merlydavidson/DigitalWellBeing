@@ -1,5 +1,6 @@
 package com.project.digitalwellbeing.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -59,7 +60,8 @@ public class GoogleFitDetails {
     public String childId;
 
 
-
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name = "googleFitID")
     @SerializedName("googleFitID")
     String googleFitID;

@@ -1,5 +1,6 @@
 package com.project.digitalwellbeing.data.model;
 
+import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -8,6 +9,8 @@ import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class LogDetails {
+    @PrimaryKey
+    @NonNull
     @ColumnInfo(name ="logId")
     @SerializedName("logId")
     public String logId;

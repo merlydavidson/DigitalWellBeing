@@ -77,6 +77,9 @@ public interface DigitalWellBeingDao {
     @Query("SELECT * FROM CallDetails where callerLogId = :id and childId =:chId")
     List<CallDetails> getaCallDetails(int id,String chId);
 
+    @Query("SELECT * FROM CallDetails where callerId = :id and childId =:chId")
+    List<CallDetails> getaCallDetails2(String id,String chId);
+
     @Query("SELECT * FROM TaskDetails where acknowlwdgement =:ack and childId =:uuid")
     List<TaskDetails> getaTaskDetails(String ack,String uuid);
 
@@ -93,7 +96,7 @@ public interface DigitalWellBeingDao {
     List<TaskDetails> getTasks(String date);
 
     @Query("SELECT EXISTS ( SELECT * FROM GoogleFitDetails where googleFitID = :id AND childId =:childId)")
-    Boolean googleFitExists(int id,String childId);
+    Boolean googleFitExists(String id,String childId);
 
     @Query("SELECT EXISTS ( SELECT * FROM BlockedApps where packagename = :name)")
    Boolean getBlockedAppDetails(String name);
@@ -104,8 +107,8 @@ public interface DigitalWellBeingDao {
     @Query("SELECT * FROM BlockedApps where packagename = :pName ")
     BlockedApps getBlockedAppDetail(String pName);
 
-    @Query("SELECT EXISTS ( SELECT * FROM TaskDetails where logId = :id and childId =:cId)")
-    Boolean taskExists(int id,String cId);
+    @Query("SELECT EXISTS ( SELECT * FROM TaskDetails where taskId = :id and childId =:cId)")
+    Boolean taskExists(String id,String cId);
 
     @Query("SELECT EXISTS ( SELECT * FROM LockUnlock where childId = :id )")
     Boolean LockUnLock(String id);
@@ -115,13 +118,13 @@ public interface DigitalWellBeingDao {
     Boolean LockUnLock1(int id,String chid);
 
     @Query("SELECT EXISTS ( SELECT * FROM logdetails where childId = :id and logId =:logid)")
-    Boolean checkLogExists(String id,int logid);
+    Boolean checkLogExists(String id,String logid);
 
     @Query("SELECT EXISTS ( SELECT * FROM UserInfo where phoneNumber = :phNo AND password = :password)")
     Boolean checkLoginppDetails(String phNo,String password);
 
     @Query("SELECT EXISTS ( SELECT * FROM LogDetails where childId = :chid AND logId = :logid)")
-    Boolean checkLogdetails(String chid,int logid);
+    Boolean checkLogdetails(String chid,String logid);
 
     @Query("SELECT * FROM BlockedApps where isChecked = :checked")
     List<BlockedApps> getBlockedApps(boolean checked);
@@ -139,16 +142,16 @@ public interface DigitalWellBeingDao {
     List<TaskDetails> getCompletedTasks(String date,int status);
 
     @Query("UPDATE CallDetails SET acknowlwdgement =:ack WHERE callerId = :logid AND childId =:chid")
-    public abstract int updateCallDetailStatus(int logid,String ack, String chid);
+    public abstract int updateCallDetailStatus(String logid,String ack, String chid);
 
-    @Query("UPDATE TaskDetails SET status= :status , acknowlwdgement =:ack WHERE logId = :logid")
-    public abstract int updateTaskdetails(int logid,String ack, int status);
+    @Query("UPDATE TaskDetails SET status= :status , acknowlwdgement =:ack WHERE taskId = :logid")
+    public abstract int updateTaskdetails(String logid,String ack, int status);
 
-    @Query("UPDATE TaskDetails SET acknowlwdgement =:ack WHERE logId = :logid AND childId =:chid")
-    public abstract int updateTaskdetailsStatus(int logid,String ack, String chid);
+    @Query("UPDATE TaskDetails SET acknowlwdgement =:ack WHERE taskId = :logid AND childId =:chid")
+    public abstract int updateTaskdetailsStatus(String logid,String ack, String chid);
 
-    @Query("UPDATE TaskDetails SET status= :status , acknowlwdgement =:ack WHERE childId = :chid AND logId =:logId")
-    public abstract int updateTaskdetails2(String chid,String ack, int status,int logId);
+    @Query("UPDATE TaskDetails SET status= :status , acknowlwdgement =:ack WHERE childId = :chid AND taskId =:logId")
+    public abstract int updateTaskdetails2(String chid,String ack, int status,String logId);
 
     @Query("UPDATE LockUnlock SET isLocked= :status , password =:pass , acknowledgement =:ack WHERE childId = :id")
     public abstract int updateLockUnlock(String id, boolean status,String pass,String ack);
@@ -169,8 +172,8 @@ public interface DigitalWellBeingDao {
     public abstract int updateBlockStatus3(boolean checked, String name,String chid);
 
     @Query("UPDATE LogDetails SET  acknowlwdgement =:ack WHERE logId = :logid AND childId =:chid")
-    public abstract int updateLogdetailsAck(int logid,String ack, String chid);
+    public abstract int updateLogdetailsAck(String logid,String ack, String chid);
 
     @Query("UPDATE GoogleFitDetails SET  acknowledgement =:ack WHERE googleFitID = :id AND childId =:chid")
-    public abstract int updateGooglefitAck(int id,String ack, String chid);
+    public abstract int updateGooglefitAck(String id,String ack, String chid);
 }

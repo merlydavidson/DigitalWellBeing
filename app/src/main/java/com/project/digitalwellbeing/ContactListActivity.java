@@ -243,6 +243,7 @@ public class ContactListActivity extends AppCompatActivity {
                 }
                 sb.append("\nPhone Number:--- " + phNumber + " \nCall Type:--- " + dir + " \nCall Date:--- " + callDayTime + " \nCall duration in sec :--- " + callDuration);
                 sb.append("\n----------------------------------");
+
                 callDetails.setCallerId(CommonFunctionArea.idGenerator(ContactListActivity.this));
                 callDetails.setCallerName(getContactName(phNumber, ContactListActivity.this));
                 callDetails.setCallerNumber(phNumber);
