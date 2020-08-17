@@ -40,6 +40,7 @@
         android:layout_marginRight="15dp"
         android:background="@drawable/edittext_round"
         android:hint="@string/passwd_string"
+        android:inputType="textPassword"
         android:padding="10dp"
         android:textColor="@color/white"
         android:textColorHint="@color/white" />

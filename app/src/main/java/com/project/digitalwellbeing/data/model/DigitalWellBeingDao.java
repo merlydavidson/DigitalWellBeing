@@ -62,7 +62,7 @@ public interface DigitalWellBeingDao {
     @Query("SELECT * FROM LogDetails where childId =:id AND acknowlwdgement =:ack")
     List<LogDetails> getLogDetails2(String id,String ack);
 
-    @Query("SELECT * FROM CallDetails where acknowlwdgement =:ack AND callDate =:date")
+    @Query("SELECT * FROM CallDetails where acknowlwdgement =:ack AND date =:date")
     List<CallDetails> getCallDetails(String ack,String date);
 
     @Query("SELECT * FROM LockUnlock where childId =:id")

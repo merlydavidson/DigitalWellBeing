@@ -77,6 +77,7 @@ public class DigitalWellBeingService extends Service {
     private String cityName = "";
     private Timer timer;
     private TimerTask timerTask;
+    private int randomIndex = 0;
 
     public static Thread performOnBackgroundThread(final Runnable runnable) {
         final Thread t = new Thread() {
@@ -126,18 +127,20 @@ public class DigitalWellBeingService extends Service {
                                    }
                                },
                 0,
-                1000 * 30);
+                1000 * 5);
     }
-private void unlockedAllApps(){
-    AppDataBase appDataBase = AppDataBase.getInstance(this);
-    DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-    List<LockUnlock> lockdetails = digitalWellBeingDao.getLockUnlockDetailsList("0", CommonDataArea.CURRENTCHILDID);
-    if (!CommonDataArea.PARENT_UUID.equals("/topics/") &&
-            !CommonDataArea.PARENT_UUID.contains(CommonFunctionArea.getDeviceUUID(this)) && !lockdetails.isEmpty())
-    new Communicator(this).sendMessage(FCMMessages.LockUnlockUpdate(lockdetails, CommonDataArea.PARENT_UUID));
+
+    private void unlockedAllApps() {
+        AppDataBase appDataBase = AppDataBase.getInstance(this);
+        DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
+        List<LockUnlock> lockdetails = digitalWellBeingDao.getLockUnlockDetailsList("0", CommonDataArea.CURRENTCHILDID);
+        if (!CommonDataArea.PARENT_UUID.equals("/topics/") &&
+                !CommonDataArea.PARENT_UUID.contains(CommonFunctionArea.getDeviceUUID(this)) && !lockdetails.isEmpty())
+            new Communicator(this).sendMessage(FCMMessages.LockUnlockUpdate(lockdetails, CommonDataArea.PARENT_UUID));
 
 
-}
+    }
+
     private void sendGoogleFitData() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
@@ -203,11 +206,11 @@ private void unlockedAllApps(){
         List<BlockedApps> appdetails = digitalWellBeingDao.getAppDataAck(CommonFunctionArea.getDeviceUUID(this), "0");
         if (!appdetails.isEmpty()) {
             //Log.d("FBDATA>>",appdetails.toString());
-          //  List<BlockedApps> newList = getRandomApps(appdetails, 10);
+            List<BlockedApps> newList = getRandomApps(appdetails, 10);
 
             String uuid = CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
-            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.contains(uuid) && !appdetails.isEmpty())
-                new Communicator(this).sendMessage(FCMMessages.sendAppdata(appdetails, CommonDataArea.PARENT_UUID));
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.contains(uuid) && !newList.isEmpty())
+                new Communicator(this).sendMessage(FCMMessages.sendAppdata(newList, CommonDataArea.PARENT_UUID));
 
         }
     }
@@ -223,13 +226,15 @@ private void unlockedAllApps(){
 
             // take a raundom index between 0 to size
             // of given List
-            int randomIndex = rand.nextInt(list.size());
+            if (list.size() > 0) {
+                randomIndex = rand.nextInt(list.size());
 
-            // add element in temporary list
-            newList.add(list.get(randomIndex));
+                // add element in temporary list
+                newList.add(list.get(randomIndex));
 
-            // Remove selected element from orginal list
-            list.remove(randomIndex);
+                // Remove selected element from orginal list
+                list.remove(randomIndex);
+            }
         }
         return newList;
     }
@@ -297,13 +302,13 @@ private void unlockedAllApps(){
     private void sendCallDetailsToParent() {
         AppDataBase appDataBase = AppDataBase.getInstance(this);
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
-        List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails("0",CommonDataArea.getDAte("dd/MM/yyyy"));
+        List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails("0", CommonDataArea.getDAte("dd/MM/yyyy"));
         if (!calldetails.isEmpty()) {
-            //List<CallDetails> newLis = getRandomCalls(calldetails, 10);
+            List<CallDetails> newLis = getRandomCalls(calldetails, 10);
             //Log.d("FBDATA>>",calldetails.toString());
-            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !calldetails.isEmpty() &&
+            if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !newLis.isEmpty() &&
                     !CommonDataArea.PARENT_UUID.equals(CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this)))
-                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.PARENT_UUID));
+                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(newLis, CommonDataArea.PARENT_UUID));
         }
     }
 
@@ -318,13 +323,15 @@ private void unlockedAllApps(){
 
             // take a raundom index between 0 to size
             // of given List
-            int randomIndex = rand.nextInt(list.size());
+            if (list.size() > 0) {
+                randomIndex = rand.nextInt(list.size());
 
-            // add element in temporary list
-            newList.add(list.get(randomIndex));
+                // add element in temporary list
+                newList.add(list.get(randomIndex));
 
-            // Remove selected element from orginal list
-            list.remove(randomIndex);
+                // Remove selected element from orginal list
+                list.remove(randomIndex);
+            }
         }
         return newList;
     }
