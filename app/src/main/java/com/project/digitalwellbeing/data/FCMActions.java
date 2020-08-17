@@ -266,15 +266,11 @@ public class FCMActions {
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         for (BlockedApps u : list) {
             if (!digitalWellBeingDao.ifAppDetailsExists(u.getPackagename(), u.getChildId())) {
-                BlockedApps blockedApps = new BlockedApps();
-                blockedApps.setPackagename(u.getPackagename());
-                blockedApps.setLastTimeUsed(u.getLastTimeUsed());
-                blockedApps.setTotalTimeInForeground(u.getTotalTimeInForeground());
-                blockedApps.setChildId(u.getChildId());
-                blockedApps.setChecked(false);
-                blockedApps.setAcknowlwdgement("1");
+
+                u.setChecked(false);
+                u.setAcknowlwdgement("1");
                 child_id = u.getChildId();
-                digitalWellBeingDao.insertAppDta(blockedApps);
+                digitalWellBeingDao.insertAppDta(u);
             } else {
 
                 long t2 = u.getTotalTimeInForeground();

@@ -203,11 +203,11 @@ private void unlockedAllApps(){
         List<BlockedApps> appdetails = digitalWellBeingDao.getAppDataAck(CommonFunctionArea.getDeviceUUID(this), "0");
         if (!appdetails.isEmpty()) {
             //Log.d("FBDATA>>",appdetails.toString());
-          //  List<BlockedApps> newList = getRandomApps(appdetails, 10);
+            List<BlockedApps> newList = getRandomApps(appdetails, 10);
 
             String uuid = CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this);
             if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !CommonDataArea.PARENT_UUID.contains(uuid) && !appdetails.isEmpty())
-                new Communicator(this).sendMessage(FCMMessages.sendAppdata(appdetails, CommonDataArea.PARENT_UUID));
+                new Communicator(this).sendMessage(FCMMessages.sendAppdata(newList, CommonDataArea.PARENT_UUID));
 
         }
     }
@@ -299,11 +299,11 @@ private void unlockedAllApps(){
         DigitalWellBeingDao digitalWellBeingDao = appDataBase.userDetailsDao();
         List<CallDetails> calldetails = digitalWellBeingDao.getCallDetails("0",CommonDataArea.getDAte("dd/MM/yyyy"));
         if (!calldetails.isEmpty()) {
-            //List<CallDetails> newLis = getRandomCalls(calldetails, 10);
+            List<CallDetails> newLis = getRandomCalls(calldetails, 10);
             //Log.d("FBDATA>>",calldetails.toString());
             if (!CommonDataArea.PARENT_UUID.equals("/topics/") && !calldetails.isEmpty() &&
                     !CommonDataArea.PARENT_UUID.equals(CommonFunctionArea.getDeviceUUID(DigitalWellBeingService.this)))
-                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(calldetails, CommonDataArea.PARENT_UUID));
+                new Communicator(this).sendMessage(FCMMessages.sendCallDetails(newLis, CommonDataArea.PARENT_UUID));
         }
     }
 

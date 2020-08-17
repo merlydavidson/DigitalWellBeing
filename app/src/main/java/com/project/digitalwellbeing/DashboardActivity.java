@@ -595,8 +595,8 @@ public class DashboardActivity extends AppCompatActivity implements View.OnClick
                         if (role == 0) {
                             if (text.getText().toString() != null && text.getText().toString().length() > 0) {
                                 if (digitalWellBeingDao.LockUnLock(CommonDataArea.CURRENTCHILDID)) {
-                                    digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID,
-                                            true, text.getText().toString(), "0");
+                                 long id=   digitalWellBeingDao.updateLockUnlock(CommonDataArea.CURRENTCHILDID,true, text.getText().toString(), "0");
+
                                     dialogButton.setText("Unblock");
                                     Toast.makeText(DashboardActivity.this, "Blocked successfully", Toast.LENGTH_SHORT).show();
                                 } else {
