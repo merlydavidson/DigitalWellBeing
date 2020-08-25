@@ -58,7 +58,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/build/generated/ap_generated_sources/debug/out/com/project/digitalwellbeing/data/model/DigitalWellBeingDao_Impl.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/AndroidManifest.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/ForgotPAsswordActivity.java">
           <value>
             <set />
           </value>
@@ -93,12 +103,27 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/ForgotPasswordActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/GoogleFit.java">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/LocationActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/LoginActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/SignupActivity.java">
           <value>
             <set />
           </value>
@@ -174,6 +199,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/lockscreen/UnlockReciever.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/project/digitalwellbeing/remote/Communicator.java">
           <value>
             <set />
           </value>
@@ -258,7 +288,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_forgot_password.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_google_fit.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_login.xml">
           <value>
             <set />
           </value>
@@ -598,12 +638,67 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/ESMeasurementDetailsActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/ESMeasurementHistoryDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/ESMeasurementPrescriptionControlActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/ESMeasurementSettingsActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/ESMeasuremntPrescriptionActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/ESMeasurmentHistoryActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/ESMeasurmentSettingControlActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/esmeasurment/MeasurementGraphFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/essession/ESHistoryDetails.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/java/com/assignment/maplehomeapp/views/essession/SimulationGraphFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_eshistory_details.xml">
           <value>
             <set />
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_esmeasurement.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/../MapleHomeAndroidApp/app/src/main/res/layout/activity_esmeasuremnt_session.xml">
           <value>
             <set />
           </value>
@@ -808,7 +903,117 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/common/components/Util.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/domain/model/keysense/IKeySenseKeypadModel.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/domain/model/keysense/IKeySenseModel.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/domain/model/keysense/KeySenseModel.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/domain/model/settings/IVehicleSettingsDetailModel.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/presenter/keysene/IKeySenseKeypadPresenter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/presenter/keysene/IKeySensePresenter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/presenter/keysene/KeySensePresenter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/presenter/settings/VehicleSettingsListPresenter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/ev/VehicleFcaContainerFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/keysense/IKeySenseKeyPadView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/keysense/IKeySenseView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/keysense/KeySenseKeyPadFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/keysense/KeySenseKeyPadFragmentKeyPad.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/settings/IVehicleSettingsDetailView.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/settings/VehicleSettingsContainerFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/java/com/mitsubishielectric/ahu/app/vehicle/presentation/view/settings/VehicleSettingsDetailsFragment.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/res/layout-tvdpi/setup_pin_popup.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/res/layout-w1077dp-h596dp/setup_pin_popup.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/res/layout-w1371dp-h637dp/setup_pin_popup.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/res/layout-w1379dp-h347dp/setup_pin_popup.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/res/layout-w857dp-h1174dp/setup_pin_popup.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleHMI/app/src/main/res/layout/setup_pin_popup.xml">
           <value>
             <set />
           </value>
@@ -824,6 +1029,11 @@
           </value>
         </entry>
         <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/libs/com.mitsubishielectric.ahu.hmi.support-stubs.jar!/com/mitsubishielectric/ahu/hmi/support/systemui/MenuBarSupport.class">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Projects/vendor/quest/Vehicle/VehicleService/app/src/main/java/com/mitsubishielectric/ahu/appservice/vehicleservice/data/common/Util.java">
           <value>
             <set />
           </value>

@@ -1,33 +1,29 @@
 package com.project.digitalwellbeing;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Message;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-import static com.project.digitalwellbeing.utils.CommonDataArea.editor;
-import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
+import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.project.digitalwellbeing.data.model.AppDataBase;
 import com.project.digitalwellbeing.data.model.DigitalWellBeingDao;
 import com.project.digitalwellbeing.data.model.UserInfo;
 import com.project.digitalwellbeing.utils.CommonDataArea;
-import com.project.digitalwellbeing.utils.CommonFunctionArea;
 
-import java.util.List;
+import static com.project.digitalwellbeing.utils.CommonDataArea.editor;
+import static com.project.digitalwellbeing.utils.CommonDataArea.sharedPreferences;
 
 public class LoginActivity extends AppCompatActivity {
     Button loginButton, signupButton;
     EditText phNo, password;
+    TextView forgotButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +36,19 @@ public class LoginActivity extends AppCompatActivity {
         signupButton = (Button) findViewById(R.id.signup_btn);
         phNo = findViewById(R.id.mob_edt);
         password = findViewById(R.id.passwd_edt);
+        forgotButton = findViewById(R.id.frgt_psswd_txt);
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, SignupActivity.class);
                 startActivity(intent);
+            }
+        });
+        forgotButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this,ForgotPasswordActivity.class));
+
             }
         });
         // new CommonFunctionArea().sendMessage(LoginActivity.this);
